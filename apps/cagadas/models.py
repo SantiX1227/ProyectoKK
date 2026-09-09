@@ -10,7 +10,14 @@ class Cagada(models.Model):
         on_delete=models.CASCADE,
         related_name='cagadas'
     )
-
+    ubicacion = models.ForeignKey(
+        'ubicaciones.Ubicacion',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='cagadas'
+    )
+    
     hora_inicio_cagada = models.DateTimeField()
 
     hora_final_cagada = models.DateTimeField()
