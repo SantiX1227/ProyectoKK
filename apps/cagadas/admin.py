@@ -7,6 +7,7 @@ class CagadaAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'usuario',
+        'ubicacion',
         'hora_inicio_cagada',
         'hora_final_cagada',
         'duracion',

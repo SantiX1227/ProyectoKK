@@ -3,6 +3,11 @@ from django.db import models
 
 
 class Usuario(AbstractUser):
+    
+    email = models.EmailField(
+        unique=True
+    )
+
     foto = models.ImageField(
         upload_to='usuarios/',
         null=True,
