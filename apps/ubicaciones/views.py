@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import Ubicacion
 from .forms import UbicacionForm
@@ -49,5 +49,42 @@ def crear_ubicacion(request):
         'ubicaciones/crear_ubicaciones.html',
         {
             'form': form
+        }
+    )
+
+@login_required
+def editar_ubicacion(request, id):
+
+    ubicacion = get_object_or_404(
+        Ubicacion,
+        id=id,
+        usuario=request.user
+    )
+
+    if request.method == 'POST':
+
+        form = UbicacionForm(
+            request.POST,
+            instance=ubicacion
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('listar_ubicaciones')
+
+    else:
+
+        form = UbicacionForm(
+            instance=ubicacion
+        )
+
+    return render(
+        request,
+        'ubicaciones/editar_ubicaciones.html',
+        {
+            'form': form,
+            'ubicacion': ubicacion
         }
     )
