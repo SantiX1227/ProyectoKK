@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mis ubicaciones - Proyecto KK</title>
+</head>
+
+<body>
+
+    <h1>Mis ubicaciones</h1>
+
+    {% if ubicaciones %}
+
+        {% for ubicacion in ubicaciones %}
+
+            <div>
+
+                <h2>
+                    {{ ubicacion.nombre }}
+                </h2>
+
+                <p>
+                    <strong>Tipo:</strong>
+                    {{ ubicacion.tipo }}
+                </p>
+
+                <p>
+                    <strong>Latitud:</strong>
+                    {{ ubicacion.latitud|default:"No registrada" }}
+                </p>
+
+                <p>
+                    <strong>Longitud:</strong>
+                    {{ ubicacion.longitud|default:"No registrada" }}
+                </p>
+
+                <p>
+                    <strong>Creada:</strong>
+                    {{ ubicacion.fecha_creacion|date:"d/m/Y H:i" }}
+                </p>
+
+            </div>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Todavía no tienes ubicaciones registradas.
+        </p>
+
+    {% endif %}
+
+    <p>
+        <a href="{% url 'home' %}">
+            Volver al inicio
+        </a>
+    </p>
+
+</body>
+
+</html>
