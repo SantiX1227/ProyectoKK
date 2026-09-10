@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from .forms import RegistroUsuarioForm, PerfilUsuarioForm
 from django.shortcuts import render, redirect
 from .forms import RegistroUsuarioForm
 
@@ -68,4 +70,96 @@ def registrarse(request):
         {
             'form': form
         }
+    )
+
+@login_required
+def perfil(request):
+
+    if request.method == 'POST':
+
+        form = PerfilUsuarioForm(
+            request.POST,
+            request.FILES,
+            instance=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('perfil')
+
+    else:
+
+        form = PerfilUsuarioForm(
+            instance=request.user
+        )
+
+    return render(
+        request,
+        'usuarios/perfil.html',
+        {
+            'form': form
+        }
+    )
+
+@login_required
+def cambiar_contrasena(request):
+
+    if request.method == 'POST':
+
+        form = PasswordChangeForm(
+            request.user,
+            request.POST
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect('perfil')
+
+    else:
+
+        form = PasswordChangeForm(
+            request.user
+        )
+
+    return render(
+        request,
+        'usuarios/cambiar_contrasena.html',
+        {
+            'form': form
+        }
+    )
+
+@login_required
+def eliminar_cuenta(request):
+
+    
+    if request.method == 'POST':
+
+        password = request.POST.get('password')
+
+        if request.user.check_password(password):
+
+            usuario = request.user
+
+            logout(request)
+
+            usuario.delete()
+
+            return redirect('registro')
+
+        return render(
+            request,
+            'usuarios/eliminar_cuenta.html',
+            {
+                'error': 'La contraseña es incorrecta.'
+            }
+        )
+
+    return render(
+        request,
+        'usuarios/eliminar_cuenta.html'
     )

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar cuenta - Proyecto KK</title>
+</head>
+<body>
+    <h1>Eliminar cuenta</h1>
+    <h2>Esta acción es permanente</h2>
+
+    <p style="color: #b30000;">
+        Si eliminas tu cuenta, tus datos asociados serán eliminados y no podrás recuperar la cuenta posteriormente.
+    </p>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="password">Confirma tu contraseña:</label><br>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                autocomplete="current-password"
+            >
+        </div>
+
+        <br>
+
+        <button type="submit" style="background-color: #d9534f; color: white; border: none; padding: 8px 12px; cursor: pointer;">
+            Eliminar mi cuenta definitivamente
+        </button>
+    </form>
+
+    <p>
+        <a href="{% url 'perfil' %}">Cancelar</a>
+    </p>
+</body>
+</html>
