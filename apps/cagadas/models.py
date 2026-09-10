@@ -24,7 +24,8 @@ class Cagada(models.Model):
 
     duracion = models.DurationField(
         null=True,
-        blank=True
+        blank=True,
+        editable=False
     )
 
     calificacion = models.DecimalField(
@@ -66,6 +67,19 @@ class Cagada(models.Model):
     visible_para_otros = models.BooleanField(
         default=False
     )
+
+    def save(self, *args, **kwargs):
+
+        if (
+            self.hora_inicio_cagada
+            and self.hora_final_cagada
+        ):
+            self.duracion = (
+                self.hora_final_cagada
+                - self.hora_inicio_cagada
+            )
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Cagada de {self.usuario.username} - {self.hora_inicio_cagada}'

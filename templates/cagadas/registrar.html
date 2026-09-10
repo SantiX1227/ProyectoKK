@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,6 +20,20 @@
 
         {{ form.as_p }}
 
+        <hr>
+
+        <h2>Temporizador</h2>
+
+        <p>Estado: <strong id="estado">Sin iniciar</strong></p>
+        <p>Inicio: <span id="hora-inicio">—</span></p>
+        <p>Tiempo: <strong id="temporizador">00:00:00</strong></p>
+        <p>Final: <span id="hora-final">—</span></p>
+
+        <button type="button" id="btn-iniciar">▶ Iniciar cagada</button>
+        <button type="button" id="btn-terminar" disabled>■ Terminar cagada</button>
+
+        <hr>
+
         <p>
             <a href="{% url 'listar_ubicaciones' %}">Ver mis ubicaciones</a>
             |
@@ -33,11 +48,15 @@
             </button>
         </p>
 
-        <button type="submit">Registrar cagada</button>
+        <button type="submit" id="btn-registrar" disabled>
+            Registrar cagada
+        </button>
     </form>
 
     <p>
-        <a href="{% url 'home' %}">Cancelar</a>
+        <a href="{% url 'home' %}">Volver al inicio</a>
     </p>
+
+    <script src="{% static 'js/cagadas.js' %}"></script>
 </body>
 </html>
