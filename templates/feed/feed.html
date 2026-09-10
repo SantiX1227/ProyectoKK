@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Feed - Proyecto KK</title>
+
+</head>
+
+<body>
+
+    <h1>Feed de cagadas</h1>
+
+    <p>
+        Aquí aparecen las cagadas que los usuarios
+        han decidido compartir.
+    </p>
+
+    <hr>
+
+    {% if cagadas %}
+
+        {% for cagada in cagadas %}
+
+            <article>
+
+                <h2>
+                    {{ cagada.usuario.username }}
+                </h2>
+
+                <p>
+                    El
+                    {{ cagada.hora_inicio_cagada|date:"d/m/Y" }}
+                    a las
+                    {{ cagada.hora_inicio_cagada|date:"h:i:s A" }}
+                    hizo una cagada.
+                </p>
+
+                <p>
+                    <strong>Duración:</strong>
+                    {{ cagada.duracion }}
+                </p>
+
+                <p>
+                    <strong>Ubicación:</strong>
+
+                    {% if cagada.ubicacion %}
+                        {{ cagada.ubicacion.nombre }}
+                    {% else %}
+                        Sin ubicación
+                    {% endif %}
+
+                </p>
+
+                <p>
+                    <strong>Calificación:</strong>
+                    {{ cagada.calificacion }}
+                </p>
+
+                <p>
+                    <strong>Categorización:</strong>
+                    {{ cagada.get_categorizacion_display }}
+                </p>
+
+                <p>
+                    <strong>Color:</strong>
+
+                    <span
+                        style="
+                            display: inline-block;
+                            width: 30px;
+                            height: 30px;
+                            background-color:
+                                {{ cagada.color }};
+                            border: 1px solid black;
+                            vertical-align: middle;
+                        "
+                    ></span>
+
+                    {{ cagada.color }}
+
+                </p>
+
+                {% if cagada.observaciones %}
+
+                    <p>
+                        <strong>Observaciones:</strong>
+                    </p>
+
+                    <p>
+                        {{ cagada.observaciones }}
+                    </p>
+
+                {% endif %}
+
+                <p>
+                    <a
+                        href="{% url 'detalle_cagada_publica' cagada.id %}"
+                    >
+                        Ver detalle
+                    </a>
+                </p>
+
+            </article>
+
+            <hr>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>
+            Todavía no hay cagadas públicas.
+        </p>
+
+    {% endif %}
+
+
+    <p>
+        <a href="{% url 'registrar_cagada' %}">
+            Registrar cagada
+        </a>
+    </p>
+
+    <p>
+        <a href="{% url 'historial_cagadas' %}">
+            Mi historial
+        </a>
+    </p>
+
+    <p>
+        <a href="{% url 'home' %}">
+            Volver al inicio
+        </a>
+    </p>
+
+</body>
+
+</html>

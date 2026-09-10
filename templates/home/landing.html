@@ -45,6 +45,12 @@
         </a>
     </p>
     
+    <p>
+        <a href="{% url 'feed_cagadas' %}">
+            Ver feed de cagadas
+        </a>
+    </p>
+    
     <form method="POST" action="{% url 'logout' %}">
 
     {% csrf_token %}
