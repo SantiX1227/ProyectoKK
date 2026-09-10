@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import CagadaForm
 from .models import Cagada
@@ -88,5 +88,24 @@ def historial_cagadas(request):
         'cagadas/historial.html',
         {
             'cagadas': cagadas
+        }
+    )
+
+@login_required
+def detalle_cagada(request, id):
+
+    cagada = get_object_or_404(
+        Cagada.objects.select_related(
+            'ubicacion'
+        ),
+        id=id,
+        usuario=request.user
+    )
+
+    return render(
+        request,
+        'cagadas/detalle.html',
+        {
+            'cagada': cagada
         }
     )

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de cagada - Proyecto KK</title>
+</head>
+<body>
+    <h1>Detalle de cagada</h1>
+
+    <p><strong>Fecha:</strong> {{ cagada.hora_inicio_cagada|date:"d/m/Y" }}</p>
+    <p><strong>Hora de inicio:</strong> {{ cagada.hora_inicio_cagada|date:"H:i:s" }}</p>
+    <p><strong>Hora final:</strong> {{ cagada.hora_final_cagada|date:"H:i:s" }}</p>
+    <p><strong>Duración:</strong> {{ cagada.duracion }}</p>
+
+    <p>
+        <strong>Ubicación:</strong> 
+        {% if cagada.ubicacion %}
+            {{ cagada.ubicacion.nombre }}
+        {% else %}
+            Sin ubicación
+        {% endif %}
+    </p>
+
+    <p><strong>Calificación:</strong> {{ cagada.calificacion }}</p>
+    <p><strong>Categorización:</strong> {{ cagada.get_categorizacion_display }}</p>
+
+    <p>
+        <strong>Color:</strong>
+        <span style="display: inline-block; 
+        width: 22px;
+        height: 22px; 
+        background-color: {{ cagada.color }};
+        border: 1px solid #333; border-radius: 4px; 
+        vertical-align: middle; margin-right: 6px;"></span>
+        {{ cagada.color }}
+    </p>
+
+    <p>
+        <strong>Visible para otros usuarios:</strong>
+        {% if cagada.visible_para_otros %}Sí{% else %}No{% endif %}
+    </p>
+
+    {% if cagada.observaciones %}
+        <p><strong>Observaciones:</strong></p>
+        <p>{{ cagada.observaciones|linebreaks }}</p>
+    {% endif %}
+
+    <hr>
+
+    <p>
+        <a href="{% url 'historial_cagadas' %}">Volver al historial</a>
+    </p>
+    <p>
+        <a href="{% url 'home' %}">Volver al inicio</a>
+    </p>
+</body>
+</html>
