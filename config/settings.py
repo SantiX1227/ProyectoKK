@@ -143,5 +143,6 @@ AUTHENTICATION_BACKENDS = [
     'apps.usuarios.backends.EmailBackend',
 ]
 
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
