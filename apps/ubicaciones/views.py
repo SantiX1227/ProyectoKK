@@ -88,3 +88,26 @@ def editar_ubicacion(request, id):
             'ubicacion': ubicacion
         }
     )
+
+@login_required
+def eliminar_ubicacion(request, id):
+
+    ubicacion = get_object_or_404(
+        Ubicacion,
+        id=id,
+        usuario=request.user
+    )
+
+    if request.method == 'POST':
+
+        ubicacion.delete()
+
+        return redirect('listar_ubicaciones')
+
+    return render(
+        request,
+        'ubicaciones/eliminar_ubicaciones.html',
+        {
+            'ubicacion': ubicacion
+        }
+    )
