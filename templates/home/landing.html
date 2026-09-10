@@ -27,6 +27,12 @@
         </a>
     </p>
 
+    <p>
+        <a href="{% url 'registrar_cagada' %}">
+            Registrar cagada
+        </a>
+    </p>
+    
     <form method="POST" action="{% url 'logout' %}">
 
     {% csrf_token %}

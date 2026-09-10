@@ -40,11 +40,23 @@ class Cagada(models.Model):
         blank=True
     )
 
+
+    CATEGORIAS = [
+        (1, 'Normal'),
+        (2, 'Rápida'),
+        (3, 'Larga'),
+        (4, 'Difícil'),
+        (5, 'Tranquila'),
+        (6, 'Explosiva'),
+        (7, 'Interrumpida'),
+        (8, 'Urgente'),
+        (9, 'Satisfactoria'),
+        (10, 'Problemática'),
+    ]
+    
     categorizacion = models.PositiveSmallIntegerField(
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5)
-        ]
+        choices=CATEGORIAS,
+        default=1
     )
 
     color = models.CharField(
