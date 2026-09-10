@@ -19,6 +19,20 @@
 
         {{ form.as_p }}
 
+        <p>
+            <a href="{% url 'listar_ubicaciones' %}">Ver mis ubicaciones</a>
+            |
+            <button
+                type="submit"
+                formaction="{% url 'crear_ubicacion' %}"
+                formnovalidate
+                name="origen"
+                value="registrar_cagada"
+            >
+                Añadir nueva ubicación
+            </button>
+        </p>
+
         <button type="submit">Registrar cagada</button>
     </form>
 

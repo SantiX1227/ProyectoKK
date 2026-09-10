@@ -22,23 +22,65 @@ def listar_ubicaciones(request):
 @login_required
 def crear_ubicacion(request):
 
+    desde_registro_cagada = False
+
     if request.method == 'POST':
 
-        form = UbicacionForm(
-            request.POST
-        )
+        origen = request.POST.get('origen')
 
-        if form.is_valid():
+        if origen == 'registrar_cagada':
 
-            ubicacion = form.save(
-                commit=False
+            datos_cagada = request.POST.dict()
+
+            datos_cagada.pop(
+                'csrfmiddlewaretoken',
+                None
             )
 
-            ubicacion.usuario = request.user
+            datos_cagada.pop(
+                'origen',
+                None
+            )
 
-            ubicacion.save()
+            request.session['cagada_borrador'] = (
+                datos_cagada
+            )
 
-            return redirect('listar_ubicaciones')
+            desde_registro_cagada = True
+
+            form = UbicacionForm()
+
+        else:
+
+            form = UbicacionForm(
+                request.POST
+            )
+
+            if form.is_valid():
+
+                ubicacion = form.save(
+                    commit=False
+                )
+
+                ubicacion.usuario = request.user
+
+                ubicacion.save()
+
+                if request.POST.get(
+                    'volver_a_cagada'
+                ) == '1':
+
+                    request.session[
+                        'cagada_ubicacion_seleccionada'
+                    ] = ubicacion.id
+
+                    return redirect(
+                        'registrar_cagada'
+                    )
+
+                return redirect(
+                    'listar_ubicaciones'
+                )
 
     else:
 
@@ -48,7 +90,10 @@ def crear_ubicacion(request):
         request,
         'ubicaciones/crear_ubicaciones.html',
         {
-            'form': form
+            'form': form,
+            'desde_registro_cagada': (
+                desde_registro_cagada
+            )
         }
     )
 
