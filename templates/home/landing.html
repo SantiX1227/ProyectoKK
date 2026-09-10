@@ -21,9 +21,15 @@
         Correo: {{ request.user.email }}
     </p>
 
-    <a href="{% url 'logout' %}">
+    <form method="POST" action="{% url 'logout' %}">
+
+    {% csrf_token %}
+
+    <button type="submit">
         Cerrar sesión
-    </a>
+    </button>
+
+    </form>
 
 </body>
 </html>

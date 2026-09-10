@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import RegistroUsuarioForm
 
@@ -32,12 +33,13 @@ def iniciar_sesion(request):
 
     return render(request, 'usuarios/login.html')
 
-
+@login_required
 def cerrar_sesion(request):
 
     logout(request)
 
     return redirect('login')
+
 
 def registrarse(request):
 
