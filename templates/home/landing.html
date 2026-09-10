@@ -39,6 +39,12 @@
         </a>
     </p>
     
+    <p>
+        <a href="{% url 'historial_cagadas' %}">
+            Ver mi historial de cagadas
+        </a>
+    </p>
+    
     <form method="POST" action="{% url 'logout' %}">
 
     {% csrf_token %}

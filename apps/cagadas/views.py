@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
+
 from .forms import CagadaForm
+from .models import Cagada
 
 
 @login_required
@@ -72,5 +74,24 @@ def registrar_cagada(request):
         'cagadas/registrar.html',
         {
             'form': form
+        }
+    )
+
+@login_required
+def historial_cagadas(request):
+
+    cagadas = Cagada.objects.filter(
+        usuario=request.user
+    ).select_related(
+        'ubicacion'
+    ).order_by(
+        '-hora_inicio_cagada'
+    )
+
+    return render(
+        request,
+        'cagadas/historial.html',
+        {
+            'cagadas': cagadas
         }
     )
