@@ -9,4 +9,9 @@ urlpatterns = [
         views.listar_ubicaciones,
         name='listar_ubicaciones'
     ),
+    path(
+        'crear-ubicacion/',
+        views.crear_ubicacion,
+        name='crear_ubicacion'
+    ),
 ]
