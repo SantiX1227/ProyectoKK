@@ -19,4 +19,9 @@ urlpatterns = [
         views.editar_ubicacion,
         name='editar_ubicacion'
     ),
+    path(
+        'eliminar-ubicacion/<int:id>/',
+        views.eliminar_ubicacion,
+        name='eliminar_ubicacion'
+    ),
 ]
