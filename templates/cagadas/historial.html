@@ -1,34 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de cagadas - Proyecto KK</title>
 </head>
-
 <body>
-
     <h1>Historial de cagadas</h1>
 
     {% if cagadas %}
-
         {% for cagada in cagadas %}
-
             <div>
-
-                <h2>
-                    {{ cagada.hora_inicio_cagada|date:"d/m/Y H:i" }}
-                </h2>
+                <h2>{{ cagada.hora_inicio_cagada|date:"d/m/Y H:i" }}</h2>
 
                 <p>
                     <strong>Ubicación:</strong>
-
                     {% if cagada.ubicacion %}
                         {{ cagada.ubicacion.nombre }}
                     {% else %}
@@ -36,71 +22,45 @@
                     {% endif %}
                 </p>
 
-                <p>
-                    <strong>Duración:</strong>
-                    {{ cagada.duracion }}
-                </p>
-
-                <p>
-                    <strong>Calificación:</strong>
-                    {{ cagada.calificacion }}
-                </p>
-
-                <p>
-                    <strong>Categorización:</strong>
-                    {{ cagada.get_categorizacion_display }}
-                </p>
+                <p><strong>Duración:</strong> {{ cagada.duracion }}</p>
+                <p><strong>Calificación:</strong> {{ cagada.calificacion }}</p>
+                <p><strong>Categorización:</strong> {{ cagada.get_categorizacion_display }}</p>
 
                 <p>
                     <strong>Color:</strong>
+                    <span style="display: inline-block; width: 16px; height: 16px; background-color: {{ cagada.color }}; border: 1px solid #333; border-radius: 3px; vertical-align: middle;"></span>
                     {{ cagada.color }}
                 </p>
 
                 <p>
                     <strong>Visible para otros:</strong>
-
-                    {% if cagada.visible_para_otros %}
-                        Sí
-                    {% else %}
-                        No
-                    {% endif %}
+                    {% if cagada.visible_para_otros %}Sí{% else %}No{% endif %}
                 </p>
 
                 {% if cagada.observaciones %}
-
                     <p>
                         <strong>Observaciones:</strong>
-                        {{ cagada.observaciones }}
+                        {{ cagada.observaciones|truncatewords:15 }}
                     </p>
-
                 {% endif %}
 
+                <!-- Enlace de detalle accesible para todas las cagadas -->
+                <p>
+                    <a href="{% url 'detalle_cagada' cagada.id %}">Ver detalle completo</a>
+                </p>
             </div>
-
             <hr>
-
         {% endfor %}
-
     {% else %}
-
-        <p>
-            Todavía no has registrado ninguna cagada.
-        </p>
-
+        <p>Todavía no has registrado ninguna cagada.</p>
     {% endif %}
 
     <p>
-        <a href="{% url 'registrar_cagada' %}">
-            Registrar una cagada
-        </a>
+        <a href="{% url 'registrar_cagada' %}">Registrar una cagada</a>
     </p>
 
     <p>
-        <a href="{% url 'home' %}">
-            Volver al inicio
-        </a>
+        <a href="{% url 'home' %}">Volver al inicio</a>
     </p>
-
 </body>
-
 </html>
