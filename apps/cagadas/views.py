@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import CagadaForm
+from .forms import CagadaForm, EditarCagadaForm
 from .models import Cagada
 
 
@@ -105,6 +105,74 @@ def detalle_cagada(request, id):
     return render(
         request,
         'cagadas/detalle.html',
+        {
+            'cagada': cagada
+        }
+    )
+
+@login_required
+def editar_cagada(request, id):
+
+    cagada = get_object_or_404(
+        Cagada,
+        id=id,
+        usuario=request.user
+    )
+
+    if request.method == 'POST':
+
+        form = EditarCagadaForm(
+            request.POST,
+            instance=cagada,
+            usuario=request.user
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            return redirect(
+                'detalle_cagada',
+                id=cagada.id
+            )
+
+    else:
+
+        form = CagadaForm(
+            instance=cagada,
+            usuario=request.user
+        )
+
+    return render(
+        request,
+        'cagadas/editar.html',
+        {
+            'form': form,
+            'cagada': cagada
+        }
+    )
+
+
+@login_required
+def eliminar_cagada(request, id):
+
+    cagada = get_object_or_404(
+        Cagada,
+        id=id,
+        usuario=request.user
+    )
+
+    if request.method == 'POST':
+
+        cagada.delete()
+
+        return redirect(
+            'historial_cagadas'
+        )
+
+    return render(
+        request,
+        'cagadas/eliminar.html',
         {
             'cagada': cagada
         }

@@ -27,12 +27,7 @@
 
     <p>
         <strong>Color:</strong>
-        <span style="display: inline-block; 
-        width: 22px;
-        height: 22px; 
-        background-color: {{ cagada.color }};
-        border: 1px solid #333; border-radius: 4px; 
-        vertical-align: middle; margin-right: 6px;"></span>
+        <span style="display: inline-block; width: 22px; height: 22px; background-color: {{ cagada.color }}; border: 1px solid #333; border-radius: 4px; vertical-align: middle; margin-right: 6px;"></span>
         {{ cagada.color }}
     </p>
 
@@ -48,6 +43,14 @@
 
     <hr>
 
+    <h2>Acciones</h2>
+    
+    <p>
+        <a href="{% url 'editar_cagada' cagada.id %}">Editar cagada</a>
+    </p>
+    <p>
+        <a href="{% url 'eliminar_cagada' cagada.id %}" style="color: red;">Eliminar cagada</a>
+    </p>
     <p>
         <a href="{% url 'historial_cagadas' %}">Volver al historial</a>
     </p>
