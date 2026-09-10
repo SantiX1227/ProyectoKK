@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('apps.core.urls')),
     path('', include('apps.usuarios.urls')),
+    path('', include('apps.cagadas.urls')),
 ]
 
 

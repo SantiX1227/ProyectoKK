@@ -38,4 +38,4 @@ class Ubicacion(models.Model):
     )
 
     def __str__(self):
-        return f'{self.nombre} - {self.usuario.username}'
+        return f'{self.nombre}'
