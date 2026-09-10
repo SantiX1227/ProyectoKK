@@ -33,6 +33,12 @@
         </a>
     </p>
     
+    <p>
+        <a href="{% url 'listar_ubicaciones' %}">
+            Ver mis ubicaciones
+        </a>
+    </p>
+    
     <form method="POST" action="{% url 'logout' %}">
 
     {% csrf_token %}
