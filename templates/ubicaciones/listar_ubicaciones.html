@@ -15,7 +15,7 @@
 <body>
 
     <h1>Mis ubicaciones</h1>
-    
+
     <p>
         <a href="{% url 'crear_ubicacion' %}">
             Crear nueva ubicación
@@ -50,6 +50,12 @@
                 <p>
                     <strong>Creada:</strong>
                     {{ ubicacion.fecha_creacion|date:"d/m/Y H:i" }}
+                </p>
+
+                <p>
+                    <a href="{% url 'editar_ubicacion' ubicacion.id %}">
+                        Editar
+                    </a>
                 </p>
 
             </div>

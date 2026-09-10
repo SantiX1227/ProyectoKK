@@ -14,4 +14,9 @@ urlpatterns = [
         views.crear_ubicacion,
         name='crear_ubicacion'
     ),
+    path(
+        'editar-ubicacion/<int:id>/',
+        views.editar_ubicacion,
+        name='editar_ubicacion'
+    ),
 ]
