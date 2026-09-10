@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('apps.usuarios.urls')),
     path('', include('apps.cagadas.urls')),
     path('', include('apps.ubicaciones.urls')),
+    path('feed/', include('apps.feed.urls')),
 ]
 
 

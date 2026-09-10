@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.cagadas",
     "apps.ubicaciones",
     "apps.core",
+    "apps.feed",
 ]
 
 MIDDLEWARE = [
