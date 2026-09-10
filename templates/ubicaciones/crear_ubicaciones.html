@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Crear ubicación - Proyecto KK</title>
+</head>
+
+<body>
+
+    <h1>Crear ubicación</h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Crear ubicación
+        </button>
+
+    </form>
+
+    <p>
+        <a href="{% url 'listar_ubicaciones' %}">
+            Cancelar
+        </a>
+    </p>
+
+</body>
+
+</html>
