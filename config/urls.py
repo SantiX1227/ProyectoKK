@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('apps.core.urls')),
     path('', include('apps.usuarios.urls')),
     path('', include('apps.cagadas.urls')),
+    path('', include('apps.ubicaciones.urls')),
 ]
 
 
