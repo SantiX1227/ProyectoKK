@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Editar cagada - Proyecto KK</title>
+
+</head>
+
+<body>
+
+    <h1>Editar cagada</h1>
+
+    <p>
+        Estás editando la cagada
+        <strong>#{{ cagada.id }}</strong>
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Guardar cambios
+        </button>
+
+    </form>
+
+    <hr>
+
+    <p>
+        <a href="{% url 'detalle_cagada' cagada.id %}">
+            Cancelar
+        </a>
+    </p>
+
+</body>
+
+</html>

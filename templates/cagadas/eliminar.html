@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Eliminar cagada - Proyecto KK</title>
+
+</head>
+
+<body>
+
+    <h1>Eliminar cagada</h1>
+
+    <h2>
+        Esta acción es permanente
+    </h2>
+
+    <p>
+        ¿Estás seguro de que quieres eliminar
+        la cagada #{{ cagada.id }}?
+    </p>
+
+    <p>
+        <strong>Fecha:</strong>
+        {{ cagada.hora_inicio_cagada|date:"d/m/Y H:i:s" }}
+    </p>
+
+    <p>
+        <strong>Duración:</strong>
+        {{ cagada.duracion }}
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <button type="submit">
+            Eliminar definitivamente
+        </button>
+
+    </form>
+
+    <p>
+        <a href="{% url 'detalle_cagada' cagada.id %}">
+            Cancelar
+        </a>
+    </p>
+
+</body>
+
+</html>

@@ -89,3 +89,63 @@ class CagadaForm(forms.ModelForm):
             )
 
         return cleaned_data
+
+        
+class EditarCagadaForm(forms.ModelForm):
+
+    class Meta:
+        model = Cagada
+
+        fields = (
+            'ubicacion',
+            'calificacion',
+            'categorizacion',
+            'color',
+            'observaciones',
+            'visible_para_otros',
+        )
+
+        labels = {
+            'ubicacion': 'Ubicación',
+            'calificacion': 'Calificación',
+            'categorizacion': 'Categorización',
+            'color': 'Color',
+            'observaciones': 'Observaciones',
+            'visible_para_otros': (
+                'Visible para otros usuarios'
+            ),
+        }
+
+        widgets = {
+            'color': forms.TextInput(
+                attrs={
+                    'type': 'color'
+                }
+            ),
+
+            'observaciones': forms.Textarea(
+                attrs={
+                    'rows': 4
+                }
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+
+        usuario = kwargs.pop(
+            'usuario',
+            None
+        )
+
+        super().__init__(
+            *args,
+            **kwargs
+        )
+
+        if usuario is not None:
+
+            self.fields['ubicacion'].queryset = (
+                Ubicacion.objects.filter(
+                    usuario=usuario
+                )
+            )
