@@ -20,6 +20,12 @@
     <p>
         Correo: {{ request.user.email }}
     </p>
+    
+    <p>
+        <a href="{% url 'perfil' %}">
+            Mi perfil
+        </a>
+    </p>
 
     <form method="POST" action="{% url 'logout' %}">
 
