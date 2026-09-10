@@ -23,11 +23,6 @@ def registrar_cagada(request):
 
             cagada.usuario = request.user
 
-            cagada.duracion = (
-                cagada.hora_final_cagada
-                - cagada.hora_inicio_cagada
-            )
-
             cagada.save()
 
             return redirect('home')
