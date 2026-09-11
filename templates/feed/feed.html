@@ -42,31 +42,39 @@
             {% include "feed/components/publicacion.html" %}
         {% endfor %}
 
-        {% if page_obj.has_other_pages %}
-            <hr>
-            <nav>
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
-                        ← Anterior
+        <hr>
+        <nav>
+            <p>
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </p>
+
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
+                    ← Anterior
+                </a>
+            {% endif %}
+
+            {% for numero in page_obj.paginator.page_range %}
+                {% if numero == page_obj.number %}
+                    <strong>[ {{ numero }} ]</strong>
+                {% else %}
+                    <a href="?page={{ numero }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
+                        [ {{ numero }} ]
                     </a>
                 {% endif %}
+            {% endfor %}
 
-                <span>
-                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
-                </span>
-
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
-                        Siguiente →
-                    </a>
-                {% endif %}
-            </nav>
-        {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
+                    Siguiente →
+                </a>
+            {% endif %}
+        </nav>
+        <hr>
     {% else %}
         <p>Todavía no hay cagadas públicas.</p>
+        <hr>
     {% endif %}
-
-    <hr>
 
     <nav>
         <p>
