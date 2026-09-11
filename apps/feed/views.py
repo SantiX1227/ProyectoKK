@@ -53,7 +53,7 @@ def feed_cagadas(request):
 
     paginator = Paginator(
         cagadas,
-        20
+        2
     )
 
     page_number = request.GET.get(
@@ -73,7 +73,7 @@ def feed_cagadas(request):
             'filter_form': form,
         }
     )
-    
+
 @login_required
 def detalle_cagada_publica(request, id):
 
