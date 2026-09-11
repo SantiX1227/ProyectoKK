@@ -38,7 +38,7 @@ def detalle_cagada_publica(request, id):
 
     return render(
         request,
-        'cagadas/detalle_publico.html',
+        'feed/detallepublico.html',
         {
             'cagada': cagada
         }
