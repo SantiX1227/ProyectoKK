@@ -10,91 +10,181 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Cagada pública - Proyecto KK</title>
+    <title>
+        Cagada de {{ cagada.usuario.username }}
+    </title>
 
 </head>
 
 <body>
 
-    <h1>Cagada de {{ cagada.usuario.username }}</h1>
+    <header>
 
-    <p>
-        <strong>Fecha:</strong>
-        {{ cagada.hora_inicio_cagada|date:"d/m/Y" }}
-    </p>
+        {% if cagada.usuario.foto %}
 
-    <p>
-        <strong>Hora de inicio:</strong>
-        {{ cagada.hora_inicio_cagada|date:"h:i:s A" }}
-    </p>
+            <img
+                src="{{ cagada.usuario.foto.url }}"
+                alt="Foto de {{ cagada.usuario.username }}"
+                width="80"
+                height="80"
+            >
 
-    <p>
-        <strong>Hora final:</strong>
-        {{ cagada.hora_final_cagada|date:"h:i:s A" }}
-    </p>
-
-    <p>
-        <strong>Duración:</strong>
-        {{ cagada.duracion }}
-    </p>
-
-    <p>
-        <strong>Ubicación:</strong>
-
-        {% if cagada.ubicacion %}
-            {{ cagada.ubicacion.nombre }}
         {% else %}
-            Sin ubicación
+
+            <div>
+                👤
+            </div>
+
         {% endif %}
 
-    </p>
+        <h1>
+            Cagada de {{ cagada.usuario.username }}
+        </h1>
 
-    <p>
-        <strong>Calificación:</strong>
-        {{ cagada.calificacion }}
-    </p>
+    </header>
 
-    <p>
-        <strong>Categorización:</strong>
-        {{ cagada.get_categorizacion_display }}
-    </p>
-
-    <p>
-        <strong>Color:</strong>
-
-        <span
-            style="
-                display: inline-block;
-                width: 30px;
-                height: 30px;
-                background-color: {{ cagada.color }};
-                border: 1px solid black;
-                vertical-align: middle;
-            "
-        ></span>
-
-        {{ cagada.color }}
-
-    </p>
-
-    {% if cagada.observaciones %}
-
-        <p>
-            <strong>Observaciones:</strong>
-        </p>
-
-        <p>
-            {{ cagada.observaciones }}
-        </p>
-
-    {% endif %}
 
     <hr>
 
+
+    <section>
+
+        <p>
+
+            <strong>
+                Fecha:
+            </strong>
+
+            {{ cagada.hora_inicio_cagada|date:"d/m/Y" }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Hora de inicio:
+            </strong>
+
+            {{ cagada.hora_inicio_cagada|date:"h:i:s A" }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Hora de finalización:
+            </strong>
+
+            {{ cagada.hora_final_cagada|date:"h:i:s A" }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Duración:
+            </strong>
+
+            {{ cagada.duracion }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Ubicación:
+            </strong>
+
+            {% if cagada.ubicacion %}
+
+                {{ cagada.ubicacion.nombre }}
+
+            {% else %}
+
+                Sin ubicación
+
+            {% endif %}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Calificación:
+            </strong>
+
+            ⭐ {{ cagada.calificacion }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Categoría:
+            </strong>
+
+            {{ cagada.get_categorizacion_display }}
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Color:
+            </strong>
+
+            <span
+                style="
+                    display: inline-block;
+                    width: 40px;
+                    height: 40px;
+                    background-color: {{ cagada.color }};
+                    border: 1px solid black;
+                    vertical-align: middle;
+                "
+                title="{{ cagada.color }}"
+            ></span>
+
+            {{ cagada.color }}
+
+        </p>
+
+
+        {% if cagada.observaciones %}
+
+            <p>
+
+                <strong>
+                    Observaciones:
+                </strong>
+
+            </p>
+
+            <p>
+                {{ cagada.observaciones }}
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <hr>
+
+
     <p>
+
         <a href="{% url 'feed_cagadas' %}">
-            Volver al feed
+            ← Volver al feed
         </a>
+
     </p>
 
 </body>
