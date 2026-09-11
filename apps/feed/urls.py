@@ -16,4 +16,9 @@ urlpatterns = [
         name='detalle_cagada_publica'
     ),
 
+    path(
+        'cagada/<int:id>/reaccionar/<str:tipo>/',
+        views.reaccionar_cagada,
+        name='reaccionar_cagada'
+    ),
 ]
