@@ -1,136 +1,75 @@
 <article>
-
     <header>
-
         {% if cagada.usuario.foto %}
-
             <img
                 src="{{ cagada.usuario.foto.url }}"
                 alt="Foto de {{ cagada.usuario.username }}"
                 width="60"
                 height="60"
+                style="object-fit: cover; border-radius: 50%;"
             >
-
         {% else %}
-
-            <div>
-                👤
-            </div>
-
+            <div style="font-size: 2rem;">👤</div>
         {% endif %}
 
-        <h2>
-            {{ cagada.usuario.username }}
-        </h2>
-
+        <h2>{{ cagada.usuario.username }}</h2>
     </header>
 
-
     <section>
-
         <p>
-
-            El
-            {{ cagada.hora_inicio_cagada|date:"d \d\e F" }}
-            a las
-            {{ cagada.hora_inicio_cagada|date:"h:i A" }}
-
-            <strong>
-                {{ cagada.usuario.username }}
-            </strong>
-
-            hizo una cagada de
-
-            <strong>
-                {{ cagada.duracion }}
-            </strong>
-
+            El {{ cagada.hora_inicio_cagada|date:"d \d\e F" }} a las {{ cagada.hora_inicio_cagada|date:"h:i A" }}
+            <strong>{{ cagada.usuario.username }}</strong>
+            hizo una cagada de <strong>{{ cagada.duracion }}</strong>
             {% if cagada.ubicacion %}
-
-                en
-                <strong>
-                    {{ cagada.ubicacion.nombre }}
-                </strong>
-
+                en <strong>{{ cagada.ubicacion.nombre }}</strong>
             {% endif %}.
-
         </p>
 
+        <p><strong>Calificación:</strong> ⭐ {{ cagada.calificacion }}</p>
+        <p><strong>Categoría:</strong> {{ cagada.get_categorizacion_display }}</p>
 
         <p>
-
-            <strong>
-                Calificación:
-            </strong>
-
-            ⭐ {{ cagada.calificacion }}
-
-        </p>
-
-
-        <p>
-
-            <strong>
-                Categoría:
-            </strong>
-
-            {{ cagada.get_categorizacion_display }}
-
-        </p>
-
-
-        <p>
-
-            <strong>
-                Color:
-            </strong>
-
-            <span
-                style="
-                    display: inline-block;
-                    width: 30px;
-                    height: 30px;
-                    background-color: {{ cagada.color }};
-                    border: 1px solid black;
-                    vertical-align: middle;
-                "
-                title="{{ cagada.color }}"
-            ></span>
-
+            <strong>Color:</strong>
+            <span style="display: inline-block; width: 22px; height: 22px; background-color: {{ cagada.color }}; border: 1px solid #333; border-radius: 4px; vertical-align: middle;" title="{{ cagada.color }}"></span>
             {{ cagada.color }}
-
         </p>
-
 
         {% if cagada.observaciones %}
-
             <div>
-
-                <strong>
-                    Observaciones:
-                </strong>
-
-                <p>
-                    {{ cagada.observaciones }}
-                </p>
-
+                <strong>Observaciones:</strong>
+                <p>{{ cagada.observaciones|linebreaks }}</p>
             </div>
-
         {% endif %}
 
+        <hr>
+
+        <div
+        class="reacciones"
+        data-cagada-id="{{ cagada.id }}"
+    >
+    
+        {% for reaccion in cagada.reacciones_display %}
+    
+            <button
+                type="button"
+                class="boton-reaccion"
+                data-tipo="{{ reaccion.tipo }}"
+                data-url="{% url 'reaccionar_cagada' cagada.id reaccion.tipo %}"
+            >
+                {{ reaccion.nombre }}
+                (<span class="contador-reaccion">{{ reaccion.cantidad }}</span>)
+            </button>
+    
+        {% endfor %}
+    
+    </div>
     </section>
 
+    <br>
 
     <footer>
-
-        <a
-            href="{% url 'detalle_cagada_publica' cagada.id %}"
-        >
-            Ver detalle
-        </a>
-
+        <a href="{% url 'detalle_cagada_publica' cagada.id %}">Ver detalle</a>
     </footer>
-
 </article>
 
 <hr>

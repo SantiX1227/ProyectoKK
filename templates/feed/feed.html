@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +7,8 @@
     <title>Feed - Proyecto KK</title>
 </head>
 <body>
+    {% csrf_token %}
+
     <h1>Feed de cagadas</h1>
 
     <hr>
@@ -87,5 +90,7 @@
             <a href="{% url 'home' %}">Volver al inicio</a>
         </p>
     </nav>
+
+    <script src="{% static 'js/cagadas.js' %}"></script>
 </body>
 </html>

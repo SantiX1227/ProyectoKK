@@ -1,3 +1,4 @@
+console.log('cagadas.js cargado');
 document.addEventListener('DOMContentLoaded', function () {
     const btnIniciar = document.getElementById('btn-iniciar');
     const btnTerminar = document.getElementById('btn-terminar');
@@ -132,3 +133,95 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+
+    const botonesReaccion = document.querySelectorAll(
+        '.boton-reaccion'
+    );
+
+    botonesReaccion.forEach((boton) => {
+
+        boton.addEventListener('click', async () => {
+
+            const url = boton.dataset.url;
+            const contenedor = boton.closest('.reacciones');
+
+            try {
+
+                const respuesta = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': obtenerCSRFToken()
+                    }
+                });
+
+                if (!respuesta.ok) {
+                    throw new Error(
+                        'No se pudo registrar la reacción.'
+                    );
+                }
+
+                const datos = await respuesta.json();
+
+                actualizarReacciones(
+                    contenedor,
+                    datos.reacciones
+                );
+
+            } catch (error) {
+
+                console.error(
+                    'Error al reaccionar:',
+                    error
+                );
+
+            }
+
+        });
+
+    });
+
+});
+
+
+function obtenerCSRFToken() {
+
+    const cookies = document.cookie.split(';');
+
+    for (const cookie of cookies) {
+
+        const [nombre, valor] = cookie.trim().split('=');
+
+        if (nombre === 'csrftoken') {
+            return decodeURIComponent(valor);
+        }
+
+    }
+
+    return '';
+}
+
+
+function actualizarReacciones(
+    contenedor,
+    reacciones
+) {
+
+    const botones = contenedor.querySelectorAll(
+        '.boton-reaccion'
+    );
+
+    botones.forEach((boton) => {
+
+        const tipo = boton.dataset.tipo;
+
+        const contador = boton.querySelector(
+            '.contador-reaccion'
+        );
+
+        contador.textContent = reacciones[tipo] ?? 0;
+
+    });
+
+}
