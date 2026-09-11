@@ -1,77 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Feed - Proyecto KK</title>
-
 </head>
-
 <body>
-
-    <h1>
-        Feed de cagadas
-    </h1>
-
-
-    <p>
-        Aquí aparecen las cagadas que los usuarios
-        han decidido compartir.
-    </p>
-
+    <h1>Feed de cagadas</h1>
 
     <hr>
 
+    <h2>Filtros</h2>
+    <form method="GET">
+        <p>
+            {{ filter_form.usuario.label_tag }}
+            {{ filter_form.usuario }}
+        </p>
+
+        <p>
+            {{ filter_form.calificacion.label_tag }}
+            {{ filter_form.calificacion }}
+        </p>
+
+        <p>
+            {{ filter_form.categoria.label_tag }}
+            {{ filter_form.categoria }}
+        </p>
+
+        <button type="submit">Filtrar</button>
+        <a href="{% url 'feed_cagadas' %}">Limpiar filtros</a>
+    </form>
+
+    <hr>
+
+    <p>Aquí aparecen las cagadas que los usuarios han decidido compartir.</p>
+
+    <hr>
 
     {% if cagadas %}
-
         {% for cagada in cagadas %}
-
             {% include "feed/components/publicacion.html" %}
-
         {% endfor %}
 
+        {% if page_obj.has_other_pages %}
+            <hr>
+            <nav>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
+                        ← Anterior
+                    </a>
+                {% endif %}
+
+                <span>
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
+                        Siguiente →
+                    </a>
+                {% endif %}
+            </nav>
+        {% endif %}
     {% else %}
-
-        <p>
-            Todavía no hay cagadas públicas.
-        </p>
-
+        <p>Todavía no hay cagadas públicas.</p>
     {% endif %}
-
 
     <hr>
 
-
     <nav>
-
         <p>
-            <a href="{% url 'registrar_cagada' %}">
-                Registrar cagada
-            </a>
+            <a href="{% url 'registrar_cagada' %}">Registrar cagada</a>
         </p>
-
         <p>
-            <a href="{% url 'historial_cagadas' %}">
-                Mi historial
-            </a>
+            <a href="{% url 'historial_cagadas' %}">Mi historial</a>
         </p>
-
         <p>
-            <a href="{% url 'home' %}">
-                Volver al inicio
-            </a>
+            <a href="{% url 'home' %}">Volver al inicio</a>
         </p>
-
     </nav>
-
 </body>
-
 </html>
