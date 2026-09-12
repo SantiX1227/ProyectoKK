@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>🆚 Comparación de usuarios</h1>
+
+<hr>
+
+<h2>
+    {{ usuario_actual.username }}
+    VS
+    {{ usuario_comparado.username }}
+</h2>
+
+<p>
+    La comparación utiliza únicamente cagadas públicas.
+</p>
+
+<hr>
+
+<h2>📊 Resumen general</h2>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>Métrica</th>
+        <th>{{ usuario_actual.username }}</th>
+        <th>{{ usuario_comparado.username }}</th>
+    </tr>
+
+    <tr>
+        <td>Total de cagadas públicas</td>
+        <td>{{ resumen_actual.total_cagadas }}</td>
+        <td>{{ resumen_comparado.total_cagadas }}</td>
+    </tr>
+
+    <tr>
+        <td>Duración total</td>
+        <td>{{ resumen_actual.duracion_total|default:"—" }}</td>
+        <td>{{ resumen_comparado.duracion_total|default:"—" }}</td>
+    </tr>
+
+    <tr>
+        <td>Duración promedio</td>
+        <td>{{ resumen_actual.duracion_promedio|default:"—" }}</td>
+        <td>{{ resumen_comparado.duracion_promedio|default:"—" }}</td>
+    </tr>
+
+    <tr>
+        <td>Calificación promedio</td>
+        <td>{{ resumen_actual.calificacion_promedio|default:"—" }}</td>
+        <td>{{ resumen_comparado.calificacion_promedio|default:"—" }}</td>
+    </tr>
+
+    <tr>
+        <td>Ubicaciones públicas utilizadas</td>
+        <td>{{ ubicaciones_actual }}</td>
+        <td>{{ ubicaciones_comparado }}</td>
+    </tr>
+
+</table>
+
+<hr>
+
+<h2>📂 Comparación por categoría</h2>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>Categoría</th>
+
+        <th>{{ usuario_actual.username }} - Cantidad</th>
+        <th>{{ usuario_comparado.username }} - Cantidad</th>
+
+        <th>{{ usuario_actual.username }} - %</th>
+        <th>{{ usuario_comparado.username }} - %</th>
+
+        <th>{{ usuario_actual.username }} - Duración promedio</th>
+        <th>{{ usuario_comparado.username }} - Duración promedio</th>
+
+        <th>{{ usuario_actual.username }} - Calificación</th>
+        <th>{{ usuario_comparado.username }} - Calificación</th>
+    </tr>
+
+    {% for categoria in comparacion_categorias %}
+
+    <tr>
+
+        <td>
+            {{ categoria.nombre }}
+        </td>
+
+        <td>
+            {{ categoria.actual.cantidad }}
+        </td>
+
+        <td>
+            {{ categoria.comparado.cantidad }}
+        </td>
+
+        <td>
+            {{ categoria.actual.porcentaje|floatformat:2 }}%
+        </td>
+
+        <td>
+            {{ categoria.comparado.porcentaje|floatformat:2 }}%
+        </td>
+
+        <td>
+            {{ categoria.actual.duracion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ categoria.comparado.duracion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ categoria.actual.calificacion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ categoria.comparado.calificacion_promedio|default:"—" }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<hr>
+
+<h2>📅 Comparación por día de la semana</h2>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>Día</th>
+
+        <th>{{ usuario_actual.username }} - Cantidad</th>
+        <th>{{ usuario_comparado.username }} - Cantidad</th>
+
+        <th>{{ usuario_actual.username }} - Duración promedio</th>
+        <th>{{ usuario_comparado.username }} - Duración promedio</th>
+
+        <th>{{ usuario_actual.username }} - Calificación</th>
+        <th>{{ usuario_comparado.username }} - Calificación</th>
+    </tr>
+
+    {% for dia in comparacion_dias %}
+
+    <tr>
+
+        <td>{{ dia.nombre }}</td>
+
+        <td>{{ dia.actual.cantidad }}</td>
+        <td>{{ dia.comparado.cantidad }}</td>
+
+        <td>
+            {{ dia.actual.duracion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ dia.comparado.duracion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ dia.actual.calificacion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ dia.comparado.calificacion_promedio|default:"—" }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<hr>
+
+<h2>🕐 Comparación por hora</h2>
+
+<table border="1" cellpadding="8">
+
+    <tr>
+        <th>Hora</th>
+
+        <th>{{ usuario_actual.username }} - Cantidad</th>
+        <th>{{ usuario_comparado.username }} - Cantidad</th>
+
+        <th>{{ usuario_actual.username }} - Duración promedio</th>
+        <th>{{ usuario_comparado.username }} - Duración promedio</th>
+    </tr>
+
+    {% for hora in comparacion_horas %}
+
+    <tr>
+
+        <td>
+            {{ hora.hora }}:00
+        </td>
+
+        <td>
+            {{ hora.actual.cantidad }}
+        </td>
+
+        <td>
+            {{ hora.comparado.cantidad }}
+        </td>
+
+        <td>
+            {{ hora.actual.duracion_promedio|default:"—" }}
+        </td>
+
+        <td>
+            {{ hora.comparado.duracion_promedio|default:"—" }}
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<hr>
+
+<a href="{% url 'analytics' %}">
+    ← Volver a Analytics
+</a>
+
+{% endblock %}

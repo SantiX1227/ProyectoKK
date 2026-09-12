@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('apps.cagadas.urls')),
     path('', include('apps.ubicaciones.urls')),
     path('feed/', include('apps.feed.urls')),
+    path('analytics/', include('apps.analytics.urls')),
 ]
 
 
