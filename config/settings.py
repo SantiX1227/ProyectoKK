@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.ubicaciones",
     "apps.core",
     "apps.feed",
+    "apps.analytics",
 ]
 
 MIDDLEWARE = [

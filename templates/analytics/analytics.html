@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Analítica</title>
+</head>
+
+<body>
+
+    <h1>Resumen personal</h1>
+
+    <hr>
+
+    <h2>Actividad</h2>
+
+    <p>
+        Total de cagadas:
+        {{ resumen.total_cagadas }}
+    </p>
+
+    <p>
+        Duración total:
+        {{ resumen.duracion_total }}
+    </p>
+
+    <p>
+        Duración promedio:
+        {{ resumen.duracion_promedio }}
+    </p>
+
+    <hr>
+
+    <h2>Extremos</h2>
+
+    <p>
+        Cagada más larga:
+        {{ resumen.cagada_mas_larga }}
+    </p>
+
+    <p>
+        Cagada más corta:
+        {{ resumen.cagada_mas_corta }}
+    </p>
+
+    <hr>
+
+    <h2>Calificaciones</h2>
+
+    <p>
+        Calificación promedio:
+        {{ resumen.calificacion_promedio }}
+    </p>
+
+    <hr>
+
+    <h2>Preferencias</h2>
+
+    <p>
+        Categoría más utilizada:
+        {{ categoria_mas_usada|default:"Sin datos" }}
+    </p>
+
+    <p>
+        Ubicación más utilizada:
+        {{ ubicacion_mas_usada|default:"Sin datos" }}
+    </p>
+
+    <hr>
+
+    <h2>Fechas</h2>
+
+    <p>
+        Primera cagada:
+        {{ resumen.primera_cagada|default:"Sin datos" }}
+    </p>
+
+    <p>
+        Cagada más reciente:
+        {{ resumen.ultima_cagada|default:"Sin datos" }}
+    </p>
+<hr>
+
+<h2>Análisis temporal</h2>
+
+<h3>Cagadas por día de la semana</h3>
+
+{% for dia, cantidad in cagadas_por_dia.items %}
+    <p>
+        {{ dia }}: {{ cantidad }}
+    </p>
+{% endfor %}
+
+
+<h3>Cagadas por hora</h3>
+
+{% for hora, cantidad in cagadas_por_hora.items %}
+    <p>
+        {{ hora }}:00 → {{ cantidad }}
+    </p>
+{% endfor %}
+
+
+<h3>Cagadas por mes</h3>
+
+{% for resultado in cagadas_por_mes %}
+    <p>
+        {{ resultado.mes|date:"F Y" }}:
+        {{ resultado.cantidad }}
+    </p>
+{% endfor %}
+
+
+<h3>Duración promedio por día</h3>
+
+{% for dia, duracion in duracion_promedio_por_dia.items %}
+    <p>
+        {{ dia }}:
+        {{ duracion|default:"Sin datos" }}
+    </p>
+{% endfor %}
+
+
+<h3>Calificación promedio por día</h3>
+
+{% for dia, calificacion in calificacion_promedio_por_dia.items %}
+    <p>
+        {{ dia }}:
+        {{ calificacion|default:"Sin datos" }}
+    </p>
+{% endfor %}
+
+
+<h3>Duración promedio por hora</h3>
+
+{% for hora, duracion in duracion_promedio_por_hora.items %}
+    <p>
+        {{ hora }}:00 →
+        {{ duracion|default:"Sin datos" }}
+    </p>
+{% endfor %}
+
+<hr>
+
+<h2>Análisis por categorías</h2>
+
+<h3>Estadísticas por categoría</h3>
+
+{% for categoria in analitica_categorias %}
+
+    <h4>
+        {{ categoria.nombre }}
+    </h4>
+
+    <p>
+        Cantidad:
+        {{ categoria.cantidad }}
+    </p>
+
+    <p>
+        Porcentaje:
+        {{ categoria.porcentaje|floatformat:2 }}%
+    </p>
+
+    <p>
+        Duración total:
+        {{ categoria.duracion_total|default:"Sin datos" }}
+    </p>
+
+    <p>
+        Duración promedio:
+        {{ categoria.duracion_promedio|default:"Sin datos" }}
+    </p>
+
+    <p>
+        Calificación promedio:
+        {{ categoria.calificacion_promedio|default:"Sin datos" }}
+    </p>
+
+{% empty %}
+
+    <p>
+        No hay datos de categorías.
+    </p>
+
+{% endfor %}
+
+
+<hr>
+
+<h3>Indicadores destacados</h3>
+
+<p>
+    Categoría con mayor duración promedio:
+    {{ categoria_mayor_duracion_nombre|default:"Sin datos" }}
+</p>
+
+{% if categoria_mayor_duracion_valor %}
+    <p>
+        Duración promedio:
+        {{ categoria_mayor_duracion_valor }}
+    </p>
+{% endif %}
+
+
+<p>
+    Categoría más frecuente:
+    {{ categoria_mas_frecuente_nombre|default:"Sin datos" }}
+</p>
+
+{% if categoria_mas_frecuente_cantidad %}
+    <p>
+        Cantidad de registros:
+        {{ categoria_mas_frecuente_cantidad }}
+    </p>
+{% endif %}
+
+
+<p>
+    Categoría mejor calificada:
+    {{ categoria_mejor_calificada_nombre|default:"Sin datos" }}
+</p>
+
+{% if categoria_mejor_calificada_valor %}
+    <p>
+        Calificación promedio:
+        {{ categoria_mejor_calificada_valor }}
+    </p>
+{% endif %}
+
+
+<p>
+    Categoría peor calificada:
+    {{ categoria_peor_calificada_nombre|default:"Sin datos" }}
+</p>
+
+{% if categoria_peor_calificada_valor %}
+    <p>
+        Calificación promedio:
+        {{ categoria_peor_calificada_valor }}
+    </p>
+{% endif %}
+
+
+<hr>
+
+<h3>Distribución de calificaciones</h3>
+
+{% for categoria in analitica_categorias %}
+
+    <h4>
+        {{ categoria.nombre }}
+    </h4>
+
+    {% for categoria_id, calificaciones in distribucion_por_categoria.items %}
+
+        {% if categoria_id == categoria.id %}
+
+            {% for resultado in calificaciones %}
+
+                <p>
+                    Calificación
+                    {{ resultado.calificacion }}
+                    →
+                    {{ resultado.cantidad }}
+                    registro(s)
+                </p>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endfor %}
+
+{% endfor %}
+<hr>
+
+<h2>Phase D - Analítica espacial</h2>
+
+<h3>Estadísticas por ubicación</h3>
+
+{% if analitica_ubicaciones %}
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Ubicación</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+            <th>Duración total</th>
+            <th>Duración promedio</th>
+            <th>Calificación promedio</th>
+            <th>Latitud</th>
+            <th>Longitud</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for ubicacion in analitica_ubicaciones %}
+            <tr>
+                <td>
+                    {{ ubicacion.nombre }}
+                </td>
+
+                <td>
+                    {{ ubicacion.cantidad }}
+                </td>
+
+                <td>
+                    {{ ubicacion.porcentaje|floatformat:2 }}%
+                </td>
+
+                <td>
+                    {{ ubicacion.duracion_total }}
+                </td>
+
+                <td>
+                    {{ ubicacion.duracion_promedio }}
+                </td>
+
+                <td>
+                    {{ ubicacion.calificacion_promedio|floatformat:2 }}
+                </td>
+
+                <td>
+                    {{ ubicacion.latitud }}
+                </td>
+
+                <td>
+                    {{ ubicacion.longitud }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<p>No tienes cagadas asociadas a ninguna ubicación.</p>
+
+{% endif %}
+<h3>Resumen espacial</h3>
+
+<ul>
+
+    <li>
+        <strong>Ubicación más utilizada:</strong>
+        {% if ubicacion_mas_utilizada_nombre %}
+            {{ ubicacion_mas_utilizada_nombre }}
+            ({{ ubicacion_mas_utilizada_cantidad }} cagadas)
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+    <li>
+        <strong>Mayor duración promedio:</strong>
+        {% if ubicacion_mayor_duracion_nombre %}
+            {{ ubicacion_mayor_duracion_nombre }}
+            ({{ ubicacion_mayor_duracion_valor }})
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+    <li>
+        <strong>Menor duración promedio:</strong>
+        {% if ubicacion_menor_duracion_nombre %}
+            {{ ubicacion_menor_duracion_nombre }}
+            ({{ ubicacion_menor_duracion_valor }})
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+    <li>
+        <strong>Mejor calificada:</strong>
+        {% if ubicacion_mejor_calificada_nombre %}
+            {{ ubicacion_mejor_calificada_nombre }}
+            ({{ ubicacion_mejor_calificada_valor|floatformat:2 }})
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+    <li>
+        <strong>Peor calificada:</strong>
+        {% if ubicacion_peor_calificada_nombre %}
+            {{ ubicacion_peor_calificada_nombre }}
+            ({{ ubicacion_peor_calificada_valor|floatformat:2 }})
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+    <li>
+        <strong>Mayor tiempo acumulado:</strong>
+        {% if ubicacion_mayor_tiempo_nombre %}
+            {{ ubicacion_mayor_tiempo_nombre }}
+            ({{ ubicacion_mayor_tiempo_valor }})
+        {% else %}
+            Sin datos
+        {% endif %}
+    </li>
+
+</ul>
+<h3>Datos para mapa</h3>
+
+{% if analitica_ubicaciones %}
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Ubicación</th>
+            <th>Latitud</th>
+            <th>Longitud</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for ubicacion in analitica_ubicaciones %}
+            <tr>
+                <td>{{ ubicacion.nombre }}</td>
+                <td>{{ ubicacion.latitud }}</td>
+                <td>{{ ubicacion.longitud }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<p>No hay ubicaciones con coordenadas disponibles.</p>
+
+{% endif %}
+
+<hr>
+
+<h2>🆚 Comparar con otro usuario</h2>
+
+<form id="form-comparacion">
+
+    <select id="usuario-comparacion">
+
+        <option value="">
+            Selecciona un usuario
+        </option>
+
+        {% for usuario in usuarios_comparables %}
+
+            <option value="{{ usuario.id }}">
+                {{ usuario.username }}
+            </option>
+
+        {% endfor %}
+
+    </select>
+
+    <button type="button" onclick="irAComparacion()">
+        Comparar
+    </button>
+
+</form>
+
+<script>
+
+function irAComparacion() {
+
+    const usuarioId =
+        document.getElementById('usuario-comparacion').value;
+
+    if (!usuarioId) {
+        alert('Selecciona un usuario.');
+        return;
+    }
+
+    window.location.href =
+        `/analytics/comparacion/${usuarioId}/`;
+}
+
+</script>
+<nav>
+    <a href="{% url 'home' %}">
+        Volver a inicio
+    </a>
+</nav>
+</body>
+</html>
