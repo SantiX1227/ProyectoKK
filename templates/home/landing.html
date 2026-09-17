@@ -1,71 +1,63 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+{% load static %}
 
-    <title>Proyecto KK</title>
-</head>
+{% block title %}Inicio - Proyecto KK{% endblock %}
 
-<body>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+{% endblock %}
 
-    <h1>
-        Bienvenido, {{ request.user.username }}
-    </h1>
-
-    <p>
-        Has iniciado sesión correctamente.
-    </p>
-
-    <p>
-        Correo: {{ request.user.email }}
-    </p>
-    
-    <p>
-        <a href="{% url 'perfil' %}">
-            Mi perfil
+{% block content %}
+<!-- Header Superior -->
+<header class="app-header">
+    <div class="header-container">
+        <!-- Logo / Marca -->
+        <a href="{% url 'home' %}" class="header-brand">
+            Proyecto KK
         </a>
-    </p>
 
-    <p>
-        <a href="{% url 'registrar_cagada' %}">
-            Registrar cagada
-        </a>
-    </p>
-    
-    <p>
-        <a href="{% url 'listar_ubicaciones' %}">
-            Ver mis ubicaciones
-        </a>
-    </p>
-    
-    <p>
-        <a href="{% url 'historial_cagadas' %}">
-            Ver mi historial de cagadas
-        </a>
-    </p>
-    
-    <p>
-        <a href="{% url 'feed_cagadas' %}">
-            Ver feed de cagadas
-        </a>
-    </p>
+        <!-- Enlaces de navegación centrados -->
+        <nav class="header-nav">
+            <a href="{% url 'listar_ubicaciones' %}" class="nav-link">Ubicaciones</a>
+            <a href="{% url 'historial_cagadas' %}" class="nav-link">Historial</a>
+            <a href="{% url 'feed_cagadas' %}" class="nav-link">Feed</a>
+            <a href="{% url 'analytics' %}" class="nav-link">Analítica</a>
+        </nav>
 
-    <p>
-        <a href="{% url 'analytics' %}">
-        Analítica
-        </a>
-    </p>
-    
-    <form method="POST" action="{% url 'logout' %}">
+        <!-- Lado derecho: Perfil y Logout -->
+        <div class="header-actions">
+            <!-- Botón Perfil con Avatar o Ícono SVG -->
+            <a href="{% url 'perfil' %}" class="profile-link" title="Mi perfil">
+                {% if request.user.foto %}
+                    <img src="{{ request.user.foto.url }}" alt="Perfil" class="profile-img-header">
+                {% else %}
+                    <!-- Ícono de usuario nativo en SVG (no requiere descargas) -->
+                    <svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                {% endif %}
+            </a>
 
-    {% csrf_token %}
+            <!-- Cerrar sesión -->
+            <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
 
-    <button type="submit">
-        Cerrar sesión
-    </button>
+<!-- Área Central Hero -->
+<main class="hero-container">
+    <div class="hero-welcome">
+        <h1>¡Hola, {{ request.user.username }}!</h1>
+        <p>{{ request.user.email }}</p>
+    </div>
 
-    </form>
-
-</body>
-</html>
+    <!-- Botón Central de Impacto -->
+    <a href="{% url 'registrar_cagada' %}" class="cta-big-btn">
+        <span>🚽 Registrar cagada</span>
+    </a>
+</main>
+{% endblock %}
