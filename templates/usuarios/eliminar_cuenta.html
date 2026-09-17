@@ -1,44 +1,55 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar cuenta - Proyecto KK</title>
-</head>
-<body>
-    <h1>Eliminar cuenta</h1>
-    <h2>Esta acción es permanente</h2>
+{% extends "base.html" %}
+{% load static %}
 
-    <p style="color: #b30000;">
-        Si eliminas tu cuenta, tus datos asociados serán eliminados y no podrás recuperar la cuenta posteriormente.
-    </p>
+{% block title %}Eliminar cuenta - Proyecto KK{% endblock %}
 
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
-    <form method="POST">
-        {% csrf_token %}
-        <div>
-            <label for="password">Confirma tu contraseña:</label><br>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                required
-                autocomplete="current-password"
-            >
+{% block content %}
+<main class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 style="color: var(--danger);">Eliminar cuenta</h1>
+            <h2 style="font-size: 1.15rem; margin-top: 0.5rem; color: var(--text-main);">Esta acción es permanente</h2>
+            <p style="margin-top: 0.75rem; color: var(--danger);">
+                Si eliminas tu cuenta, tus datos asociados serán eliminados y no podrás recuperar la cuenta posteriormente.
+            </p>
         </div>
 
-        <br>
+        {% if error %}
+            <div class="alert-error">
+                {{ error }}
+            </div>
+        {% endif %}
 
-        <button type="submit" style="background-color: #d9534f; color: white; border: none; padding: 8px 12px; cursor: pointer;">
-            Eliminar mi cuenta definitivamente
-        </button>
-    </form>
+        <form method="POST">
+            {% csrf_token %}
 
-    <p>
-        <a href="{% url 'perfil' %}">Cancelar</a>
-    </p>
-</body>
-</html>
+            <div class="form-group">
+                <label for="password">Confirma tu contraseña:</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    required
+                    autocomplete="current-password"
+                    placeholder="••••••••"
+                >
+            </div>
+
+            <button type="submit" class="btn btn-danger" style="margin-top: 1rem;">
+                Eliminar mi cuenta definitivamente
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'perfil' %}">
+                Cancelar
+            </a>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,156 +1,111 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends "base.html" %}
+{% load static %}
 
-<head>
+{% block title %}Crear cuenta - Proyecto KK{% endblock %}
 
-    <meta charset="UTF-8">
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Crear cuenta - Proyecto KK</title>
-
-</head>
-
-<body>
-
-    <h1>Proyecto KK</h1>
-
-    <h2>Crear cuenta</h2>
-
-    <form method="POST" enctype="multipart/form-data">
-
-        {% csrf_token %}
-
-        {{ form.non_field_errors }}
-
-        <div>
-
-            <label for="{{ form.username.id_for_label }}">
-                Nombre de usuario
-            </label>
-
-            {{ form.username }}
-
-            {{ form.username.errors }}
-
+{% block content %}
+<main class="auth-page">
+    <div class="auth-card" style="max-width: 520px;">
+        <div class="auth-header">
+            <h1>Proyecto KK</h1>
+            <p>Crea tu cuenta para empezar</p>
         </div>
 
-        <br>
+        {% if form.non_field_errors %}
+            <div class="alert-error">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
-        <div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-            <label for="{{ form.email.id_for_label }}">
-                Correo electrónico
-            </label>
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Nombre de usuario</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="errorlist">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
 
-            {{ form.email }}
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="errorlist">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
 
-            {{ form.email.errors }}
+            <div class="form-group">
+                <label for="{{ form.first_name.id_for_label }}">Nombre</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="errorlist">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
 
+            <div class="form-group">
+                <label for="{{ form.last_name.id_for_label }}">Apellido</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="errorlist">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.fecha_nacimiento.id_for_label }}">Fecha de nacimiento</label>
+                {{ form.fecha_nacimiento }}
+                {% if form.fecha_nacimiento.errors %}
+                    <div class="errorlist">{{ form.fecha_nacimiento.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Campo Foto estilizado como Drag & Drop -->
+            <div class="form-group">
+                <label for="{{ form.foto.id_for_label }}">Foto de perfil</label>
+                <div class="file-dropzone">
+                    {{ form.foto }}
+                    <span class="file-dropzone-text">📷 Elige una foto o arrástrala aquí</span>
+                    <span class="file-dropzone-subtext" id="file-name">PNG, JPG hasta 5MB</span>
+                </div>
+                {% if form.foto.errors %}
+                    <div class="errorlist">{{ form.foto.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="errorlist">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="errorlist">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+                Crear cuenta
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            ¿Ya tienes una cuenta?
+            <a href="{% url 'login' %}">Iniciar sesión</a>
         </div>
+    </div>
+</main>
+{% endblock %}
 
-        <br>
-
-        <div>
-
-            <label for="{{ form.first_name.id_for_label }}">
-                Nombre
-            </label>
-
-            {{ form.first_name }}
-
-            {{ form.first_name.errors }}
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label for="{{ form.last_name.id_for_label }}">
-                Apellido
-            </label>
-
-            {{ form.last_name }}
-
-            {{ form.last_name.errors }}
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label for="{{ form.fecha_nacimiento.id_for_label }}">
-                Fecha de nacimiento
-            </label>
-
-            {{ form.fecha_nacimiento }}
-
-            {{ form.fecha_nacimiento.errors }}
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label for="{{ form.foto.id_for_label }}">
-                Foto de perfil
-            </label>
-
-            {{ form.foto }}
-
-            {{ form.foto.errors }}
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label for="{{ form.password1.id_for_label }}">
-                Contraseña
-            </label>
-
-            {{ form.password1 }}
-
-            {{ form.password1.errors }}
-
-        </div>
-
-        <br>
-
-        <div>
-
-            <label for="{{ form.password2.id_for_label }}">
-                Confirmar contraseña
-            </label>
-
-            {{ form.password2 }}
-
-            {{ form.password2.errors }}
-
-        </div>
-
-        <br>
-
-        <button type="submit">
-            Crear cuenta
-        </button>
-
-    </form>
-
-    <p>
-        ¿Ya tienes una cuenta?
-        <a href="{% url 'login' %}">
-            Iniciar sesión
-        </a>
-    </p>
-
-</body>
-
-</html>
+{% block extra_js %}
+    <script src="{% static 'js/usuarios.js' %}"></script>
+{% endblock %}
