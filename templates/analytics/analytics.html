@@ -447,7 +447,7 @@
 
         {% for usuario in usuarios_comparables %}
 
-            <option value="{{ usuario.id }}">
+            <option value="{% url 'analytics-comparacion' usuario.id %}">
                 {{ usuario.username }}
             </option>
 
@@ -465,16 +465,15 @@
 
 function irAComparacion() {
 
-    const usuarioId =
+    const urlComparacion =
         document.getElementById('usuario-comparacion').value;
 
-    if (!usuarioId) {
+    if (!urlComparacion) {
         alert('Selecciona un usuario.');
         return;
     }
 
-    window.location.href =
-        `/analytics/comparacion/${usuarioId}/`;
+    window.location.href = urlComparacion;
 }
 
 </script>
