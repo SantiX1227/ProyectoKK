@@ -1,9 +1,14 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+    authenticate,
+    login,
+    logout,
+    update_session_auth_hash
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from .forms import RegistroUsuarioForm, PerfilUsuarioForm
 from django.shortcuts import render, redirect
-from .forms import RegistroUsuarioForm
+
+from .forms import RegistroUsuarioForm, PerfilUsuarioForm
 
 def iniciar_sesion(request):
 
@@ -115,10 +120,15 @@ def cambiar_contrasena(request):
 
         if form.is_valid():
 
-            form.save()
+            usuario = form.save()
+
+            update_session_auth_hash(
+                request,
+                usuario
+            )
 
             return redirect('perfil')
-
+        
     else:
 
         form = PasswordChangeForm(
