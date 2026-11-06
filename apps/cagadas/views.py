@@ -138,7 +138,7 @@ def editar_cagada(request, id):
 
     else:
 
-        form = CagadaForm(
+        form = EditarCagadaForm(
             instance=cagada,
             usuario=request.user
         )
