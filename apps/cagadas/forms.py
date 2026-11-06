@@ -1,6 +1,21 @@
+from datetime import timedelta
+
 from django import forms
+from django.utils import timezone
+
 from .models import Cagada
 from apps.ubicaciones.models import Ubicacion
+
+
+# Límites para validar las horas que envía el cronómetro
+DURACION_MAXIMA = timedelta(hours=2)
+
+# Margen por si el reloj del dispositivo va un poco adelantado
+TOLERANCIA_RELOJ = timedelta(minutes=2)
+
+# Tiempo máximo entre terminar la cagada y registrarla
+ANTIGUEDAD_MAXIMA = timedelta(hours=1)
+
 
 class CagadaForm(forms.ModelForm):
 
@@ -86,6 +101,24 @@ class CagadaForm(forms.ModelForm):
         if hora_final <= hora_inicio:
             raise forms.ValidationError(
                 'La hora final debe ser posterior a la hora de inicio.'
+            )
+
+        ahora = timezone.now()
+
+        if hora_final > ahora + TOLERANCIA_RELOJ:
+            raise forms.ValidationError(
+                'La hora final no puede estar en el futuro.'
+            )
+
+        if hora_final - hora_inicio > DURACION_MAXIMA:
+            raise forms.ValidationError(
+                'La duración no puede superar las 2 horas.'
+            )
+
+        if ahora - hora_final > ANTIGUEDAD_MAXIMA:
+            raise forms.ValidationError(
+                'Esta cagada terminó hace demasiado tiempo. '
+                'Reinicia el cronómetro y vuelve a registrarla.'
             )
 
         return cleaned_data
