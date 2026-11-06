@@ -24,6 +24,15 @@ class RegistroUsuarioForm(UserCreationForm):
             'password2',
         )
 
+        widgets = {
+            'fecha_nacimiento': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'type': 'date'
+                }
+            ),
+        }
+
 class PerfilUsuarioForm(forms.ModelForm):
 
     class Meta:
@@ -49,6 +58,7 @@ class PerfilUsuarioForm(forms.ModelForm):
 
         widgets = {
             'fecha_nacimiento': forms.DateInput(
+                format='%Y-%m-%d',
                 attrs={
                     'type': 'date'
                 }
