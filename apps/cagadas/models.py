@@ -1,5 +1,9 @@
 from django.conf import settings
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    RegexValidator
+)
 from django.db import models
 
 
@@ -61,7 +65,13 @@ class Cagada(models.Model):
     )
 
     color = models.CharField(
-        max_length=7
+        max_length=7,
+        validators=[
+            RegexValidator(
+                regex=r'^#[0-9A-Fa-f]{6}$',
+                message='El color debe tener el formato #RRGGBB.'
+            )
+        ]
     )
 
     visible_para_otros = models.BooleanField(
