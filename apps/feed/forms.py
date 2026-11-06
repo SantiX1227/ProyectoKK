@@ -28,6 +28,9 @@ class FeedFilterForm(forms.Form):
 
         calificaciones = (
             Cagada.objects
+            .filter(
+                visible_para_otros=True
+            )
             .values_list(
                 'calificacion',
                 flat=True
