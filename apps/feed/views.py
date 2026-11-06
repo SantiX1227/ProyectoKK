@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.utils.http import url_has_allowed_host_and_scheme
 from apps.cagadas.models import Cagada
 from .forms import FeedFilterForm
 from .models import Reaccion
@@ -149,4 +149,14 @@ def reaccionar_cagada(request, id, tipo):
             'reaccion_usuario': reaccion_usuario.tipo if reaccion_usuario else None
         })
 
-    return redirect(request.META.get('HTTP_REFERER', '/feed/'))
+    # Sin JavaScript: volver a la página de origen solo si es de este sitio
+    destino = request.META.get('HTTP_REFERER')
+
+    if destino and url_has_allowed_host_and_scheme(
+        url=destino,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure()
+    ):
+        return redirect(destino)
+
+    return redirect('feed_cagadas')
