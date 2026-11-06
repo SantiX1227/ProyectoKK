@@ -48,7 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const minuto = pad(fecha.getMinutes());
         const segundo = pad(fecha.getSeconds());
 
-        return `${año}-${mes}-${dia}T${hora}:${minuto}:${segundo}`;
+        // Desfase respecto a UTC (Colombia: -05:00)
+        const desfaseMinutos = -fecha.getTimezoneOffset();
+        const signo = desfaseMinutos >= 0 ? '+' : '-';
+        const desfaseHoras = pad(Math.floor(Math.abs(desfaseMinutos) / 60));
+        const desfaseResto = pad(Math.abs(desfaseMinutos) % 60);
+
+        return `${año}-${mes}-${dia}T${hora}:${minuto}:${segundo}${signo}${desfaseHoras}:${desfaseResto}`;
     }
 
     function actualizarTemporizador(referenciaMs = Date.now()) {
