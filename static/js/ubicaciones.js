@@ -75,9 +75,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     botonGeolocalizar.addEventListener('click', obtenerUbicacion);
 
-    // Captura automática solo si los campos están vacíos
-    // (no pisa lo que el usuario ya escribió si el formulario volvió con errores)
-    if (!campoLatitud.value && !campoLongitud.value) {
+    // Captura automática solo si la página lo permite (no en editar)
+    // y si los campos están vacíos (no pisa lo que ya escribió el usuario)
+    const capturaAutomatica =
+        botonGeolocalizar.dataset.automatica !== 'false';
+
+    if (
+        capturaAutomatica &&
+        !campoLatitud.value &&
+        !campoLongitud.value
+    ) {
         obtenerUbicacion();
     }
 

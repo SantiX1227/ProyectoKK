@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -29,6 +30,18 @@
 
         {{ form.as_p }}
 
+        <p>
+            <button
+                type="button"
+                id="btn-geolocalizar"
+                data-automatica="false"
+            >
+                📍 Usar mi ubicación actual
+            </button>
+        </p>
+
+        <p id="estado-geolocalizacion" aria-live="polite"></p>
+
         <button type="submit">
             Guardar cambios
         </button>
@@ -40,6 +53,8 @@
             Cancelar
         </a>
     </p>
+
+    <script src="{% static 'js/ubicaciones.js' %}"></script>
 
 </body>
 
