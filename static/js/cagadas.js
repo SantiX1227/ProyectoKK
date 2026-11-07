@@ -231,3 +231,88 @@ function actualizarReacciones(
     });
 
 }
+
+
+
+// =========================================================
+// VALIDACIÓN EN TIEMPO REAL DE LA CALIFICACIÓN (registrar)
+// =========================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Solo el input numérico del registro: el feed también carga este
+    // archivo y tiene un <select> con el mismo id en sus filtros
+    const campoCalificacion = document.querySelector(
+        'input[type="number"]#id_calificacion'
+    );
+
+    if (!campoCalificacion) {
+        return;
+    }
+
+    const avisoCalificacion = document.createElement('span');
+
+    avisoCalificacion.id = 'aviso-calificacion';
+    avisoCalificacion.setAttribute('aria-live', 'polite');
+    avisoCalificacion.style.color = 'red';
+    avisoCalificacion.style.marginLeft = '0.5rem';
+
+    campoCalificacion.insertAdjacentElement(
+        'afterend',
+        avisoCalificacion
+    );
+
+    function obtenerMensajeCalificacion() {
+
+        // El navegador marca badInput si lo escrito no es un número
+        if (campoCalificacion.validity.badInput) {
+            return 'Solo se admiten números, por ejemplo 4.5.';
+        }
+
+        const valor = campoCalificacion.value.trim();
+
+        if (valor === '') {
+            return 'La calificación es obligatoria.';
+        }
+
+        if (!/^\d+(\.\d+)?$/.test(valor)) {
+            return 'Solo se admiten números positivos, por ejemplo 4.5.';
+        }
+
+        const numero = Number(valor);
+
+        if (numero < 0 || numero > 5) {
+            return 'La calificación debe estar entre 0 y 5.';
+        }
+
+        if (!/^\d+(\.\d)?$/.test(valor)) {
+            return 'Usa como máximo un decimal, por ejemplo 4.5.';
+        }
+
+        return '';
+    }
+
+    function validarCalificacion() {
+
+        const mensaje = obtenerMensajeCalificacion();
+
+        // Con un mensaje no vacío, el navegador bloquea el envío del formulario
+        campoCalificacion.setCustomValidity(mensaje);
+
+        campoCalificacion.setAttribute(
+            'aria-invalid',
+            mensaje ? 'true' : 'false'
+        );
+
+        avisoCalificacion.textContent = mensaje;
+    }
+
+    campoCalificacion.addEventListener('input', validarCalificacion);
+    campoCalificacion.addEventListener('blur', validarCalificacion);
+
+    // Si la página volvió del servidor con un valor, validarlo de una vez
+    if (campoCalificacion.value !== '') {
+        validarCalificacion();
+    }
+
+});

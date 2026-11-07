@@ -55,6 +55,14 @@ class CagadaForm(forms.ModelForm):
                 }
             ),
 
+            'calificacion': forms.NumberInput(
+                attrs={
+                    'min': '0',
+                    'max': '5',
+                    'step': '0.1',
+                }
+            ),
+            
             'observaciones': forms.Textarea(
                 attrs={
                     'rows': 4
