@@ -866,6 +866,7 @@ def analytics_comparacion(request, usuario_id):
         total_cagadas=Count('id'),
         duracion_total=Sum('duracion'),
         duracion_promedio=Avg('duracion'),
+        duracion_maxima=Max('duracion'),
         calificacion_promedio=Avg('calificacion'),
     )
 
@@ -873,9 +874,9 @@ def analytics_comparacion(request, usuario_id):
         total_cagadas=Count('id'),
         duracion_total=Sum('duracion'),
         duracion_promedio=Avg('duracion'),
+        duracion_maxima=Max('duracion'),
         calificacion_promedio=Avg('calificacion'),
     )
-
     # ==========================================
     # CATEGORÍAS
     # ==========================================
