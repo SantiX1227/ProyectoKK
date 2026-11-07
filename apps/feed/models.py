@@ -36,12 +36,14 @@ class Reaccion(models.Model):
     )
 
     class Meta:
+        verbose_name = 'reacción'
+        verbose_name_plural = 'reacciones'
+
         constraints = [
             models.UniqueConstraint(
                 fields=['usuario', 'cagada'],
                 name='una_reaccion_por_usuario_cagada'
             )
         ]
-
     def __str__(self):
         return f'{self.usuario.username} - {self.get_tipo_display()}'

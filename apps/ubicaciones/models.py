@@ -37,5 +37,9 @@ class Ubicacion(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        verbose_name = 'ubicación'
+        verbose_name_plural = 'ubicaciones'
+
     def __str__(self):
         return f'{self.nombre}'
