@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -23,6 +24,14 @@
         {{ form.non_field_errors }}
     
         {{ form.as_p }}
+
+        <p>
+            <button type="button" id="btn-geolocalizar">
+                📍 Usar mi ubicación actual
+            </button>
+        </p>
+
+        <p id="estado-geolocalizacion" aria-live="polite"></p>
     
         {% if desde_registro_cagada %}
     
@@ -51,6 +60,8 @@
             Cancelar
         </a>
     </p>
+
+    <script src="{% static 'js/ubicaciones.js' %}"></script>
 
 </body>
 
