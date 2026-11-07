@@ -1,5 +1,14 @@
-console.log('cagadas.js cargado');
+// =========================================================
+// CRONÓMETRO DE LA CAGADA (registrar)
+// El estado se guarda en localStorage y se recupera de los
+// campos ocultos, para que no se pierda por un error del
+// formulario, una recarga o el desvío a crear ubicación.
+// Solo se borra al reiniciar o al registrar la cagada.
+// =========================================================
+
 document.addEventListener('DOMContentLoaded', function () {
+    const formulario = document.getElementById('form-registrar-cagada');
+
     const btnIniciar = document.getElementById('btn-iniciar');
     const btnTerminar = document.getElementById('btn-terminar');
     const btnReiniciar = document.getElementById('btn-reiniciar');
@@ -14,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const campoFinal = document.getElementById('id_hora_final_cagada');
 
     if (
+        !formulario ||
         !btnIniciar ||
         !btnTerminar ||
         !btnReiniciar ||
@@ -28,8 +38,16 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+    // Una clave por usuario, por si varias personas usan el mismo navegador
+    const CLAVE_CRONOMETRO =
+        `proyectokk_cronometro_${formulario.dataset.usuario || 'anonimo'}`;
+
     let inicioTimestamp = null;
     let intervalo = null;
+
+    // ---------------------------------------------------------
+    // Formatos
+    // ---------------------------------------------------------
 
     function formatearHora(fecha) {
         return fecha.toLocaleTimeString('es-CO', {
@@ -60,7 +78,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function actualizarTemporizador(referenciaMs = Date.now()) {
         if (!inicioTimestamp) return;
 
-        const diferencia = Math.floor((referenciaMs - inicioTimestamp) / 1000);
+        const diferencia = Math.max(
+            0,
+            Math.floor((referenciaMs - inicioTimestamp) / 1000)
+        );
         const horas = Math.floor(diferencia / 3600);
         const minutos = Math.floor((diferencia % 3600) / 60);
         const segundos = diferencia % 60;
@@ -76,7 +97,82 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function reiniciarEstado() {
+    // ---------------------------------------------------------
+    // Almacenamiento en el navegador
+    // (try/catch: en modo privado o con almacenamiento bloqueado
+    // el cronómetro sigue funcionando, solo que sin protección)
+    // ---------------------------------------------------------
+
+    function guardarEstado(inicioMs, finalMs) {
+        try {
+            localStorage.setItem(
+                CLAVE_CRONOMETRO,
+                JSON.stringify({ inicio: inicioMs, final: finalMs })
+            );
+        } catch (error) {
+            console.warn('No se pudo guardar el cronómetro:', error);
+        }
+    }
+
+    function leerEstado() {
+        try {
+            const datos = JSON.parse(
+                localStorage.getItem(CLAVE_CRONOMETRO)
+            );
+
+            if (!datos || !Number.isFinite(datos.inicio)) {
+                return null;
+            }
+
+            if (
+                datos.final !== null &&
+                !(Number.isFinite(datos.final) && datos.final > datos.inicio)
+            ) {
+                return null;
+            }
+
+            return datos;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function borrarEstado() {
+        try {
+            localStorage.removeItem(CLAVE_CRONOMETRO);
+        } catch (error) {
+            console.warn('No se pudo borrar el cronómetro:', error);
+        }
+    }
+
+    // Horas que devolvió el servidor (error del formulario
+    // o vuelta desde "Añadir nueva ubicación")
+    function leerCamposOcultos() {
+        if (!campoInicio.value) return null;
+
+        const inicio = Date.parse(campoInicio.value);
+
+        if (Number.isNaN(inicio)) return null;
+
+        const final = campoFinal.value
+            ? Date.parse(campoFinal.value)
+            : null;
+
+        if (
+            final !== null &&
+            (Number.isNaN(final) || final <= inicio)
+        ) {
+            return null;
+        }
+
+        return { inicio: inicio, final: final };
+    }
+
+    // ---------------------------------------------------------
+    // Estados de la pantalla
+    // ---------------------------------------------------------
+
+    function mostrarSinIniciar() {
         detenerTemporizador();
         inicioTimestamp = null;
 
@@ -93,15 +189,14 @@ document.addEventListener('DOMContentLoaded', function () {
         btnRegistrar.disabled = true;
     }
 
-    btnIniciar.addEventListener('click', function () {
-        const ahora = new Date();
-        inicioTimestamp = ahora.getTime();
+    function mostrarEnProgreso(inicio) {
+        detenerTemporizador();
+        inicioTimestamp = inicio.getTime();
 
-        campoInicio.value = formatearFechaDjango(ahora);
+        campoInicio.value = formatearFechaDjango(inicio);
         campoFinal.value = '';
-        horaInicio.textContent = formatearHora(ahora);
+        horaInicio.textContent = formatearHora(inicio);
         horaFinal.textContent = '—';
-        temporizador.textContent = '00:00:00';
         estado.textContent = 'En progreso';
 
         btnIniciar.disabled = true;
@@ -111,22 +206,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
         intervalo = setInterval(actualizarTemporizador, 250);
         actualizarTemporizador();
+    }
+
+    function mostrarFinalizada(inicio, final) {
+        detenerTemporizador();
+        inicioTimestamp = inicio.getTime();
+
+        campoInicio.value = formatearFechaDjango(inicio);
+        campoFinal.value = formatearFechaDjango(final);
+        horaInicio.textContent = formatearHora(inicio);
+        horaFinal.textContent = formatearHora(final);
+        actualizarTemporizador(final.getTime());
+        estado.textContent = 'Finalizada';
+
+        btnIniciar.disabled = true;
+        btnTerminar.disabled = true;
+        btnReiniciar.disabled = false;
+        btnRegistrar.disabled = false;
+    }
+
+    function aplicarEstado(datos) {
+        const inicio = new Date(datos.inicio);
+
+        if (datos.final === null) {
+            mostrarEnProgreso(inicio);
+        } else {
+            mostrarFinalizada(inicio, new Date(datos.final));
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Botones
+    // ---------------------------------------------------------
+
+    btnIniciar.addEventListener('click', function () {
+        const ahora = new Date();
+
+        mostrarEnProgreso(ahora);
+        guardarEstado(ahora.getTime(), null);
     });
 
     btnTerminar.addEventListener('click', function () {
         if (!inicioTimestamp) return;
 
         const ahora = new Date();
-        detenerTemporizador();
 
-        campoFinal.value = formatearFechaDjango(ahora);
-        horaFinal.textContent = formatearHora(ahora);
-        actualizarTemporizador(ahora.getTime());
-
-        estado.textContent = 'Finalizada';
-        btnTerminar.disabled = true;
-        btnReiniciar.disabled = false;
-        btnRegistrar.disabled = false;
+        mostrarFinalizada(new Date(inicioTimestamp), ahora);
+        guardarEstado(inicioTimestamp, ahora.getTime());
     });
 
     btnReiniciar.addEventListener('click', function () {
@@ -135,10 +261,49 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
         if (confirmar) {
-            reiniciarEstado();
+            borrarEstado();
+            mostrarSinIniciar();
         }
     });
+
+    // Solo el botón "Registrar cagada" borra el estado guardado.
+    // Si el servidor rechaza el formulario, la página vuelve con
+    // las horas en los campos ocultos y se recuperan de ahí.
+    formulario.addEventListener('submit', function (evento) {
+        if (evento.submitter === btnRegistrar) {
+            borrarEstado();
+        }
+    });
+
+    // Al volver con el botón "Atrás" el navegador puede mostrar la
+    // página guardada en memoria: se sincroniza con lo almacenado
+    // (evita registrar dos veces la misma cagada)
+    window.addEventListener('pageshow', function (evento) {
+        if (!evento.persisted) return;
+
+        const datos = leerEstado();
+
+        if (datos) {
+            aplicarEstado(datos);
+        } else {
+            mostrarSinIniciar();
+        }
+    });
+
+    // ---------------------------------------------------------
+    // Al cargar la página: campos ocultos > almacenamiento > vacío
+    // ---------------------------------------------------------
+
+    const datosIniciales = leerCamposOcultos() || leerEstado();
+
+    if (datosIniciales) {
+        aplicarEstado(datosIniciales);
+        guardarEstado(datosIniciales.inicio, datosIniciales.final);
+    } else {
+        mostrarSinIniciar();
+    }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
 
     const botonesReaccion = document.querySelectorAll(

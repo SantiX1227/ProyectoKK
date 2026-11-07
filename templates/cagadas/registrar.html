@@ -9,7 +9,11 @@
 <body>
     <h1>Registrar cagada</h1>
 
-    <form method="POST">
+    <form
+        method="POST"
+        id="form-registrar-cagada"
+        data-usuario="{{ request.user.id }}"
+    >
         {% csrf_token %}
 
         {% if form.non_field_errors %}
