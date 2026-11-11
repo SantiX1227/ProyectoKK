@@ -1,89 +1,101 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static l10n %}
 
-<head>
-    <meta charset="UTF-8">
+{% block title %}Mis ubicaciones - Proyecto KK{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/ubicaciones.css' %}">
+{% endblock %}
 
-    <title>Mis ubicaciones - Proyecto KK</title>
-</head>
+{% block content %}
+<main class="page">
 
-<body>
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Mis ubicaciones</h1>
+            <p class="page-subtitle">
+                {% if ubicaciones %}
+                    {{ ubicaciones|length }} lugar{{ ubicaciones|length|pluralize:"es" }}
+                    guardado{{ ubicaciones|length|pluralize }}
+                {% else %}
+                    Guarda los sitios donde sueles ir
+                {% endif %}
+            </p>
+        </div>
 
-    <h1>Mis ubicaciones</h1>
-
-    <p>
-        <a href="{% url 'crear_ubicacion' %}">
-            Crear nueva ubicación
-        </a>
-    </p>
+        <div class="page-actions">
+            <a href="{% url 'crear_ubicacion' %}" class="btn btn-primary">
+                ＋ Nueva ubicación
+            </a>
+        </div>
+    </header>
 
     {% if ubicaciones %}
+        <div class="grid grid-auto">
+            {% for ubicacion in ubicaciones %}
+                <article class="card card-hover ubicacion-card">
 
-        {% for ubicacion in ubicaciones %}
+                    <div class="ubicacion-cabecera">
+                        <span class="ubicacion-icono">📍</span>
 
-            <div>
+                        <div>
+                            <h2 class="ubicacion-nombre">{{ ubicacion.nombre }}</h2>
+                            <span class="badge">{{ ubicacion.tipo }}</span>
+                        </div>
+                    </div>
 
-                <h2>
-                    {{ ubicacion.nombre }}
-                </h2>
+                    {% if ubicacion.latitud is not None and ubicacion.longitud is not None %}
+                        <div class="coordenadas">
+                            <div class="coordenada">
+                                <span>Latitud</span>
+                                <strong>{{ ubicacion.latitud|unlocalize }}</strong>
+                            </div>
 
-                <p>
-                    <strong>Tipo:</strong>
-                    {{ ubicacion.tipo }}
-                </p>
+                            <div class="coordenada">
+                                <span>Longitud</span>
+                                <strong>{{ ubicacion.longitud|unlocalize }}</strong>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="sin-coordenadas">⚠️ Sin coordenadas registradas</p>
+                    {% endif %}
 
-                <p>
-                    <strong>Latitud:</strong>
-                    {{ ubicacion.latitud|default:"No registrada" }}
-                </p>
+                    <div class="card-footer">
+                        <span class="ubicacion-fecha">
+                            Creada el {{ ubicacion.fecha_creacion|date:"d/m/Y" }}
+                        </span>
 
-                <p>
-                    <strong>Longitud:</strong>
-                    {{ ubicacion.longitud|default:"No registrada" }}
-                </p>
+                        <div class="row">
+                            <a
+                                href="{% url 'editar_ubicacion' ubicacion.id %}"
+                                class="btn btn-outline btn-sm"
+                            >
+                                Editar
+                            </a>
 
-                <p>
-                    <strong>Creada:</strong>
-                    {{ ubicacion.fecha_creacion|date:"d/m/Y H:i" }}
-                </p>
+                            <a
+                                href="{% url 'eliminar_ubicacion' ubicacion.id %}"
+                                class="btn btn-ghost-danger btn-sm"
+                            >
+                                Eliminar
+                            </a>
+                        </div>
+                    </div>
 
-                <p>
-                    <a href="{% url 'editar_ubicacion' ubicacion.id %}">
-                        Editar
-                    </a>
-                </p>
-
-                <p>
-                    <a href="{% url 'eliminar_ubicacion' ubicacion.id %}">
-                        Eliminar
-                    </a>
-                </p>
-
-            </div>
-
-            <hr>
-
-        {% endfor %}
-
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🗺️</div>
+            <h3>Todavía no tienes ubicaciones</h3>
+            <p>Crea tu primera ubicación para asociarla a tus cagadas.</p>
 
-        <p>
-            Todavía no tienes ubicaciones registradas.
-        </p>
-
+            <a href="{% url 'crear_ubicacion' %}" class="btn btn-primary">
+                Crear mi primera ubicación
+            </a>
+        </div>
     {% endif %}
 
-    <p>
-        <a href="{% url 'home' %}">
-            Volver al inicio
-        </a>
-    </p>
-
-</body>
-
-</html>
+</main>
+{% endblock %}

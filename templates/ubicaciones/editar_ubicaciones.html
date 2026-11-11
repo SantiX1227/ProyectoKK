@@ -1,61 +1,45 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
+{% block title %}Editar ubicación - Proyecto KK{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/ubicaciones.css' %}">
+{% endblock %}
 
-    <title>Editar ubicación - Proyecto KK</title>
-</head>
+{% block content %}
+<main class="page page-narrow">
 
-<body>
+    <a href="{% url 'listar_ubicaciones' %}" class="btn btn-ghost btn-sm mb-2">
+        ← Volver a mis ubicaciones
+    </a>
 
-    <h1>Editar ubicación</h1>
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Editar ubicación</h1>
+            <p class="page-subtitle">Editando <strong>{{ ubicacion.nombre }}</strong></p>
+        </div>
+    </header>
 
-    <p>
-        Editando:
-        <strong>{{ ubicacion.nombre }}</strong>
-    </p>
-
-    <form method="POST">
-
+    <form method="POST" class="card">
         {% csrf_token %}
 
-        {{ form.non_field_errors }}
+        {% include 'ubicaciones/components/campos_ubicacion.html' with captura_automatica=False %}
 
-        {{ form.as_p }}
-
-        <p>
-            <button
-                type="button"
-                id="btn-geolocalizar"
-                data-automatica="false"
-            >
-                📍 Usar mi ubicación actual
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                Guardar cambios
             </button>
-        </p>
 
-        <p id="estado-geolocalizacion" aria-live="polite"></p>
-
-        <button type="submit">
-            Guardar cambios
-        </button>
-
+            <a href="{% url 'listar_ubicaciones' %}" class="btn btn-ghost">
+                Cancelar
+            </a>
+        </div>
     </form>
 
-    <p>
-        <a href="{% url 'listar_ubicaciones' %}">
-            Cancelar
-        </a>
-    </p>
+</main>
+{% endblock %}
 
+{% block extra_js %}
     <script src="{% static 'js/ubicaciones.js' %}"></script>
-
-</body>
-
-</html>
+{% endblock %}

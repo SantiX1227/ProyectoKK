@@ -1,50 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
+{% block title %}Eliminar ubicación - Proyecto KK{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block content %}
+<main class="confirm-page">
+    <div class="confirm-card">
 
-    <title>Eliminar ubicación - Proyecto KK</title>
-</head>
+        <span class="confirm-icon">📍</span>
 
-<body>
+        <h1>¿Eliminar esta ubicación?</h1>
+        <p>Las cagadas asociadas no se eliminan: quedarán sin ubicación.</p>
 
-    <h1>Eliminar ubicación</h1>
+        <div class="info-list">
+            <div class="info-item">
+                <span class="info-label">Nombre</span>
+                <span class="info-value">{{ ubicacion.nombre }}</span>
+            </div>
 
-    <h2>
-        {{ ubicacion.nombre }}
-    </h2>
+            <div class="info-item">
+                <span class="info-label">Tipo</span>
+                <span class="info-value">{{ ubicacion.tipo }}</span>
+            </div>
+        </div>
 
-    <p>
-        ¿Estás seguro de que quieres eliminar esta ubicación?
-    </p>
+        <div class="confirm-actions">
+            <form method="POST">
+                {% csrf_token %}
 
-    <p>
-        Las cagadas asociadas a esta ubicación
-        no serán eliminadas.
-    </p>
+                <button type="submit" class="btn btn-danger btn-lg">
+                    Sí, eliminar ubicación
+                </button>
+            </form>
 
-    <form method="POST">
+            <a href="{% url 'listar_ubicaciones' %}" class="btn btn-ghost">
+                Cancelar
+            </a>
+        </div>
 
-        {% csrf_token %}
-
-        <button type="submit">
-            Sí, eliminar ubicación
-        </button>
-
-    </form>
-
-    <p>
-        <a href="{% url 'listar_ubicaciones' %}">
-            Cancelar
-        </a>
-    </p>
-
-</body>
-
-</html>
+    </div>
+</main>
+{% endblock %}

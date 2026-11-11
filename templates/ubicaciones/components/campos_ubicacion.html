@@ -1,0 +1,71 @@
+{% comment %}
+    Campos de una ubicación, compartidos por crear y editar.
+    Variable opcional: captura_automatica=False evita pedir la ubicación
+    al cargar la página (en editar solo se pide con el botón).
+{% endcomment %}
+
+{{ form.non_field_errors }}
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="{{ form.nombre.id_for_label }}">
+            {{ form.nombre.label }}
+        </label>
+
+        {{ form.nombre }}
+        {{ form.nombre.errors }}
+
+        <span class="form-help">Por ejemplo: Baño de casa, Oficina…</span>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.tipo.id_for_label }}">
+            {{ form.tipo.label }}
+        </label>
+
+        {{ form.tipo }}
+        {{ form.tipo.errors }}
+
+        <span class="form-help">Por ejemplo: Casa, Trabajo, Restaurante…</span>
+    </div>
+</div>
+
+<section class="geo-panel">
+    <div class="geo-panel-cabecera">
+        <div>
+            <h2 class="geo-panel-titulo">📍 Coordenadas</h2>
+            <p class="geo-panel-texto">Opcionales. Solo las ves tú en tu analítica.</p>
+        </div>
+
+        <button
+            type="button"
+            id="btn-geolocalizar"
+            class="btn btn-outline btn-sm"
+            {% if captura_automatica == False %}data-automatica="false"{% endif %}
+        >
+            Usar mi ubicación actual
+        </button>
+    </div>
+
+    <p id="estado-geolocalizacion" class="geo-estado" aria-live="polite"></p>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.latitud.id_for_label }}">
+                {{ form.latitud.label }}
+            </label>
+
+            {{ form.latitud }}
+            {{ form.latitud.errors }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.longitud.id_for_label }}">
+                {{ form.longitud.label }}
+            </label>
+
+            {{ form.longitud }}
+            {{ form.longitud.errors }}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,170 @@
+/* static/css/ubicaciones.css
+   ==========================================================================
+   Pantallas de ubicaciones: listado, crear/editar (con geolocalización)
+   y eliminar. Usa los componentes globales de base.css.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Listado
+   ========================================================================== */
+
+.ubicacion-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ubicacion-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* Icono con fondo suave; alterna marca / acento como los accesos del inicio */
+.ubicacion-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary-soft);
+  font-size: 1.4rem;
+}
+
+.ubicacion-card:nth-child(even) .ubicacion-icono {
+  background-color: var(--accent-soft);
+}
+
+.ubicacion-nombre {
+  font-size: 1.1rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.ubicacion-cabecera .badge {
+  margin-top: 0.25rem;
+}
+
+/* Coordenadas en una caja con números alineados */
+.coordenadas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.coordenada {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-alt);
+}
+
+.coordenada span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.coordenada strong {
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sin-coordenadas {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--warning-soft);
+  color: #92400e;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ubicacion-card .card-footer {
+  margin-top: auto;
+}
+
+.ubicacion-fecha {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Botón de texto en rojo (eliminar dentro de una tarjeta) */
+.btn-ghost-danger {
+  background-color: transparent;
+  color: var(--danger);
+}
+
+.btn-ghost-danger:hover {
+  background-color: var(--danger-soft);
+  color: var(--danger-hover);
+}
+
+
+/* ==========================================================================
+   2. Crear / editar: panel de geolocalización
+   ========================================================================== */
+
+.geo-panel {
+  margin: 0.5rem 0 1.25rem;
+  padding: 1.25rem;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-alt);
+}
+
+.geo-panel-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.geo-panel-titulo {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.geo-panel-texto {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Los campos de coordenadas no dejan margen extra dentro del panel */
+.geo-panel .form-row .form-group {
+  margin-bottom: 0;
+}
+
+/* Mensaje que escribe ubicaciones.js */
+.geo-estado {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.geo-estado:empty {
+  display: none;
+}
+
+/* Mientras se busca la ubicación el botón está desactivado: se anima el icono */
+#btn-geolocalizar:disabled {
+  cursor: progress;
+}
+
+.geo-panel:has(#btn-geolocalizar:disabled) .geo-estado {
+  border-color: #fde68a;
+}
