@@ -1,48 +1,49 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
+{% block title %}Editar cagada - Proyecto KK{% endblock %}
 
-    <meta charset="UTF-8">
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cagadas.css' %}">
+{% endblock %}
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+{% block content %}
+<main class="page page-narrow">
 
-    <title>Editar cagada - Proyecto KK</title>
+    <a href="{% url 'detalle_cagada' cagada.id %}" class="btn btn-ghost btn-sm mb-2">
+        ← Volver al detalle
+    </a>
 
-</head>
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Editar cagada</h1>
+            <p class="page-subtitle">
+                Registrada el {{ cagada.hora_inicio_cagada|date:"j \d\e F \a \l\a\s H:i" }}
+            </p>
+        </div>
+    </header>
 
-<body>
-
-    <h1>Editar cagada</h1>
-
-    <p>
-        Estás editando la cagada
-        <strong>#{{ cagada.id }}</strong>
-    </p>
-
-    <form method="POST">
-
+    <form method="POST" class="card detalles-card">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
 
-        <button type="submit">
-            Guardar cambios
-        </button>
+        {% include 'cagadas/components/campos_cagada.html' %}
 
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                Guardar cambios
+            </button>
+
+            <a href="{% url 'detalle_cagada' cagada.id %}" class="btn btn-ghost">
+                Cancelar
+            </a>
+        </div>
     </form>
 
-    <hr>
+</main>
+{% endblock %}
 
-    <p>
-        <a href="{% url 'detalle_cagada' cagada.id %}">
-            Cancelar
-        </a>
-    </p>
-
-</body>
-
-</html>
+{% block extra_js %}
+    <script src="{% static 'js/cagadas.js' %}"></script>
+{% endblock %}

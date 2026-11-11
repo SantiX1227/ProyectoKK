@@ -31,22 +31,22 @@
 
                 <a
                     href="{% url 'historial_cagadas' %}"
-                    class="navbar-link {% if url_actual in 'historial_cagadas detalle_cagada editar_cagada eliminar_cagada' %}is-active{% endif %}"
+                    class="navbar-link {% if url_actual == 'historial_cagadas' or url_actual == 'detalle_cagada' or url_actual == 'editar_cagada' or url_actual == 'eliminar_cagada' %}is-active{% endif %}"
                 >Historial</a>
 
                 <a
                     href="{% url 'listar_ubicaciones' %}"
-                    class="navbar-link {% if url_actual in 'listar_ubicaciones crear_ubicacion editar_ubicacion eliminar_ubicacion' %}is-active{% endif %}"
+                    class="navbar-link {% if url_actual == 'listar_ubicaciones' or url_actual == 'crear_ubicacion' or url_actual == 'editar_ubicacion' or url_actual == 'eliminar_ubicacion' %}is-active{% endif %}"
                 >Ubicaciones</a>
 
                 <a
                     href="{% url 'feed_cagadas' %}"
-                    class="navbar-link {% if url_actual in 'feed_cagadas detalle_cagada_publica' %}is-active{% endif %}"
+                    class="navbar-link {% if url_actual == 'feed_cagadas' or url_actual == 'detalle_cagada_publica' %}is-active{% endif %}"
                 >Feed</a>
 
                 <a
                     href="{% url 'analytics' %}"
-                    class="navbar-link {% if url_actual in 'analytics analytics-comparacion' %}is-active{% endif %}"
+                    class="navbar-link {% if url_actual == 'analytics' or url_actual == 'analytics-comparacion' %}is-active{% endif %}"
                 >Analítica</a>
             </div>
 

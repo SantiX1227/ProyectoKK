@@ -607,6 +607,10 @@ hr {
   border-top: 1px solid var(--border);
 }
 
+.card-footer-end {
+  justify-content: flex-end;
+}
+
 /* Tarjeta que se eleva al pasar el ratón (listas, enlaces) */
 .card-hover {
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
@@ -1184,6 +1188,194 @@ input[type="color"] {
   background: var(--gradient-brand);
   border-color: transparent;
   color: #ffffff;
+}
+
+
+/* ==========================================================================
+   10b. Componentes compartidos entre apps
+   ========================================================================== */
+
+/* Estrellas de calificación (0–5, admite decimales).
+   Uso: <span class="rating" style="--nota: 4.5"></span> */
+.rating {
+  --nota: 0;
+  position: relative;
+  display: inline-block;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.rating::before {
+  content: "★★★★★";
+  color: var(--border-strong);
+}
+
+.rating::after {
+  content: "★★★★★";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--nota) / 5 * 100%);
+  overflow: hidden;
+  color: #f59e0b;
+}
+
+.rating-lg {
+  font-size: 1.5rem;
+}
+
+/* Interruptor: <label class="switch-field"><input type="checkbox"> Texto</label> */
+.switch-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-group .switch-field {
+  margin-bottom: 0;
+  font-size: 0.92rem;
+}
+
+.switch-field input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 46px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background-color: var(--border-strong);
+  transition: background-color var(--transition);
+  cursor: pointer;
+}
+
+.switch-field input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition);
+}
+
+.switch-field input[type="checkbox"]:checked {
+  background-color: var(--accent);
+}
+
+.switch-field input[type="checkbox"]:checked::before {
+  transform: translateX(20px);
+}
+
+/* Lista etiqueta / valor (detalles) */
+.info-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--surface-alt);
+  border-radius: var(--radius-md);
+  overflow-wrap: anywhere;
+}
+
+.info-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.info-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .info-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Pantalla de confirmación (eliminar algo) */
+.confirm-page {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.25rem;
+}
+
+.confirm-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 2.5rem 2.25rem 2rem;
+  text-align: center;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  animation: aparecer 0.35s ease;
+}
+
+.confirm-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 1.25rem;
+  border-radius: 50%;
+  background-color: var(--danger-soft);
+  font-size: 2rem;
+}
+
+.confirm-card h1 {
+  font-size: 1.5rem;
+}
+
+.confirm-card > p {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+}
+
+.confirm-card .info-list {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+}
+
+.confirm-actions .btn,
+.confirm-actions form {
+  width: 100%;
+}
+
+.confirm-actions form .btn {
+  width: 100%;
 }
 
 

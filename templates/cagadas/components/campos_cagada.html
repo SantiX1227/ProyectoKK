@@ -1,0 +1,89 @@
+{% comment %}
+    Campos de detalle de una cagada, compartidos por registrar y editar.
+    Variable opcional: en_registro=True muestra los atajos de ubicación.
+{% endcomment %}
+
+<div class="form-group">
+    <label for="{{ form.ubicacion.id_for_label }}">
+        {{ form.ubicacion.label }}
+    </label>
+
+    {{ form.ubicacion }}
+    {{ form.ubicacion.errors }}
+
+    {% if en_registro %}
+        <div class="ubicacion-atajos">
+            <button
+                type="submit"
+                formaction="{% url 'crear_ubicacion' %}"
+                formnovalidate
+                name="origen"
+                value="registrar_cagada"
+                class="btn btn-outline btn-sm"
+            >
+                ＋ Añadir nueva ubicación
+            </button>
+
+            <a
+                href="{% url 'listar_ubicaciones' %}"
+                class="btn btn-ghost btn-sm"
+            >
+                Ver mis ubicaciones
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="{{ form.calificacion.id_for_label }}">
+            {{ form.calificacion.label }}
+        </label>
+
+        {{ form.calificacion }}
+        {{ form.calificacion.errors }}
+
+        <span class="form-help">De 0 a 5, con un decimal (ej. 4.5).</span>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.categorizacion.id_for_label }}">
+            {{ form.categorizacion.label }}
+        </label>
+
+        {{ form.categorizacion }}
+        {{ form.categorizacion.errors }}
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="form-group">
+        <label for="{{ form.color.id_for_label }}">
+            {{ form.color.label }}
+        </label>
+
+        <div class="color-campo">
+            {{ form.color }}
+        </div>
+
+        {{ form.color.errors }}
+    </div>
+
+    <div class="form-group form-group-switch">
+        <label class="switch-field">
+            {{ form.visible_para_otros }}
+            <span>{{ form.visible_para_otros.label }}</span>
+        </label>
+
+        {{ form.visible_para_otros.errors }}
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="{{ form.observaciones.id_for_label }}">
+        {{ form.observaciones.label }}
+    </label>
+
+    {{ form.observaciones }}
+    {{ form.observaciones.errors }}
+</div>

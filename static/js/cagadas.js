@@ -419,8 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     avisoCalificacion.id = 'aviso-calificacion';
     avisoCalificacion.setAttribute('aria-live', 'polite');
-    avisoCalificacion.style.color = 'red';
-    avisoCalificacion.style.marginLeft = '0.5rem';
 
     campoCalificacion.insertAdjacentElement(
         'afterend',

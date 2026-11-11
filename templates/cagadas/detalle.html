@@ -1,61 +1,121 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de cagada - Proyecto KK</title>
-</head>
-<body>
-    <h1>Detalle de cagada</h1>
+{% extends 'base.html' %}
+{% load static l10n %}
 
-    <p><strong>Fecha:</strong> {{ cagada.hora_inicio_cagada|date:"d/m/Y" }}</p>
-    <p><strong>Hora de inicio:</strong> {{ cagada.hora_inicio_cagada|date:"H:i:s" }}</p>
-    <p><strong>Hora final:</strong> {{ cagada.hora_final_cagada|date:"H:i:s" }}</p>
-    <p><strong>Duración:</strong> {{ cagada.duracion }}</p>
+{% block title %}Detalle de cagada - Proyecto KK{% endblock %}
 
-    <p>
-        <strong>Ubicación:</strong> 
-        {% if cagada.ubicacion %}
-            {{ cagada.ubicacion.nombre }}
-        {% else %}
-            Sin ubicación
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cagadas.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="page page-narrow">
+
+    <a href="{% url 'historial_cagadas' %}" class="btn btn-ghost btn-sm mb-2">
+        ← Volver al historial
+    </a>
+
+    <section
+        class="card detalle-cabecera"
+        style="--color-cagada: {{ cagada.color }};"
+    >
+        <p class="text-muted text-sm fw-bold">
+            {{ cagada.hora_inicio_cagada|date:"l" }}
+        </p>
+
+        <h1 class="page-title">
+            {{ cagada.hora_inicio_cagada|date:"j \d\e F \d\e Y" }}
+        </h1>
+
+        <div class="row">
+            <span
+                class="rating rating-lg"
+                style="--nota: {{ cagada.calificacion|unlocalize }};"
+            ></span>
+
+            <span class="fw-bold">{{ cagada.calificacion }} / 5</span>
+
+            <span class="badge badge-primary">
+                {{ cagada.get_categorizacion_display }}
+            </span>
+
+            {% if cagada.visible_para_otros %}
+                <span class="badge badge-accent">🌍 Pública</span>
+            {% else %}
+                <span class="badge">🔒 Privada</span>
+            {% endif %}
+        </div>
+    </section>
+
+    <div class="grid grid-3 detalle-stats">
+        <div class="stat-card">
+            <p class="stat-label">Duración</p>
+            <p class="stat-value">{{ cagada.duracion }}</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Inicio</p>
+            <p class="stat-value">{{ cagada.hora_inicio_cagada|date:"H:i:s" }}</p>
+        </div>
+
+        <div class="stat-card">
+            <p class="stat-label">Final</p>
+            <p class="stat-value">{{ cagada.hora_final_cagada|date:"H:i:s" }}</p>
+        </div>
+    </div>
+
+    <section class="card">
+        <h2 class="card-title mb-2">Información</h2>
+
+        <div class="info-list">
+            <div class="info-item">
+                <span class="info-label">Ubicación</span>
+                <span class="info-value">
+                    📍 {{ cagada.ubicacion.nombre|default:"Sin ubicación" }}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Categorización</span>
+                <span class="info-value">{{ cagada.get_categorizacion_display }}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Color</span>
+                <span class="info-value">
+                    <span class="color-dot" style="background-color: {{ cagada.color }};"></span>
+                    {{ cagada.color }}
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Visibilidad</span>
+                <span class="info-value">
+                    {% if cagada.visible_para_otros %}
+                        Visible para otros usuarios
+                    {% else %}
+                        Solo tú
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        {% if cagada.observaciones %}
+            <h3 class="mt-3 mb-1">Observaciones</h3>
+            <div class="observaciones-texto">
+                {{ cagada.observaciones|linebreaks }}
+            </div>
         {% endif %}
-    </p>
 
-    <p><strong>Calificación:</strong> {{ cagada.calificacion }}</p>
-    <p><strong>Categorización:</strong> {{ cagada.get_categorizacion_display }}</p>
+        <div class="card-footer card-footer-end">
+            <a href="{% url 'editar_cagada' cagada.id %}" class="btn btn-outline">
+                ✏️ Editar
+            </a>
 
-    <p>
-        <strong>Color:</strong>
-        <span style="display: inline-block; width: 22px; height: 22px; background-color: {{ cagada.color }}; border: 1px solid #333; border-radius: 4px; vertical-align: middle; margin-right: 6px;"></span>
-        {{ cagada.color }}
-    </p>
+            <a href="{% url 'eliminar_cagada' cagada.id %}" class="btn btn-danger">
+                🗑️ Eliminar
+            </a>
+        </div>
+    </section>
 
-    <p>
-        <strong>Visible para otros usuarios:</strong>
-        {% if cagada.visible_para_otros %}Sí{% else %}No{% endif %}
-    </p>
-
-    {% if cagada.observaciones %}
-        <p><strong>Observaciones:</strong></p>
-        <p>{{ cagada.observaciones|linebreaks }}</p>
-    {% endif %}
-
-    <hr>
-
-    <h2>Acciones</h2>
-    
-    <p>
-        <a href="{% url 'editar_cagada' cagada.id %}">Editar cagada</a>
-    </p>
-    <p>
-        <a href="{% url 'eliminar_cagada' cagada.id %}" style="color: red;">Eliminar cagada</a>
-    </p>
-    <p>
-        <a href="{% url 'historial_cagadas' %}">Volver al historial</a>
-    </p>
-    <p>
-        <a href="{% url 'home' %}">Volver al inicio</a>
-    </p>
-</body>
-</html>
+</main>
+{% endblock %}

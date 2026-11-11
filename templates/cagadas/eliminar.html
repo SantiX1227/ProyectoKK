@@ -1,58 +1,43 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
+{% block title %}Eliminar cagada - Proyecto KK{% endblock %}
 
-    <meta charset="UTF-8">
+{% block content %}
+<main class="confirm-page">
+    <div class="confirm-card">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        <span class="confirm-icon">🗑️</span>
 
-    <title>Eliminar cagada - Proyecto KK</title>
+        <h1>¿Eliminar esta cagada?</h1>
+        <p>Esta acción es permanente y no se puede deshacer.</p>
 
-</head>
+        <div class="info-list">
+            <div class="info-item">
+                <span class="info-label">Fecha</span>
+                <span class="info-value">{{ cagada.hora_inicio_cagada|date:"d/m/Y H:i" }}</span>
+            </div>
 
-<body>
+            <div class="info-item">
+                <span class="info-label">Duración</span>
+                <span class="info-value">{{ cagada.duracion }}</span>
+            </div>
+        </div>
 
-    <h1>Eliminar cagada</h1>
+        <div class="confirm-actions">
+            <form method="POST">
+                {% csrf_token %}
 
-    <h2>
-        Esta acción es permanente
-    </h2>
+                <button type="submit" class="btn btn-danger btn-lg">
+                    Eliminar definitivamente
+                </button>
+            </form>
 
-    <p>
-        ¿Estás seguro de que quieres eliminar
-        la cagada #{{ cagada.id }}?
-    </p>
+            <a href="{% url 'detalle_cagada' cagada.id %}" class="btn btn-ghost">
+                Cancelar
+            </a>
+        </div>
 
-    <p>
-        <strong>Fecha:</strong>
-        {{ cagada.hora_inicio_cagada|date:"d/m/Y H:i:s" }}
-    </p>
-
-    <p>
-        <strong>Duración:</strong>
-        {{ cagada.duracion }}
-    </p>
-
-    <form method="POST">
-
-        {% csrf_token %}
-
-        <button type="submit">
-            Eliminar definitivamente
-        </button>
-
-    </form>
-
-    <p>
-        <a href="{% url 'detalle_cagada' cagada.id %}">
-            Cancelar
-        </a>
-    </p>
-
-</body>
-
-</html>
+    </div>
+</main>
+{% endblock %}

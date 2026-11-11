@@ -1,0 +1,349 @@
+/* static/css/cagadas.css
+   ==========================================================================
+   Pantallas de cagadas: registrar (cronómetro), historial, detalle y editar.
+   Usa los componentes globales de base.css (card, btn, badge, rating…).
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Registrar: distribución en dos columnas
+   ========================================================================== */
+
+.registro-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .registro-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   2. Cronómetro
+   Los estados se deducen de qué botones están activos (los gestiona
+   cagadas.js), así que no hace falta tocar el JavaScript:
+   - en progreso → #btn-terminar activo
+   - finalizada  → #btn-registrar activo (fuera de la tarjeta)
+   ========================================================================== */
+
+.cronometro {
+  position: sticky;
+  top: calc(var(--navbar-height) + 1.5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .cronometro {
+    position: static;
+  }
+}
+
+.cronometro-titulo {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* Esfera con anillo */
+.cronometro-dial {
+  --anillo: var(--border);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 230px;
+  height: 230px;
+  margin: 1.5rem 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--surface) 0 66%, transparent 67%),
+    conic-gradient(var(--anillo) 0 100%);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition);
+}
+
+.cronometro-tiempo {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-main);
+}
+
+/* Estado: pastilla debajo del tiempo */
+.cronometro-estado {
+  margin-top: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+}
+
+.cronometro-horas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.cronometro-hora {
+  padding: 0.7rem;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+}
+
+.cronometro-hora span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.cronometro-hora strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.cronometro-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+/* Solo se muestran los botones que se pueden usar en cada estado */
+.cronometro-acciones .btn:disabled {
+  display: none;
+}
+
+/* --- Estado: en progreso --- */
+.cronometro:has(#btn-terminar:not(:disabled)) .cronometro-dial {
+  background:
+    radial-gradient(circle, var(--surface) 0 66%, transparent 67%),
+    conic-gradient(from var(--giro, 0deg), #e08a2c, #b5541c, #f3c48b, #e08a2c);
+  box-shadow: var(--shadow-brand);
+  animation: girar-anillo 3s linear infinite;
+}
+
+.cronometro:has(#btn-terminar:not(:disabled)) .cronometro-tiempo {
+  color: var(--primary);
+}
+
+.cronometro:has(#btn-terminar:not(:disabled)) .cronometro-estado {
+  background-color: var(--primary-soft);
+  color: var(--primary);
+  animation: latido 1.6s ease-in-out infinite;
+}
+
+/* --- Estado: finalizada --- */
+.registro-layout:has(#btn-registrar:not(:disabled)) .cronometro-dial {
+  --anillo: var(--accent);
+}
+
+.registro-layout:has(#btn-registrar:not(:disabled)) .cronometro-estado {
+  background-color: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Ángulo animable del anillo (navegadores con @property) */
+@property --giro {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes girar-anillo {
+  to { --giro: 360deg; }
+}
+
+@keyframes latido {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+
+/* ==========================================================================
+   3. Formulario de detalles (registrar y editar)
+   ========================================================================== */
+
+.detalles-card .card-title {
+  margin-bottom: 1.25rem;
+}
+
+/* Fila de atajos bajo el select de ubicación */
+.ubicacion-atajos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Selector de color con su código al lado */
+.color-campo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Interruptor alineado con el resto de campos de su fila */
+.form-group-switch {
+  justify-content: flex-end;
+  padding-bottom: 0.6rem;
+}
+
+/* Aviso en tiempo real de la calificación (lo crea cagadas.js) */
+#aviso-calificacion {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+#aviso-calificacion:empty {
+  display: none;
+}
+
+/* Botón de registrar + pista mientras está desactivado */
+.registro-envio {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.registro-pista {
+  display: none;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.registro-envio:has(#btn-registrar:disabled) .registro-pista {
+  display: block;
+}
+
+
+/* ==========================================================================
+   4. Historial
+   ========================================================================== */
+
+.cagada-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.35rem 1.35rem 1.1rem;
+  overflow: hidden;
+}
+
+/* Franja superior con el color registrado */
+.cagada-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background-color: var(--color-cagada, var(--border));
+}
+
+.cagada-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cagada-fecha {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.cagada-hora {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.cagada-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.cagada-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cagada-observaciones {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.cagada-card .card-footer {
+  margin-top: auto;
+}
+
+
+/* ==========================================================================
+   5. Detalle
+   ========================================================================== */
+
+.detalle-cabecera {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 2rem 1.75rem;
+}
+
+.detalle-cabecera::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-color: var(--color-cagada, var(--border));
+}
+
+.detalle-cabecera .row {
+  margin-top: 0.75rem;
+}
+
+.detalle-stats {
+  margin: 1.25rem 0;
+}
+
+.detalle-stats .stat-value {
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.observaciones-texto {
+  color: var(--text-main);
+  line-height: 1.7;
+}
+
+.observaciones-texto p + p {
+  margin-top: 0.75rem;
+}

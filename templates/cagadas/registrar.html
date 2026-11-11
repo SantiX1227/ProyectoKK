@@ -1,67 +1,98 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar cagada - Proyecto KK</title>
-</head>
-<body>
-    <h1>Registrar cagada</h1>
+
+{% block title %}Registrar cagada - Proyecto KK{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cagadas.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="page">
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Registrar cagada</h1>
+            <p class="page-subtitle">
+                Inicia el cronómetro, termínalo al acabar y completa los detalles.
+            </p>
+        </div>
+    </header>
 
     <form
         method="POST"
         id="form-registrar-cagada"
         data-usuario="{{ request.user.id }}"
+        class="registro-layout"
     >
         {% csrf_token %}
 
-        {% if form.non_field_errors %}
-            <div style="color: red;">
-                {{ form.non_field_errors }}
+        {# Horas ocultas que rellena el cronómetro (cagadas.js) #}
+        {{ form.hora_inicio_cagada }}
+        {{ form.hora_final_cagada }}
+
+        <section class="card cronometro">
+            <h2 class="cronometro-titulo">⏱️ Cronómetro</h2>
+
+            <div class="cronometro-dial">
+                <strong id="temporizador" class="cronometro-tiempo">00:00:00</strong>
+                <span id="estado" class="cronometro-estado">Sin iniciar</span>
             </div>
-        {% endif %}
 
-        {{ form.as_p }}
+            <div class="cronometro-horas">
+                <div class="cronometro-hora">
+                    <span>Inicio</span>
+                    <strong id="hora-inicio">—</strong>
+                </div>
 
-        <hr>
+                <div class="cronometro-hora">
+                    <span>Final</span>
+                    <strong id="hora-final">—</strong>
+                </div>
+            </div>
 
-        <h2>Temporizador</h2>
+            <div class="cronometro-acciones">
+                <button type="button" id="btn-iniciar" class="btn btn-primary btn-lg">
+                    ▶ Iniciar cagada
+                </button>
 
-        <p>Estado: <strong id="estado">Sin iniciar</strong></p>
-        <p>Inicio: <span id="hora-inicio">—</span></p>
-        <p>Tiempo: <strong id="temporizador">00:00:00</strong></p>
-        <p>Final: <span id="hora-final">—</span></p>
+                <button type="button" id="btn-terminar" class="btn btn-danger btn-lg" disabled>
+                    ■ Terminar cagada
+                </button>
 
-        <button type="button" id="btn-iniciar">▶ Iniciar cagada</button>
-        <button type="button" id="btn-terminar" disabled>■ Terminar cagada</button>
-        <button type="button" id="btn-reiniciar"disabled>↻ Reiniciar cagada</button>
-        
-        <hr>
+                <button type="button" id="btn-reiniciar" class="btn btn-ghost" disabled>
+                    ↻ Reiniciar
+                </button>
+            </div>
+        </section>
 
-        <p>
-            <a href="{% url 'listar_ubicaciones' %}">Ver mis ubicaciones</a>
-            |
-            <button
-                type="submit"
-                formaction="{% url 'crear_ubicacion' %}"
-                formnovalidate
-                name="origen"
-                value="registrar_cagada"
-            >
-                Añadir nueva ubicación
-            </button>
-        </p>
+        <section class="card detalles-card">
+            <h2 class="card-title">Detalles</h2>
 
-        <button type="submit" id="btn-registrar" disabled>
-            Registrar cagada
-        </button>
+            {{ form.non_field_errors }}
+
+            {% include 'cagadas/components/campos_cagada.html' with en_registro=True %}
+
+            <div class="registro-envio">
+                <button
+                    type="submit"
+                    id="btn-registrar"
+                    class="btn btn-primary btn-lg btn-block"
+                    disabled
+                >
+                    ✓ Registrar cagada
+                </button>
+
+                <p class="registro-pista">
+                    Termina el cronómetro para poder registrar.
+                </p>
+            </div>
+        </section>
     </form>
 
-    <p>
-        <a href="{% url 'home' %}">Volver al inicio</a>
-    </p>
+</main>
+{% endblock %}
 
+{% block extra_js %}
     <script src="{% static 'js/cagadas.js' %}"></script>
-</body>
-</html>
+{% endblock %}
