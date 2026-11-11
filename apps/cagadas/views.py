@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from apps.core.templatetags.formato import duracion as formatear_duracion
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import CagadaForm, EditarCagadaForm
@@ -24,6 +26,11 @@ def registrar_cagada(request):
             cagada.usuario = request.user
 
             cagada.save()
+
+            messages.success(
+                request,
+                f'Tu cagada quedó registrada.'
+            )
 
             return redirect('home')
 
@@ -131,6 +138,11 @@ def editar_cagada(request, id):
 
             form.save()
 
+            messages.success(
+                request,
+                'Los cambios de tu cagada se guardaron.'
+            )
+
             return redirect(
                 'detalle_cagada',
                 id=cagada.id
@@ -165,6 +177,11 @@ def eliminar_cagada(request, id):
     if request.method == 'POST':
 
         cagada.delete()
+
+        messages.success(
+            request,
+            'La cagada se eliminó de tu historial.'
+        )
 
         return redirect(
             'historial_cagadas'

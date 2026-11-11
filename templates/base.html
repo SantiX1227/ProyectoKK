@@ -16,6 +16,8 @@
 
     <!-- CSS adicional por vista -->
     {% block extra_css %}{% endblock %}
+    <!-- JS global (modal de avisos) -->
+    <script src="{% static 'js/main.js' %}" defer></script>
 </head>
 <body>
     {% if user.is_authenticated %}
@@ -24,6 +26,9 @@
 
     {% block content %}
     {% endblock %}
+
+    {% include 'includes/mensajes.html' %}
+
     <!-- Scripts adicionales por vista -->
     {% block extra_js %}{% endblock %}
 </body>

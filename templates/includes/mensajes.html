@@ -1,0 +1,43 @@
+{% if messages %}
+<dialog
+    class="modal-aviso"
+    id="modal-aviso"
+    open
+    aria-labelledby="modal-aviso-titulo-1"
+>
+    <div class="modal-aviso-contenido">
+
+        {% for message in messages %}
+            <div class="modal-aviso-item is-{{ message.level_tag }}">
+
+                <span class="modal-aviso-icono" aria-hidden="true">
+                    {% if message.level_tag == 'success' %}✅
+                    {% elif message.level_tag == 'error' %}❌
+                    {% elif message.level_tag == 'warning' %}⚠️
+                    {% else %}ℹ️{% endif %}
+                </span>
+
+                <h2
+                    class="modal-aviso-titulo"
+                    id="modal-aviso-titulo-{{ forloop.counter }}"
+                >
+                    {% if message.level_tag == 'success' %}¡Listo!
+                    {% elif message.level_tag == 'error' %}Algo salió mal
+                    {% elif message.level_tag == 'warning' %}Atención
+                    {% else %}Aviso{% endif %}
+                </h2>
+
+                <p class="modal-aviso-texto">{{ message }}</p>
+
+            </div>
+        {% endfor %}
+
+        <form method="dialog" class="modal-aviso-acciones">
+            <button type="submit" class="btn btn-primary" autofocus>
+                Entendido
+            </button>
+        </form>
+
+    </div>
+</dialog>
+{% endif %}

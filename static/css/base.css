@@ -1528,6 +1528,97 @@ input[type="color"] {
   width: 100%;
 }
 
+/* Modal de aviso: informa del resultado de una acción (registrar,
+   editar, eliminar...). Lo pinta templates/includes/mensajes.html a
+   partir del framework de mensajes de Django y main.js lo abre como
+   modal real. Sin JavaScript se ve igual, pero sin fondo oscuro. */
+.modal-aviso {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  margin: auto;
+  height: fit-content;
+  max-height: calc(100dvh - 2rem);
+  width: min(400px, calc(100vw - 2rem));
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background-color: var(--surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.modal-aviso:not([open]) {
+  display: none;
+}
+
+.modal-aviso[open] {
+  display: block;
+  animation: color-abrir 0.22s ease;
+}
+
+.modal-aviso::backdrop {
+  background-color: rgba(42, 31, 24, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+/* Mientras el modal está abierto, la página de detrás no se desplaza */
+html:has(.modal-aviso:modal) {
+  overflow: hidden;
+}
+
+/* El relleno va aquí y no en el <dialog>: así un toque en el fondo
+   llega al <dialog> y main.js sabe que fue "fuera" */
+.modal-aviso-contenido {
+  padding: 2rem 1.75rem 1.5rem;
+}
+
+.modal-aviso-item + .modal-aviso-item {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.modal-aviso-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.9rem;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  background-color: var(--info-soft);
+}
+
+.modal-aviso-item.is-success .modal-aviso-icono { background-color: var(--success-soft); }
+.modal-aviso-item.is-error   .modal-aviso-icono { background-color: var(--danger-soft); }
+.modal-aviso-item.is-warning .modal-aviso-icono { background-color: var(--warning-soft); }
+
+.modal-aviso-titulo {
+  font-size: 1.3rem;
+}
+
+.modal-aviso-item.is-success .modal-aviso-titulo { color: var(--success); }
+.modal-aviso-item.is-error   .modal-aviso-titulo { color: var(--danger); }
+.modal-aviso-item.is-warning .modal-aviso-titulo { color: var(--warning); }
+
+.modal-aviso-texto {
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.modal-aviso-acciones {
+  margin-top: 1.5rem;
+}
+
+.modal-aviso-acciones .btn {
+  width: 100%;
+}
+
 
 /* ==========================================================================
    11. Utilidades y animaciones
