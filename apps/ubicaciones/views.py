@@ -78,7 +78,7 @@ def crear_ubicacion(request):
                     messages.success(
                         request,
                         f'La ubicación «{ubicacion.nombre}» se creó '
-                        'y quedó seleccionada en tu registro.'
+                        'y quedó seleccionada en tu registro de mierda.'
                     )
 
                     return redirect(

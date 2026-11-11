@@ -7,6 +7,7 @@ from django.contrib.auth import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from .forms import RegistroUsuarioForm, PerfilUsuarioForm
 
@@ -63,6 +64,12 @@ def registrarse(request):
 
             login(request, usuario)
 
+            messages.success(
+                request,
+                f'Te damos la bienvenida al Proyecto KK, {usuario.username}. '
+                'Ya puedes registrar tu primera cagada.'
+            )
+
             return redirect('home')
 
     else:
@@ -91,6 +98,11 @@ def perfil(request):
         if form.is_valid():
 
             form.save()
+
+            messages.success(
+                request,
+                'Tu perfil de mierda se actualizó.'
+            )
 
             return redirect('perfil')
 
@@ -127,6 +139,11 @@ def cambiar_contrasena(request):
                 usuario
             )
 
+            messages.success(
+                request,
+                'Tu contraseña de mierda se cambió. Tu sesión sigue abierta.'
+            )
+
             return redirect('perfil')
         
     else:
@@ -158,6 +175,12 @@ def eliminar_cuenta(request):
             logout(request)
 
             usuario.delete()
+
+            messages.info(
+                request,
+                'Sos una mierda, Tu cuenta y todos tus datos se eliminaron. '
+                'Si quieres volver, puedes crear una cuenta nueva.'
+            )
 
             return redirect('registro')
 
