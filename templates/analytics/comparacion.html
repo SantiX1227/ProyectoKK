@@ -1,239 +1,648 @@
 {% extends 'base.html' %}
+{% load static formato %}
+
+{% block title %}{{ usuario_actual.username }} vs {{ usuario_comparado.username }} - Proyecto KK{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+    <link rel="stylesheet" href="{% static 'css/comparacion.css' %}">
+{% endblock %}
 
 {% block content %}
-
-<h1>🆚 Comparación de usuarios</h1>
-
-<hr>
-
-<h2>
-    {{ usuario_actual.username }}
-    VS
-    {{ usuario_comparado.username }}
-</h2>
-
-<p>
-    La comparación utiliza únicamente cagadas públicas.
-</p>
-
-<hr>
-
-<h2>📊 Resumen general</h2>
-
-<table border="1" cellpadding="8">
-
-    <tr>
-        <th>Métrica</th>
-        <th>{{ usuario_actual.username }}</th>
-        <th>{{ usuario_comparado.username }}</th>
-    </tr>
-
-    <tr>
-        <td>Total de cagadas públicas</td>
-        <td>{{ resumen_actual.total_cagadas }}</td>
-        <td>{{ resumen_comparado.total_cagadas }}</td>
-    </tr>
-
-    <tr>
-        <td>Duración total</td>
-        <td>{{ resumen_actual.duracion_total|default:"—" }}</td>
-        <td>{{ resumen_comparado.duracion_total|default:"—" }}</td>
-    </tr>
-
-    <tr>
-        <td>Duración promedio</td>
-        <td>{{ resumen_actual.duracion_promedio|default:"—" }}</td>
-        <td>{{ resumen_comparado.duracion_promedio|default:"—" }}</td>
-    </tr>
-
-    <tr>
-        <td>Duración máxima</td>
-        <td>{{ resumen_actual.duracion_maxima|default:"—" }}</td>
-        <td>{{ resumen_comparado.duracion_maxima|default:"—" }}</td>
-    </tr>
-
-    <tr>
-        <td>Calificación promedio</td>
-        <td>{{ resumen_actual.calificacion_promedio|default:"—" }}</td>
-        <td>{{ resumen_comparado.calificacion_promedio|default:"—" }}</td>
-    </tr>
-
-    <tr>
-        <td>Ubicaciones públicas utilizadas</td>
-        <td>{{ ubicaciones_actual }}</td>
-        <td>{{ ubicaciones_comparado }}</td>
-    </tr>
-
-</table>
-
-<hr>
-
-<h2>📂 Comparación por categoría</h2>
-
-<table border="1" cellpadding="8">
-
-    <tr>
-        <th>Categoría</th>
-
-        <th>{{ usuario_actual.username }} - Cantidad</th>
-        <th>{{ usuario_comparado.username }} - Cantidad</th>
-
-        <th>{{ usuario_actual.username }} - %</th>
-        <th>{{ usuario_comparado.username }} - %</th>
-
-        <th>{{ usuario_actual.username }} - Duración promedio</th>
-        <th>{{ usuario_comparado.username }} - Duración promedio</th>
-
-        <th>{{ usuario_actual.username }} - Calificación</th>
-        <th>{{ usuario_comparado.username }} - Calificación</th>
-    </tr>
-
-    {% for categoria in comparacion_categorias %}
-
-    <tr>
-
-        <td>
-            {{ categoria.nombre }}
-        </td>
-
-        <td>
-            {{ categoria.actual.cantidad }}
-        </td>
-
-        <td>
-            {{ categoria.comparado.cantidad }}
-        </td>
-
-        <td>
-            {{ categoria.actual.porcentaje|floatformat:2 }}%
-        </td>
-
-        <td>
-            {{ categoria.comparado.porcentaje|floatformat:2 }}%
-        </td>
-
-        <td>
-            {{ categoria.actual.duracion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ categoria.comparado.duracion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ categoria.actual.calificacion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ categoria.comparado.calificacion_promedio|default:"—" }}
-        </td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-<hr>
-
-<h2>📅 Comparación por día de la semana</h2>
-
-<table border="1" cellpadding="8">
-
-    <tr>
-        <th>Día</th>
-
-        <th>{{ usuario_actual.username }} - Cantidad</th>
-        <th>{{ usuario_comparado.username }} - Cantidad</th>
-
-        <th>{{ usuario_actual.username }} - Duración promedio</th>
-        <th>{{ usuario_comparado.username }} - Duración promedio</th>
-
-        <th>{{ usuario_actual.username }} - Calificación</th>
-        <th>{{ usuario_comparado.username }} - Calificación</th>
-    </tr>
-
-    {% for dia in comparacion_dias %}
-
-    <tr>
-
-        <td>{{ dia.nombre }}</td>
-
-        <td>{{ dia.actual.cantidad }}</td>
-        <td>{{ dia.comparado.cantidad }}</td>
-
-        <td>
-            {{ dia.actual.duracion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ dia.comparado.duracion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ dia.actual.calificacion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ dia.comparado.calificacion_promedio|default:"—" }}
-        </td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-<hr>
-
-<h2>🕐 Comparación por hora</h2>
-
-<table border="1" cellpadding="8">
-
-    <tr>
-        <th>Hora</th>
-
-        <th>{{ usuario_actual.username }} - Cantidad</th>
-        <th>{{ usuario_comparado.username }} - Cantidad</th>
-
-        <th>{{ usuario_actual.username }} - Duración promedio</th>
-        <th>{{ usuario_comparado.username }} - Duración promedio</th>
-    </tr>
-
-    {% for hora in comparacion_horas %}
-
-    <tr>
-
-        <td>
-            {{ hora.hora }}:00
-        </td>
-
-        <td>
-            {{ hora.actual.cantidad }}
-        </td>
-
-        <td>
-            {{ hora.comparado.cantidad }}
-        </td>
-
-        <td>
-            {{ hora.actual.duracion_promedio|default:"—" }}
-        </td>
-
-        <td>
-            {{ hora.comparado.duracion_promedio|default:"—" }}
-        </td>
-
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-<hr>
-
-<a href="{% url 'analytics' %}">
-    ← Volver a Analytics
-</a>
-
+<main class="page comparacion">
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Comparación</h1>
+            <p class="page-subtitle">
+                Cara a cara, solo con las cagadas públicas de ambos.
+            </p>
+        </div>
+
+        <div class="page-actions">
+            <a href="{% url 'analytics' %}" class="btn btn-secondary">
+                ← Volver a Analítica
+            </a>
+        </div>
+    </header>
+
+    {# ===================== MARCADOR ===================== #}
+    <section class="duelo" aria-label="Marcador">
+
+        <div class="jugador jugador-yo{% if resultado == 'actual' %} is-ganador{% endif %}">
+            <span class="jugador-avatar">
+                {% if usuario_actual.foto %}
+                    <img src="{{ usuario_actual.foto.url }}" alt="">
+                {% else %}
+                    {{ usuario_actual.username|first|upper }}
+                {% endif %}
+
+                {% if resultado == 'actual' %}
+                    <span class="jugador-corona">👑</span>
+                {% endif %}
+            </span>
+            <span class="jugador-nombre">{{ usuario_actual.username }}</span>
+            <span class="jugador-etiqueta">Tú</span>
+        </div>
+
+        <div class="marcador">
+            <span class="marcador-vs">VS</span>
+
+            <span class="marcador-puntos">
+                <strong class="texto-yo">{{ puntos_actual }}</strong>
+                <span class="marcador-guion">–</span>
+                <strong class="texto-rival">{{ puntos_comparado }}</strong>
+            </span>
+
+            <span class="veredicto veredicto-{{ resultado }}">
+                {% if resultado == 'actual' %}
+                    🏆 ¡Vas ganando!
+                {% elif resultado == 'comparado' %}
+                    😤 {{ usuario_comparado.username }} te gana
+                {% else %}
+                    🤝 Empate técnico
+                {% endif %}
+            </span>
+
+            <span class="marcador-nota">Un punto por cada métrica ganada</span>
+        </div>
+
+        <div class="jugador jugador-rival{% if resultado == 'comparado' %} is-ganador{% endif %}">
+            <span class="jugador-avatar">
+                {% if usuario_comparado.foto %}
+                    <img src="{{ usuario_comparado.foto.url }}" alt="">
+                {% else %}
+                    {{ usuario_comparado.username|first|upper }}
+                {% endif %}
+
+                {% if resultado == 'comparado' %}
+                    <span class="jugador-corona">👑</span>
+                {% endif %}
+            </span>
+            <span class="jugador-nombre">{{ usuario_comparado.username }}</span>
+            <span class="jugador-etiqueta">Rival</span>
+        </div>
+
+    </section>
+
+    {% if not resumen_actual.total_cagadas or not resumen_comparado.total_cagadas %}
+        <p class="alert alert-info">
+            ℹ️
+            {% if not resumen_actual.total_cagadas and not resumen_comparado.total_cagadas %}
+                Ninguno de los dos tiene cagadas públicas todavía, así que no hay mucho que comparar.
+            {% elif not resumen_actual.total_cagadas %}
+                No tienes cagadas públicas: marca alguna como visible para competir de verdad.
+            {% else %}
+                {{ usuario_comparado.username }} aún no tiene cagadas públicas.
+            {% endif %}
+        </p>
+    {% endif %}
+
+    <nav class="analitica-nav" aria-label="Secciones de la comparación">
+        <a href="#resumen">📊 Resumen</a>
+        <a href="#fuertes">💪 Puntos fuertes</a>
+        <a href="#categorias">📂 Categorías</a>
+        <a href="#dias">📅 Días</a>
+        <a href="#horas">🕐 Horas</a>
+        <a href="#rival">🔄 Cambiar rival</a>
+    </nav>
+
+    {# ===================== RESUMEN ===================== #}
+    <section id="resumen" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📊</span>
+            <div>
+                <h2>Resumen general</h2>
+                <p>Métrica a métrica: 👑 marca quién se lleva el punto.</p>
+            </div>
+
+            <div class="leyenda">
+                <span class="leyenda-item leyenda-yo">Tú</span>
+                <span class="leyenda-item leyenda-rival">{{ usuario_comparado.username }}</span>
+            </div>
+        </div>
+
+        <div class="card duelo-lista">
+            {% for metrica in metricas_resumen %}
+                <div class="duelo-fila{% if metrica.ganador %} gana-{{ metrica.ganador }}{% endif %}{% if not metrica.puntua %} no-puntua{% endif %}">
+
+                    <div class="duelo-valor duelo-valor-yo">
+                        {% if metrica.ganador == 'actual' %}
+                            <span class="corona" title="Gana">👑</span>
+                        {% endif %}
+                        <span class="duelo-pill">
+                            {% include 'analytics/components/valor_metrica.html' with valor=metrica.actual tipo=metrica.tipo %}
+                        </span>
+                    </div>
+
+                    <div class="duelo-centro">
+                        <span class="duelo-nombre">{{ metrica.icono }} {{ metrica.nombre }}</span>
+                        <span class="duelo-pista">
+                            <span class="duelo-yo" style="--valor: {{ metrica.reparto }};"></span>
+                        </span>
+                        <span class="duelo-criterio">
+                            {% if metrica.ganador == 'empate' %}
+                                Empate · {{ metrica.criterio }}
+                            {% else %}
+                                {{ metrica.criterio }}
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="duelo-valor duelo-valor-rival">
+                        <span class="duelo-pill">
+                            {% include 'analytics/components/valor_metrica.html' with valor=metrica.comparado tipo=metrica.tipo %}
+                        </span>
+                        {% if metrica.ganador == 'comparado' %}
+                            <span class="corona" title="Gana">👑</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+
+    </section>
+
+    {# ===================== PUNTOS FUERTES ===================== #}
+    <section id="fuertes" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">💪</span>
+            <div>
+                <h2>Puntos fuertes</h2>
+                <p>En qué destaca cada uno y cuáles son sus hábitos.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+
+            <article class="card fuertes fuertes-yo">
+                <div class="fuertes-cabecera">
+                    <span class="jugador-avatar">
+                        {% if usuario_actual.foto %}
+                            <img src="{{ usuario_actual.foto.url }}" alt="">
+                        {% else %}
+                            {{ usuario_actual.username|first|upper }}
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>Tus puntos fuertes</h3>
+                        <p>{{ puntos_actual }} métrica{{ puntos_actual|pluralize }} ganada{{ puntos_actual|pluralize }}</p>
+                    </div>
+                </div>
+
+                {% if puntos_actual %}
+                    <ul class="fuertes-lista">
+                        {% for metrica in metricas_resumen %}
+                            {% if metrica.ganador == 'actual' %}
+                                <li>
+                                    <span class="fuerte-icono">{{ metrica.icono }}</span>
+                                    <div>
+                                        <strong>{{ metrica.criterio }}</strong>
+                                        <span>
+                                            {{ metrica.nombre }}:
+                                            {% include 'analytics/components/valor_metrica.html' with valor=metrica.actual tipo=metrica.tipo %}
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="fuertes-vacio">Esta vez no ganas en nada… ¡a entrenar! 💩</p>
+                {% endif %}
+
+                <div class="habitos">
+                    <div class="habito">
+                        <span>Día favorito</span>
+                        <strong>{{ perfil_actual.dia|default:"—" }}</strong>
+                    </div>
+                    <div class="habito">
+                        <span>Hora pico</span>
+                        <strong>{{ perfil_actual.hora|default:"—" }}</strong>
+                    </div>
+                    <div class="habito">
+                        <span>Categoría</span>
+                        <strong>{{ perfil_actual.categoria|default:"—" }}</strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card fuertes fuertes-rival">
+                <div class="fuertes-cabecera">
+                    <span class="jugador-avatar">
+                        {% if usuario_comparado.foto %}
+                            <img src="{{ usuario_comparado.foto.url }}" alt="">
+                        {% else %}
+                            {{ usuario_comparado.username|first|upper }}
+                        {% endif %}
+                    </span>
+                    <div>
+                        <h3>Puntos fuertes de {{ usuario_comparado.username }}</h3>
+                        <p>{{ puntos_comparado }} métrica{{ puntos_comparado|pluralize }} ganada{{ puntos_comparado|pluralize }}</p>
+                    </div>
+                </div>
+
+                {% if puntos_comparado %}
+                    <ul class="fuertes-lista">
+                        {% for metrica in metricas_resumen %}
+                            {% if metrica.ganador == 'comparado' %}
+                                <li>
+                                    <span class="fuerte-icono">{{ metrica.icono }}</span>
+                                    <div>
+                                        <strong>{{ metrica.criterio }}</strong>
+                                        <span>
+                                            {{ metrica.nombre }}:
+                                            {% include 'analytics/components/valor_metrica.html' with valor=metrica.comparado tipo=metrica.tipo %}
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="fuertes-vacio">No te gana en nada. ¡Bien hecho! 🎉</p>
+                {% endif %}
+
+                <div class="habitos">
+                    <div class="habito">
+                        <span>Día favorito</span>
+                        <strong>{{ perfil_comparado.dia|default:"—" }}</strong>
+                    </div>
+                    <div class="habito">
+                        <span>Hora pico</span>
+                        <strong>{{ perfil_comparado.hora|default:"—" }}</strong>
+                    </div>
+                    <div class="habito">
+                        <span>Categoría</span>
+                        <strong>{{ perfil_comparado.categoria|default:"—" }}</strong>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+    {# ===================== CATEGORÍAS ===================== #}
+    <section id="categorias" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📂</span>
+            <div>
+                <h2>Categorías cara a cara</h2>
+                <p>Qué porcentaje de sus cagadas dedica cada uno a cada categoría.</p>
+            </div>
+
+            <div class="leyenda">
+                <span class="leyenda-item leyenda-yo">Tú</span>
+                <span class="leyenda-item leyenda-rival">{{ usuario_comparado.username }}</span>
+            </div>
+        </div>
+
+        <div class="categorias-grid">
+            {% for categoria in comparacion_categorias %}
+                {% if categoria.actual.cantidad or categoria.comparado.cantidad %}
+                    <article class="card categoria-duelo{% if categoria.ganador_cantidad %} gana-{{ categoria.ganador_cantidad }}{% endif %}">
+
+                        <div class="card-header">
+                            <h3 class="card-title">{{ categoria.nombre }}</h3>
+
+                            {% if categoria.ganador_cantidad == 'actual' %}
+                                <span class="badge badge-yo">Más tuya</span>
+                            {% elif categoria.ganador_cantidad == 'comparado' %}
+                                <span class="badge badge-rival">Más de {{ usuario_comparado.username|truncatechars:12 }}</span>
+                            {% else %}
+                                <span class="badge">Empate</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="pareja">
+                            <div class="pareja-fila pareja-yo">
+                                <span class="pareja-nombre">Tú</span>
+                                <span class="barra-pista">
+                                    <span
+                                        class="barra"
+                                        style="--valor: {{ categoria.actual.porcentaje|floatformat:'0' }};"
+                                    ></span>
+                                </span>
+                                <strong>{{ categoria.actual.porcentaje|floatformat:0 }}%</strong>
+                            </div>
+
+                            <div class="pareja-fila pareja-rival">
+                                <span class="pareja-nombre">{{ usuario_comparado.username }}</span>
+                                <span class="barra-pista">
+                                    <span
+                                        class="barra"
+                                        style="--valor: {{ categoria.comparado.porcentaje|floatformat:'0' }};"
+                                    ></span>
+                                </span>
+                                <strong>{{ categoria.comparado.porcentaje|floatformat:0 }}%</strong>
+                            </div>
+                        </div>
+
+                        <table class="mini-tabla">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th class="th-yo">Tú</th>
+                                    <th class="th-rival">{{ usuario_comparado.username|truncatechars:10 }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Cagadas</th>
+                                    <td class="{% if categoria.ganador_cantidad == 'actual' %}gana-yo{% endif %}">
+                                        <span class="celda">{{ categoria.actual.cantidad }}</span>
+                                    </td>
+                                    <td class="{% if categoria.ganador_cantidad == 'comparado' %}gana-rival{% endif %}">
+                                        <span class="celda">{{ categoria.comparado.cantidad }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Duración</th>
+                                    <td class="{% if categoria.ganador_duracion == 'actual' %}gana-yo{% endif %}">
+                                        <span class="celda">{{ categoria.actual.duracion_promedio|duracion|default:"—" }}</span>
+                                    </td>
+                                    <td class="{% if categoria.ganador_duracion == 'comparado' %}gana-rival{% endif %}">
+                                        <span class="celda">{{ categoria.comparado.duracion_promedio|duracion|default:"—" }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Nota</th>
+                                    <td class="{% if categoria.ganador_calificacion == 'actual' %}gana-yo{% endif %}">
+                                        <span class="celda">{{ categoria.actual.calificacion_promedio|floatformat:1|default:"—" }}</span>
+                                    </td>
+                                    <td class="{% if categoria.ganador_calificacion == 'comparado' %}gana-rival{% endif %}">
+                                        <span class="celda">{{ categoria.comparado.calificacion_promedio|floatformat:1|default:"—" }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </article>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <p class="tabla-nota">
+            Solo se muestran las categorías que al menos uno de los dos ha usado.
+            En duración gana la más larga; en nota, la más alta.
+        </p>
+
+    </section>
+
+    {# ===================== DÍAS ===================== #}
+    <section id="dias" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📅</span>
+            <div>
+                <h2>Día a día</h2>
+                <p>El día se pinta del color de quien más cagó.</p>
+            </div>
+
+            <div class="leyenda">
+                <span class="leyenda-item leyenda-yo">Tú</span>
+                <span class="leyenda-item leyenda-rival">{{ usuario_comparado.username }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="mariposa-cabecera">
+                <span class="texto-yo">← Tú</span>
+                <span>Cagadas por día</span>
+                <span class="texto-rival">{{ usuario_comparado.username }} →</span>
+            </div>
+
+            <ul class="mariposa">
+                {% for dia in comparacion_dias %}
+                    <li class="mariposa-fila{% if dia.ganador_cantidad %} gana-{{ dia.ganador_cantidad }}{% endif %}">
+                        <span class="mariposa-valor">{{ dia.actual.cantidad }}</span>
+                        <span class="mariposa-pista mariposa-pista-yo">
+                            <span
+                                class="mariposa-barra"
+                                style="--valor: {% widthratio dia.actual.cantidad maximo_dia 100 %};"
+                            ></span>
+                        </span>
+                        <span class="mariposa-dia" title="{{ dia.nombre }}">{{ dia.nombre|slice:":3" }}</span>
+                        <span class="mariposa-pista mariposa-pista-rival">
+                            <span
+                                class="mariposa-barra"
+                                style="--valor: {% widthratio dia.comparado.cantidad maximo_dia 100 %};"
+                            ></span>
+                        </span>
+                        <span class="mariposa-valor">{{ dia.comparado.cantidad }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table tabla-duelo">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Día</th>
+                        <th colspan="2" class="grupo-inicio">Cagadas</th>
+                        <th colspan="2" class="grupo-inicio">Duración promedio</th>
+                        <th colspan="2" class="grupo-inicio">Calificación</th>
+                    </tr>
+                    <tr>
+                        <th class="th-yo grupo-inicio">Tú</th>
+                        <th class="th-rival">{{ usuario_comparado.username }}</th>
+                        <th class="th-yo grupo-inicio">Tú</th>
+                        <th class="th-rival">{{ usuario_comparado.username }}</th>
+                        <th class="th-yo grupo-inicio">Tú</th>
+                        <th class="th-rival">{{ usuario_comparado.username }}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for dia in comparacion_dias %}
+                        <tr>
+                            <td>{{ dia.nombre }}</td>
+
+                            <td class="grupo-inicio{% if dia.ganador_cantidad == 'actual' %} gana-yo{% endif %}">
+                                <span class="celda">{{ dia.actual.cantidad }}</span>
+                            </td>
+                            <td class="{% if dia.ganador_cantidad == 'comparado' %}gana-rival{% endif %}">
+                                <span class="celda">{{ dia.comparado.cantidad }}</span>
+                            </td>
+
+                            <td class="grupo-inicio{% if dia.ganador_duracion == 'actual' %} gana-yo{% endif %}">
+                                <span class="celda">{{ dia.actual.duracion_promedio|duracion|default:"—" }}</span>
+                            </td>
+                            <td class="{% if dia.ganador_duracion == 'comparado' %}gana-rival{% endif %}">
+                                <span class="celda">{{ dia.comparado.duracion_promedio|duracion|default:"—" }}</span>
+                            </td>
+
+                            <td class="grupo-inicio{% if dia.ganador_calificacion == 'actual' %} gana-yo{% endif %}">
+                                <span class="celda">{{ dia.actual.calificacion_promedio|floatformat:1|default:"—" }}</span>
+                            </td>
+                            <td class="{% if dia.ganador_calificacion == 'comparado' %}gana-rival{% endif %}">
+                                <span class="celda">{{ dia.comparado.calificacion_promedio|floatformat:1|default:"—" }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="tabla-nota">
+            Cagadas: gana quien tiene más · Duración: gana la más larga ·
+            Calificación: gana la más alta.
+        </p>
+
+    </section>
+
+    {# ===================== HORAS ===================== #}
+    <section id="horas" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">🕐</span>
+            <div>
+                <h2>Hora a hora</h2>
+                <p>Pasa el ratón por una hora para ver los números exactos.</p>
+            </div>
+
+            <div class="leyenda">
+                <span class="leyenda-item leyenda-yo">Tú</span>
+                <span class="leyenda-item leyenda-rival">{{ usuario_comparado.username }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <ol class="columnas">
+                {% for hora in comparacion_horas %}
+                    <li
+                        class="columna"
+                        title="{{ hora.hora|stringformat:'02d' }}:00 · Tú: {{ hora.actual.cantidad }} · {{ usuario_comparado.username }}: {{ hora.comparado.cantidad }}"
+                    >
+                        <span class="columna-pista columna-pista-doble">
+                            <span
+                                class="columna-barra columna-yo"
+                                style="--valor: {% widthratio hora.actual.cantidad maximo_hora 100 %};"
+                            ></span>
+                            <span
+                                class="columna-barra columna-rival"
+                                style="--valor: {% widthratio hora.comparado.cantidad maximo_hora 100 %};"
+                            ></span>
+                        </span>
+                        <span class="columna-etiqueta">{{ hora.hora }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+
+            <div class="columnas-leyenda">
+                <span>🌙 Madrugada</span>
+                <span>☀️ Mediodía</span>
+                <span>🌙 Noche</span>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table tabla-duelo">
+                <thead>
+                    <tr>
+                        <th rowspan="2">Hora</th>
+                        <th colspan="2" class="grupo-inicio">Cagadas</th>
+                        <th colspan="2" class="grupo-inicio">Duración promedio</th>
+                    </tr>
+                    <tr>
+                        <th class="th-yo grupo-inicio">Tú</th>
+                        <th class="th-rival">{{ usuario_comparado.username }}</th>
+                        <th class="th-yo grupo-inicio">Tú</th>
+                        <th class="th-rival">{{ usuario_comparado.username }}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for hora in comparacion_horas %}
+                        {% if hora.actual.cantidad or hora.comparado.cantidad %}
+                            <tr>
+                                <td>{{ hora.hora|stringformat:"02d" }}:00</td>
+
+                                <td class="grupo-inicio{% if hora.ganador_cantidad == 'actual' %} gana-yo{% endif %}">
+                                    <span class="celda">{{ hora.actual.cantidad }}</span>
+                                </td>
+                                <td class="{% if hora.ganador_cantidad == 'comparado' %}gana-rival{% endif %}">
+                                    <span class="celda">{{ hora.comparado.cantidad }}</span>
+                                </td>
+
+                                <td class="grupo-inicio{% if hora.ganador_duracion == 'actual' %} gana-yo{% endif %}">
+                                    <span class="celda">{{ hora.actual.duracion_promedio|duracion|default:"—" }}</span>
+                                </td>
+                                <td class="{% if hora.ganador_duracion == 'comparado' %}gana-rival{% endif %}">
+                                    <span class="celda">{{ hora.comparado.duracion_promedio|duracion|default:"—" }}</span>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="tabla-nota">Solo las horas en las que al menos uno de los dos registró algo.</p>
+
+    </section>
+
+    {# ===================== CAMBIAR RIVAL ===================== #}
+    <section id="rival" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">🔄</span>
+            <div>
+                <h2>Cambiar de rival</h2>
+                <p>Compárate con otra persona de la comunidad.</p>
+            </div>
+        </div>
+
+        <div class="card comparar-card">
+            <div>
+                <h3>¿Otro duelo?</h3>
+                <p>Elige a alguien más y mide tus estadísticas públicas contra las suyas.</p>
+            </div>
+
+            <div>
+                <form id="form-comparacion" class="comparar-form">
+                    <label for="usuario-comparacion" class="sr-only">Usuario</label>
+
+                    <select id="usuario-comparacion" class="form-control">
+                        <option value="">Selecciona un usuario</option>
+
+                        {% for usuario in usuarios_comparables %}
+                            <option
+                                value="{% url 'analytics-comparacion' usuario.id %}"
+                                {% if usuario.id == usuario_comparado.id %}selected{% endif %}
+                            >
+                                {{ usuario.username }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button type="submit" class="btn btn-primary">
+                        Comparar
+                    </button>
+                </form>
+
+                <p
+                    id="aviso-comparacion"
+                    class="alert alert-warning comparar-aviso"
+                    role="alert"
+                    hidden
+                >
+                    ⚠️ Primero elige un usuario de la lista.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/analytics.js' %}"></script>
 {% endblock %}

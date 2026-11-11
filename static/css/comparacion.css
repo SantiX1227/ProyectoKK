@@ -1,0 +1,928 @@
+/* static/css/comparacion.css
+   ==========================================================================
+   Comparación entre usuarios (Fase E). Se carga DESPUÉS de analytics.css
+   y reutiliza su estructura (navegación, secciones, columnas, comparar-card).
+   --------------------------------------------------------------------------
+   Código de color: TÚ = caramelo (--yo) · RIVAL = verde azulado (--rival).
+   El que gana una métrica o una celda se pinta con su color.
+   --------------------------------------------------------------------------
+   1. Colores de cada lado y leyenda
+   2. Marcador (cabecera del duelo)
+   3. Filas de duelo (resumen)
+   4. Puntos fuertes
+   5. Categorías cara a cara
+   6. Gráfico mariposa (días)
+   7. Columnas dobles (horas)
+   8. Tablas de duelo
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Colores de cada lado y leyenda
+   ========================================================================== */
+
+.comparacion {
+  --yo: #b5541c;
+  --yo-soft: #fcefe4;
+  --yo-borde: #f1cdb2;
+  --gradiente-yo: linear-gradient(135deg, #b5541c 0%, #e08a2c 100%);
+
+  --rival: #0f766e;
+  --rival-soft: #e0f2ef;
+  --rival-borde: #b3e0d8;
+  --gradiente-rival: linear-gradient(135deg, #0f766e 0%, #2bb5a5 100%);
+}
+
+.texto-yo    { color: var(--yo); }
+.texto-rival { color: var(--rival); }
+
+.comparacion .seccion-cabecera {
+  flex-wrap: wrap;
+}
+
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.leyenda-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  font-weight: 700;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leyenda-item::before {
+  content: "";
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gradiente-yo);
+}
+
+.leyenda-rival::before {
+  background: var(--gradiente-rival);
+}
+
+
+/* ==========================================================================
+   2. Marcador
+   ========================================================================== */
+
+.duelo {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 2.25rem 2rem 2rem;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background:
+    linear-gradient(100deg, var(--yo-soft) 0%, var(--surface) 38%, var(--surface) 62%, var(--rival-soft) 100%);
+  box-shadow: var(--shadow-md);
+}
+
+/* Franja de color arriba: mitad de cada uno */
+.duelo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #b5541c 0%, #e08a2c 50%, #2bb5a5 50%, #0f766e 100%);
+}
+
+.jugador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+  text-align: center;
+  transition: opacity var(--transition);
+}
+
+.jugador-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 4px solid var(--surface);
+  background: var(--gradiente-yo);
+  box-shadow: 0 0 0 3px var(--yo), var(--shadow-md);
+  color: #ffffff;
+  font-size: 2.1rem;
+  font-weight: 800;
+}
+
+.jugador-rival .jugador-avatar {
+  background: var(--gradiente-rival);
+  box-shadow: 0 0 0 3px var(--rival), var(--shadow-md);
+}
+
+.jugador-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.jugador-corona {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-14deg);
+  font-size: 1.9rem;
+  filter: drop-shadow(0 3px 4px rgba(60, 35, 15, 0.25));
+  animation: corona-flotar 2.4s ease-in-out infinite;
+}
+
+.jugador-nombre {
+  max-width: 100%;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.jugador-etiqueta {
+  padding: 0.15rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background-color: var(--yo-soft);
+  color: var(--yo);
+}
+
+.jugador-rival .jugador-etiqueta {
+  background-color: var(--rival-soft);
+  color: var(--rival);
+}
+
+/* El que va ganando se agranda; el otro se apaga un poco */
+.jugador.is-ganador .jugador-avatar {
+  transform: scale(1.06);
+}
+
+.jugador-yo.is-ganador .jugador-avatar {
+  box-shadow: 0 0 0 3px var(--yo), 0 0 0 10px rgba(181, 84, 28, 0.15), var(--shadow-lg);
+}
+
+.jugador-rival.is-ganador .jugador-avatar {
+  box-shadow: 0 0 0 3px var(--rival), 0 0 0 10px rgba(15, 118, 110, 0.15), var(--shadow-lg);
+}
+
+.duelo:has(.is-ganador) .jugador:not(.is-ganador) {
+  opacity: 0.72;
+}
+
+.marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.marcador-vs {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+}
+
+.marcador-puntos {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 3.6rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.marcador-guion {
+  color: var(--border-strong);
+}
+
+.veredicto {
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background-color: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.veredicto-actual {
+  background: var(--gradiente-yo);
+  color: #ffffff;
+  box-shadow: 0 8px 18px -8px rgba(181, 84, 28, 0.6);
+}
+
+.veredicto-comparado {
+  background: var(--gradiente-rival);
+  color: #ffffff;
+  box-shadow: 0 8px 18px -8px rgba(15, 118, 110, 0.6);
+}
+
+.marcador-nota {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .duelo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 2rem 1.25rem 1.5rem;
+    gap: 1.25rem 1rem;
+  }
+
+  .marcador {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .jugador-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 1.6rem;
+  }
+
+  .jugador-nombre {
+    font-size: 1.05rem;
+  }
+
+  .marcador-puntos {
+    font-size: 2.8rem;
+  }
+}
+
+@keyframes corona-flotar {
+  0%, 100% { transform: translateX(-50%) rotate(-14deg) translateY(0); }
+  50%      { transform: translateX(-50%) rotate(-10deg) translateY(-4px); }
+}
+
+
+/* ==========================================================================
+   3. Filas de duelo (resumen)
+   ========================================================================== */
+
+.duelo-lista {
+  padding: 0.5rem 1.75rem;
+}
+
+.duelo-fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.duelo-fila:last-child {
+  border-bottom: none;
+}
+
+.duelo-valor {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.duelo-valor-yo {
+  justify-content: flex-end;
+}
+
+.duelo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.duelo-pill small {
+  font-size: 0.8rem;
+  color: #f59e0b;
+}
+
+/* Ganador de la fila: su valor se pinta con su color */
+.gana-actual .duelo-valor-yo .duelo-pill {
+  background-color: var(--yo-soft);
+  color: var(--yo);
+  box-shadow: inset 0 0 0 1.5px var(--yo-borde);
+}
+
+.gana-comparado .duelo-valor-rival .duelo-pill {
+  background-color: var(--rival-soft);
+  color: var(--rival);
+  box-shadow: inset 0 0 0 1.5px var(--rival-borde);
+}
+
+.gana-empate .duelo-pill {
+  color: var(--text-main);
+}
+
+.corona {
+  font-size: 1.05rem;
+}
+
+.duelo-centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  text-align: center;
+}
+
+.duelo-nombre {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Barra partida: izquierda = tú, derecha = rival */
+.duelo-pista {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--gradiente-rival);
+  overflow: hidden;
+}
+
+.duelo-yo {
+  --valor: 50;
+  display: block;
+  height: 100%;
+  width: calc(var(--valor) * 1%);
+  background: var(--gradiente-yo);
+  box-shadow: 3px 0 0 var(--surface);
+  transform-origin: left;
+  animation: barra-crecer 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Marca del centro (50 %) para ver de un vistazo quién supera a quién */
+.duelo-pista::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: 50%;
+  width: 2px;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.duelo-criterio {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.gana-actual .duelo-criterio    { color: var(--yo); }
+.gana-comparado .duelo-criterio { color: var(--rival); }
+
+/* Métrica que no puntúa: más discreta */
+.duelo-fila.no-puntua .duelo-pista {
+  opacity: 0.45;
+}
+
+@media (max-width: 640px) {
+  .duelo-lista {
+    padding: 0.25rem 1.1rem;
+  }
+
+  .duelo-fila {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem 1rem;
+  }
+
+  .duelo-centro {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .duelo-valor-yo {
+    justify-content: flex-start;
+  }
+
+  .duelo-valor-rival {
+    justify-content: flex-end;
+  }
+
+  .duelo-pill {
+    font-size: 0.95rem;
+  }
+}
+
+
+/* ==========================================================================
+   4. Puntos fuertes
+   ========================================================================== */
+
+.fuertes {
+  border-width: 1.5px;
+}
+
+.fuertes-yo {
+  border-color: var(--yo-borde);
+  background: linear-gradient(180deg, var(--yo-soft) 0%, var(--surface) 160px);
+}
+
+.fuertes-rival {
+  border-color: var(--rival-borde);
+  background: linear-gradient(180deg, var(--rival-soft) 0%, var(--surface) 160px);
+}
+
+.fuertes-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.1rem;
+}
+
+.fuertes-cabecera .jugador-avatar {
+  width: 46px;
+  height: 46px;
+  border-width: 2px;
+  font-size: 1.1rem;
+  box-shadow: 0 0 0 2px var(--yo);
+}
+
+.fuertes-rival .fuertes-cabecera .jugador-avatar {
+  background: var(--gradiente-rival);
+  box-shadow: 0 0 0 2px var(--rival);
+}
+
+.fuertes-cabecera h3 {
+  font-size: 1.1rem;
+}
+
+.fuertes-cabecera p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.fuertes-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.fuertes-lista li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.85rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.fuerte-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background-color: var(--yo-soft);
+  font-size: 1.1rem;
+}
+
+.fuertes-rival .fuerte-icono {
+  background-color: var(--rival-soft);
+}
+
+.fuertes-lista strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.fuertes-yo .fuertes-lista strong    { color: var(--yo); }
+.fuertes-rival .fuertes-lista strong { color: var(--rival); }
+
+.fuertes-lista span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.fuertes-vacio {
+  padding: 1.1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface);
+}
+
+/* Hábitos: día favorito, hora pico, categoría favorita */
+.habitos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+  padding-top: 1.1rem;
+  border-top: 1px dashed var(--border-strong);
+}
+
+.habito {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-alt);
+}
+
+.habito span {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.habito strong {
+  font-size: 0.88rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 420px) {
+  .habitos {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   5. Categorías cara a cara
+   ========================================================================== */
+
+.categoria-duelo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.categoria-duelo .card-header {
+  margin-bottom: 0;
+}
+
+/* Borde superior del color de quien la usa más */
+.categoria-duelo.gana-actual    { border-top: 4px solid var(--yo); }
+.categoria-duelo.gana-comparado { border-top: 4px solid var(--rival); }
+
+.badge-yo    { background-color: var(--yo-soft);    color: var(--yo); }
+.badge-rival { background-color: var(--rival-soft); color: var(--rival); }
+
+.pareja {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.pareja-fila {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) 2.75rem;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+}
+
+.pareja-nombre {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pareja-fila strong {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.pareja-yo .pareja-nombre,
+.pareja-yo strong    { color: var(--yo); }
+
+.pareja-rival .pareja-nombre,
+.pareja-rival strong { color: var(--rival); }
+
+.pareja-yo .barra    { background: var(--gradiente-yo); }
+.pareja-rival .barra { background: var(--gradiente-rival); }
+
+
+/* ==========================================================================
+   6. Gráfico mariposa (cagadas por día)
+   ========================================================================== */
+
+.mariposa-cabecera {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.mariposa-cabecera span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mariposa-cabecera span:nth-child(2) {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.mariposa-cabecera span:last-child {
+  text-align: right;
+}
+
+.mariposa {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.mariposa-fila {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) 3.5rem minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mariposa-valor {
+  font-size: 0.88rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--yo);
+  text-align: right;
+}
+
+.mariposa-valor:last-child {
+  color: var(--rival);
+  text-align: left;
+}
+
+.mariposa-dia {
+  padding: 0.2rem 0;
+  border-radius: var(--radius-full);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  background-color: var(--surface-alt);
+}
+
+/* El día lo "gana" quien cagó más: la etiqueta toma su color */
+.mariposa-fila.gana-actual .mariposa-dia {
+  background-color: var(--yo-soft);
+  color: var(--yo);
+}
+
+.mariposa-fila.gana-comparado .mariposa-dia {
+  background-color: var(--rival-soft);
+  color: var(--rival);
+}
+
+.mariposa-pista {
+  display: flex;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-alt);
+  overflow: hidden;
+}
+
+.mariposa-pista-yo {
+  justify-content: flex-end;
+}
+
+.mariposa-barra {
+  --valor: 0;
+  display: block;
+  height: 100%;
+  width: calc(var(--valor) * 1%);
+  border-radius: inherit;
+  animation: barra-crecer 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mariposa-pista-yo .mariposa-barra {
+  background: linear-gradient(270deg, #b5541c 0%, #e08a2c 100%);
+  transform-origin: right;
+}
+
+.mariposa-pista-rival .mariposa-barra {
+  background: var(--gradiente-rival);
+  transform-origin: left;
+}
+
+@media (max-width: 600px) {
+  .mariposa-fila {
+    grid-template-columns: 1.5rem minmax(0, 1fr) 2.75rem minmax(0, 1fr) 1.5rem;
+    gap: 0.4rem;
+  }
+}
+
+
+/* ==========================================================================
+   7. Columnas dobles (cagadas por hora)
+   ========================================================================== */
+
+.columna-pista-doble {
+  gap: 2px;
+  padding: 0 1px;
+}
+
+.columna-pista-doble .columna-barra {
+  flex: 1;
+  width: auto;
+  border-radius: 4px 4px 0 0;
+}
+
+.columna-pista-doble .columna-yo {
+  background: linear-gradient(0deg, #b5541c 0%, #e08a2c 100%);
+}
+
+.columna-pista-doble .columna-rival {
+  background: linear-gradient(0deg, #0f766e 0%, #2bb5a5 100%);
+}
+
+
+/* ==========================================================================
+   8. Tablas de duelo
+   ========================================================================== */
+
+.tabla-duelo {
+  font-size: 0.9rem;
+}
+
+.tabla-duelo th,
+.tabla-duelo td {
+  text-align: center;
+}
+
+.tabla-duelo th:first-child,
+.tabla-duelo td:first-child {
+  text-align: left;
+  padding-left: 1.25rem;
+}
+
+.tabla-duelo td:first-child {
+  font-weight: 700;
+}
+
+/* Fila de grupos (Cagadas / Duración / Calificación) */
+.tabla-duelo thead tr:first-child th {
+  padding-bottom: 0.4rem;
+  border-bottom: none;
+  color: var(--text-main);
+}
+
+/* Fila con los nombres de cada lado */
+.tabla-duelo .th-yo,
+.tabla-duelo .th-rival {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  font-size: 0.7rem;
+  max-width: 9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabla-duelo .th-yo {
+  color: var(--yo);
+  background-color: var(--yo-soft);
+}
+
+.tabla-duelo .th-rival {
+  color: var(--rival);
+  background-color: var(--rival-soft);
+}
+
+/* Separador vertical entre grupos */
+.tabla-duelo .grupo-inicio {
+  border-left: 1px solid var(--border);
+}
+
+.tabla-duelo tbody tr:nth-child(even) {
+  background-color: #fdfaf6;
+}
+
+.celda {
+  display: inline-block;
+  min-width: 3.75rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+/* Celda ganadora: píldora del color de quien gana */
+.gana-yo .celda {
+  background-color: var(--yo-soft);
+  color: var(--yo);
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1.5px var(--yo-borde);
+}
+
+.gana-rival .celda {
+  background-color: var(--rival-soft);
+  color: var(--rival);
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1.5px var(--rival-borde);
+}
+
+.tabla-duelo .sin-dato,
+.mini-tabla .sin-dato {
+  color: #c9bcaf;
+}
+
+/* Mini tabla dentro de cada tarjeta de categoría */
+.mini-tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+  font-size: 0.85rem;
+}
+
+.mini-tabla th {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-align: left;
+  font-weight: 700;
+}
+
+.mini-tabla thead th {
+  text-align: center;
+  padding-bottom: 0.2rem;
+}
+
+.mini-tabla thead th.th-yo    { color: var(--yo); }
+.mini-tabla thead th.th-rival { color: var(--rival); }
+
+.mini-tabla td {
+  text-align: center;
+}
+
+.mini-tabla .celda {
+  min-width: 0;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.82rem;
+}
+
+.tabla-nota {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

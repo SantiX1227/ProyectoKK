@@ -1,0 +1,1 @@
+{% load formato %}{% if valor is None %}<span class="sin-dato">—</span>{% elif tipo == 'duracion' %}{{ valor|duracion }}{% elif tipo == 'nota' %}{{ valor|floatformat:1 }} <small>★</small>{% else %}{{ valor }}{% endif %}

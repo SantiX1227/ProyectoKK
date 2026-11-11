@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import (
     Count,
@@ -844,6 +846,161 @@ def analytics(request):
 
 
 # =========================================================
+# UTILIDADES DE LA COMPARACIÓN
+# =========================================================
+
+def _a_numero(valor):
+    """
+    Convierte timedelta, Decimal o int en un número comparable.
+    None se mantiene como None (sin datos).
+    """
+
+    if valor is None:
+        return None
+
+    if isinstance(valor, timedelta):
+        return valor.total_seconds()
+
+    return float(valor)
+
+
+def _ganador(valor_actual, valor_comparado, mayor_gana=True):
+    """
+    Devuelve 'actual', 'comparado', 'empate' o None (ninguno tiene datos).
+    Si solo uno tiene datos, gana ese.
+    """
+
+    actual = _a_numero(valor_actual)
+    comparado = _a_numero(valor_comparado)
+
+    if actual is None and comparado is None:
+        return None
+
+    if comparado is None:
+        return 'actual'
+
+    if actual is None:
+        return 'comparado'
+
+    if actual == comparado:
+        return 'empate'
+
+    if (actual > comparado) == mayor_gana:
+        return 'actual'
+
+    return 'comparado'
+
+
+def _ganador_parejo(valor_actual, valor_comparado, mayor_gana=True):
+    """
+    Como _ganador, pero solo hay ganador si ambos tienen datos
+    (para días, horas o categorías donde uno no participó).
+    """
+
+    if valor_actual is None or valor_comparado is None:
+        return None
+
+    return _ganador(
+        valor_actual,
+        valor_comparado,
+        mayor_gana
+    )
+
+
+def _reparto(valor_actual, valor_comparado):
+    """
+    Porcentaje (0-100) de la barra de duelo que corresponde
+    al usuario actual. 50 si ninguno tiene datos.
+    """
+
+    actual = _a_numero(valor_actual) or 0
+    comparado = _a_numero(valor_comparado) or 0
+
+    total = actual + comparado
+
+    if not total:
+        return 50
+
+    return round(
+        actual / total * 100
+    )
+
+
+def _metrica(
+    icono,
+    nombre,
+    tipo,
+    valor_actual,
+    valor_comparado,
+    criterio,
+    mayor_gana=True,
+    puntua=True
+):
+    """
+    Una fila del duelo: valores de ambos, quién gana y el reparto de la barra.
+    tipo: 'numero', 'duracion' o 'nota' (cómo se muestra en la plantilla).
+    """
+
+    if puntua:
+        ganador = _ganador(
+            valor_actual,
+            valor_comparado,
+            mayor_gana
+        )
+    else:
+        ganador = None
+
+    return {
+        'icono': icono,
+        'nombre': nombre,
+        'tipo': tipo,
+        'actual': valor_actual,
+        'comparado': valor_comparado,
+        'criterio': criterio,
+        'puntua': puntua,
+        'ganador': ganador,
+        'reparto': _reparto(
+            valor_actual,
+            valor_comparado
+        ),
+    }
+
+
+def _favorito(elementos, lado):
+    """
+    Elemento (día, hora o categoría) con más cagadas para un lado
+    ('actual' o 'comparado'). None si ese lado no tiene ninguna.
+    """
+
+    mejor = max(
+        elementos,
+        key=lambda elemento: elemento[lado]['cantidad'],
+        default=None
+    )
+
+    if mejor is None or not mejor[lado]['cantidad']:
+        return None
+
+    return mejor
+
+
+def _perfil(comparacion_dias, comparacion_horas, comparacion_categorias, lado):
+    """
+    Día favorito, hora pico y categoría favorita de un lado.
+    """
+
+    dia = _favorito(comparacion_dias, lado)
+    hora = _favorito(comparacion_horas, lado)
+    categoria = _favorito(comparacion_categorias, lado)
+
+    return {
+        'dia': dia['nombre'] if dia else None,
+        'hora': f"{hora['hora']:02d}:00" if hora else None,
+        'categoria': categoria['nombre'] if categoria else None,
+    }
+
+
+# =========================================================
 # FASE E - ANÁLISIS DE COMPARACIÓN ENTRE USUARIOS
 # =========================================================
 @login_required
@@ -1129,6 +1286,145 @@ def analytics_comparacion(request, usuario_id):
     )
 
     # ==========================================
+    # DUELO: GANADORES Y MARCADOR
+    # ==========================================
+
+    metricas_resumen = [
+        _metrica(
+            '📊',
+            'Cagadas públicas',
+            'numero',
+            resumen_actual['total_cagadas'],
+            resumen_comparado['total_cagadas'],
+            criterio='Más constante',
+        ),
+        _metrica(
+            '⏱️',
+            'Duración promedio',
+            'duracion',
+            resumen_actual['duracion_promedio'],
+            resumen_comparado['duracion_promedio'],
+            criterio='Más paciente',
+        ),
+        _metrica(
+            '🐢',
+            'Duración máxima',
+            'duracion',
+            resumen_actual['duracion_maxima'],
+            resumen_comparado['duracion_maxima'],
+            criterio='Récord más largo',
+        ),
+        _metrica(
+            '⭐',
+            'Calificación promedio',
+            'nota',
+            resumen_actual['calificacion_promedio'],
+            resumen_comparado['calificacion_promedio'],
+            criterio='Mejor calidad',
+        ),
+        _metrica(
+            '📍',
+            'Ubicaciones usadas',
+            'numero',
+            ubicaciones_actual,
+            ubicaciones_comparado,
+            criterio='Más explorador',
+        ),
+        _metrica(
+            '🕰️',
+            'Tiempo total',
+            'duracion',
+            resumen_actual['duracion_total'],
+            resumen_comparado['duracion_total'],
+            criterio='Solo informativo',
+            puntua=False,
+        ),
+    ]
+
+    puntos_actual = sum(
+        1
+        for metrica in metricas_resumen
+        if metrica['ganador'] == 'actual'
+    )
+
+    puntos_comparado = sum(
+        1
+        for metrica in metricas_resumen
+        if metrica['ganador'] == 'comparado'
+    )
+
+    if puntos_actual > puntos_comparado:
+        resultado = 'actual'
+    elif puntos_comparado > puntos_actual:
+        resultado = 'comparado'
+    else:
+        resultado = 'empate'
+
+    # Ganador de cada celda de las tablas (para colorearla)
+    for categoria in comparacion_categorias:
+        categoria['ganador_cantidad'] = _ganador(
+            categoria['actual']['cantidad'],
+            categoria['comparado']['cantidad']
+        )
+        categoria['ganador_duracion'] = _ganador_parejo(
+            categoria['actual']['duracion_promedio'],
+            categoria['comparado']['duracion_promedio']
+        )
+        categoria['ganador_calificacion'] = _ganador_parejo(
+            categoria['actual']['calificacion_promedio'],
+            categoria['comparado']['calificacion_promedio']
+        )
+
+    for dia in comparacion_dias:
+        dia['ganador_cantidad'] = _ganador(
+            dia['actual']['cantidad'],
+            dia['comparado']['cantidad']
+        )
+        dia['ganador_duracion'] = _ganador_parejo(
+            dia['actual']['duracion_promedio'],
+            dia['comparado']['duracion_promedio']
+        )
+        dia['ganador_calificacion'] = _ganador_parejo(
+            dia['actual']['calificacion_promedio'],
+            dia['comparado']['calificacion_promedio']
+        )
+
+    for hora in comparacion_horas:
+        hora['ganador_cantidad'] = _ganador(
+            hora['actual']['cantidad'],
+            hora['comparado']['cantidad']
+        )
+        hora['ganador_duracion'] = _ganador_parejo(
+            hora['actual']['duracion_promedio'],
+            hora['comparado']['duracion_promedio']
+        )
+
+    # Máximos para escalar los gráficos (el mismo para ambos usuarios)
+    maximo_dia = max(
+        max(dia['actual']['cantidad'], dia['comparado']['cantidad'])
+        for dia in comparacion_dias
+    )
+
+    maximo_hora = max(
+        max(hora['actual']['cantidad'], hora['comparado']['cantidad'])
+        for hora in comparacion_horas
+    )
+
+    perfil_actual = _perfil(
+        comparacion_dias,
+        comparacion_horas,
+        comparacion_categorias,
+        'actual'
+    )
+
+    perfil_comparado = _perfil(
+        comparacion_dias,
+        comparacion_horas,
+        comparacion_categorias,
+        'comparado'
+    )
+
+    # ==========================================
     # CONTEXTO COMPARACIÓN
     # ==========================================
 
@@ -1148,6 +1444,17 @@ def analytics_comparacion(request, usuario_id):
         'ubicaciones_comparado': ubicaciones_comparado,
 
         'usuarios_comparables': usuarios_comparables,
+
+        'metricas_resumen': metricas_resumen,
+        'puntos_actual': puntos_actual,
+        'puntos_comparado': puntos_comparado,
+        'resultado': resultado,
+
+        'maximo_dia': maximo_dia,
+        'maximo_hora': maximo_hora,
+
+        'perfil_actual': perfil_actual,
+        'perfil_comparado': perfil_comparado,
     }
 
     return render(
