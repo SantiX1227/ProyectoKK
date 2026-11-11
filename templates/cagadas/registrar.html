@@ -90,6 +90,39 @@
         </section>
     </form>
 
+    {# Confirmación de reiniciar (la abre cagadas.js) #}
+    <dialog
+        class="modal-aviso"
+        id="modal-reiniciar"
+        aria-labelledby="modal-reiniciar-titulo"
+    >
+        <div class="modal-aviso-contenido">
+
+            <div class="modal-aviso-item is-warning">
+                <span class="modal-aviso-icono" aria-hidden="true">⚠️</span>
+
+                <h2 class="modal-aviso-titulo" id="modal-reiniciar-titulo">
+                    ¿Reiniciar la cagada?
+                </h2>
+
+                <p class="modal-aviso-texto">
+                    Se perderá el tiempo que llevas registrado.
+                </p>
+            </div>
+
+            <form method="dialog" class="modal-aviso-acciones">
+                <button type="submit" value="reiniciar" class="btn btn-danger">
+                    Sí, reiniciar
+                </button>
+
+                <button type="submit" value="cancelar" class="btn btn-secondary" autofocus>
+                    Cancelar
+                </button>
+            </form>
+
+        </div>
+    </dialog>
+
 </main>
 {% endblock %}
 

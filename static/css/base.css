@@ -921,6 +921,51 @@ input[type="radio"] {
   margin-bottom: 0;
 }
 
+/* Campo de foto con imagen actual (ClearableFileInput en {{ form.as_p }}).
+   Django lo pinta como texto suelto:
+   "Actualmente: <a> ☐ Limpiar <br> Modificar: <input type=file>".
+   Lleva un checkbox, así que la regla de arriba lo ponía todo en una
+   fila; aquí se saca del flex para que cada parte vaya en su línea:
+     Foto de perfil
+     Actualmente: archivo.png  ☐ Limpiar
+     Modificar:
+     [Seleccionar archivo] */
+.django-as-p p:has(> input[type="file"]) {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+}
+
+.django-as-p p:has(> input[type="file"]) > label:first-child {
+  display: block;
+  margin-bottom: 0.3rem;
+  line-height: 1.5;
+}
+
+.django-as-p p:has(> input[type="file"]) > a {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.django-as-p p:has(> input[type="file"]) > input[type="checkbox"] {
+  margin: 0 0.35rem 0 0.75rem;
+  vertical-align: -0.2em;
+}
+
+.django-as-p p:has(> input[type="file"]) > input[type="checkbox"] + label {
+  display: inline;
+  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.django-as-p p:has(> input[type="file"]) > input[type="file"] {
+  display: block;
+  margin-top: 0.3rem;
+}
+
 /* Selector de color */
 input[type="color"] {
   width: 64px;
@@ -1611,7 +1656,11 @@ html:has(.modal-aviso:modal) {
   overflow-wrap: anywhere;
 }
 
+/* Uno o varios botones, uno debajo de otro (como .confirm-actions) */
 .modal-aviso-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
   margin-top: 1.5rem;
 }
 

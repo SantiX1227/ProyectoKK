@@ -255,16 +255,48 @@ document.addEventListener('DOMContentLoaded', function () {
         guardarEstado(inicioTimestamp, ahora.getTime());
     });
 
-    btnReiniciar.addEventListener('click', function () {
-        const confirmar = confirm(
-            '¿Seguro que quieres reiniciar la cagada? Se perderá el tiempo registrado actualmente.'
-        );
+    // Reiniciar pide confirmación con un modal propio (#modal-reiniciar).
+    // Si el navegador no soporta <dialog>, se usa el confirm() de siempre.
+    const modalReiniciar = document.getElementById('modal-reiniciar');
 
-        if (confirmar) {
-            borrarEstado();
-            mostrarSinIniciar();
+    function reiniciar() {
+        borrarEstado();
+        mostrarSinIniciar();
+    }
+
+    btnReiniciar.addEventListener('click', function () {
+        if (!modalReiniciar || typeof modalReiniciar.showModal !== 'function') {
+            const confirmar = confirm(
+                '¿Seguro que quieres reiniciar la cagada? Se perderá el tiempo registrado actualmente.'
+            );
+
+            if (confirmar) {
+                reiniciar();
+            }
+
+            return;
         }
+
+        modalReiniciar.returnValue = '';
+        modalReiniciar.showModal();
     });
+
+    if (modalReiniciar) {
+        // Al cerrarse: solo reinicia si se pulsó "Sí, reiniciar"
+        // (Esc, "Cancelar" o tocar fuera no hacen nada)
+        modalReiniciar.addEventListener('close', function () {
+            if (modalReiniciar.returnValue === 'reiniciar') {
+                reiniciar();
+            }
+        });
+
+        // Tocar el fondo, fuera del recuadro, cierra sin reiniciar
+        modalReiniciar.addEventListener('click', function (evento) {
+            if (evento.target === modalReiniciar) {
+                modalReiniciar.close('cancelar');
+            }
+        });
+    }
 
     // Solo el botón "Registrar cagada" borra el estado guardado.
     // Si el servidor rechaza el formulario, la página vuelve con
