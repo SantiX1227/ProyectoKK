@@ -27,16 +27,17 @@ document.addEventListener('DOMContentLoaded', function () {
         scrollWheelZoom: false
     });
 
-    // Con ratón, la rueda solo hace zoom después de hacer clic en el
-    // mapa (así no "atrapa" el desplazamiento de la página)
-    mapa.on('click', function () {
+    // Con ratón, la rueda solo hace zoom cuando ya estás usando el mapa
+    // (clic, empezar a arrastrar o llegar con el teclado). Así, al bajar
+    // por la página con la rueda, el mapa no "atrapa" el desplazamiento.
+    // Al sacar el ratón del mapa se vuelve a desactivar.
+    mapa.on('mousedown focus', function () {
         mapa.scrollWheelZoom.enable();
     });
 
     mapa.on('mouseout', function () {
         mapa.scrollWheelZoom.disable();
     });
-
     // OpenStreetMap exige saber desde qué sitio se piden los mosaicos.
     // Django envía "Referrer-Policy: same-origin" (no manda el Referer
     // a otros dominios), así que solo para los mosaicos se envía el
@@ -47,25 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(mapa);
 
-    const posiciones = [];
-
-    ubicaciones.forEach(function (lugar) {
-        const posicion = [lugar.latitud, lugar.longitud];
-
-        L.marker(posicion, {
-            alt: lugar.nombre,
-            keyboard: true
-        })
-            .bindPopup(function () {
-                return crearPopup(lugar);
-            })
-            .addTo(mapa);
-
-        posiciones.push(posicion);
+    // Encuadre primero: Leaflet no crea los iconos de los marcadores
+    // hasta que el mapa tiene una vista (y abajo se usan sus elementos).
+    // Con una sola ubicación, zoom de calle; con varias, que se vean todas.
+    const posiciones = ubicaciones.map(function (lugar) {
+        return [lugar.latitud, lugar.longitud];
     });
 
-    // Encuadre: con una sola ubicación, zoom de calle;
-    // con varias, que se vean todas
     if (posiciones.length === 1) {
         mapa.setView(posiciones[0], 16);
     } else {
@@ -74,7 +63,61 @@ document.addEventListener('DOMContentLoaded', function () {
             maxZoom: 17
         });
     }
+
+    ubicaciones.forEach(function (lugar, indice) {
+        const marcador = L.marker(posiciones[indice], {
+            icon: crearPin(lugar),
+            keyboard: true,
+            title: lugar.nombre,
+            // Los lugares más usados quedan por encima si se solapan
+            zIndexOffset: lugar.nivel * 100 + (lugar.favorita ? 1000 : 0)
+        })
+            .bindPopup(function () {
+                return crearPopup(lugar);
+            })
+            .addTo(mapa);
+
+        // Nombre accesible para lectores de pantalla y teclado
+        marcador.getElement().setAttribute(
+            'aria-label',
+            lugar.nombre + ': ' + lugar.cantidad +
+                (lugar.cantidad === 1 ? ' cagada' : ' cagadas')
+        );
+
+        // El pin con la ventana abierta se resalta
+        marcador.on('popupopen', function () {
+            marcador.getElement().classList.add('is-activo');
+        });
+
+        marcador.on('popupclose', function () {
+            marcador.getElement().classList.remove('is-activo');
+        });
+    });
 });
+
+// ---------------------------------------------------------
+// Pin de color según el nivel (colores en mapa.css).
+// Solo lleva números: el nombre nunca entra en este HTML.
+// ---------------------------------------------------------
+
+function crearPin(lugar) {
+    const numero = lugar.cantidad > 99 ? '99+' : String(lugar.cantidad);
+
+    let clases = 'pin nivel-' + Number(lugar.nivel);
+
+    if (lugar.favorita) {
+        clases += ' es-favorita';
+    }
+
+    return L.divIcon({
+        className: clases,
+        html: '<span class="pin-forma"><span class="pin-numero">' + numero + '</span></span>',
+        iconSize: [36, 46],
+        iconAnchor: [18, 44],
+        popupAnchor: [0, -40]
+    });
+}
+
 
 
 // ---------------------------------------------------------

@@ -122,6 +122,140 @@
 
 
 /* ==========================================================================
+   1a. Pines de colores (L.divIcon creado en mapa.js)
+   --------------------------------------------------------------------------
+   <div class="leaflet-marker-icon pin nivel-N [es-favorita]">
+     <span class="pin-forma"><span class="pin-numero">12</span></span>
+   </div>
+   Gota girada 45° con el número enderezado dentro. El tamaño (36×46)
+   y el ancla (punta abajo en el centro) se fijan en mapa.js.
+   ========================================================================== */
+
+.pin {
+  background: none;
+  border: none;
+}
+
+.pin-forma {
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  background-color: var(--nivel-color, var(--nivel-0));
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 10px -2px rgba(42, 31, 24, 0.45);
+  transform: rotate(-45deg);
+  transform-origin: center;
+  transition: transform var(--transition);
+}
+
+.pin-numero {
+  transform: rotate(45deg);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+}
+
+/* En los niveles claros el número va oscuro para que se lea */
+.pin.nivel-0 .pin-numero,
+.pin.nivel-1 .pin-numero {
+  color: var(--text-main);
+}
+
+/* Corona sobre la ubicación favorita, en un círculo blanco para que
+   no se pierda sobre el mapa */
+.pin.es-favorita::after {
+  content: "👑";
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(42, 31, 24, 0.35);
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+/* El pin seleccionado (ventana abierta) o con foco crece un poco */
+.pin.is-activo .pin-forma,
+.pin:focus-visible .pin-forma {
+  transform: rotate(-45deg) scale(1.18);
+}
+
+.pin:focus-visible {
+  outline: none;
+}
+
+.pin:focus-visible .pin-forma {
+  box-shadow: 0 0 0 4px var(--primary-ring), 0 4px 10px -2px rgba(42, 31, 24, 0.45);
+}
+
+@media (hover: hover) {
+  .pin:hover .pin-forma {
+    transform: rotate(-45deg) scale(1.12);
+  }
+}
+
+
+/* ==========================================================================
+   1c. Leyenda de colores (franja debajo del mapa, dentro de la tarjeta)
+   ========================================================================== */
+
+.mapa-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.1rem;
+  padding: 0.85rem 1.1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mapa-leyenda-titulo {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.mapa-leyenda-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+
+.mapa-leyenda-lista li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.mapa-leyenda-lista .nivel-punto {
+  width: 12px;
+  height: 12px;
+}
+
+.mapa-leyenda-nota {
+  white-space: nowrap;
+}
+
+
+/* ==========================================================================
    1b. Ventana emergente de cada ubicación (la construye mapa.js)
    ========================================================================== */
 

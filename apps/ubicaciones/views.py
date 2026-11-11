@@ -14,7 +14,8 @@ from .forms import UbicacionForm
 
 # Mapa: nivel de color según el número de cagadas en la ubicación.
 # Pares (mínimo de cagadas, nivel), de mayor a menor. Sin cagadas → nivel 0.
-# Si cambias los umbrales, actualiza también la leyenda (paso 4) y mapa.css.
+# La leyenda se genera sola a partir de aquí (_leyenda_mapa).
+# Los colores de cada nivel están en mapa.css (--nivel-0 … --nivel-4).
 NIVELES_MAPA = (
     (11, 4),
     (6, 3),
@@ -31,6 +32,42 @@ def _nivel_mapa(cantidad):
             return nivel
 
     return 0
+def _leyenda_mapa():
+    """
+    Textos de la leyenda a partir de NIVELES_MAPA, para que la
+    leyenda nunca se desincronice de los umbrales:
+    [{'nivel': 0, 'texto': '0'}, {'nivel': 1, 'texto': '1–2'}, ...]
+    """
+
+    leyenda = [
+        {
+            'nivel': 0,
+            'texto': '0'
+        }
+    ]
+
+    ascendente = sorted(NIVELES_MAPA)
+
+    for indice, (minimo, nivel) in enumerate(ascendente):
+
+        if indice + 1 < len(ascendente):
+
+            maximo = ascendente[indice + 1][0] - 1
+
+            if minimo == maximo:
+                texto = f'{minimo}'
+            else:
+                texto = f'{minimo}–{maximo}'
+
+        else:
+            texto = f'{minimo} o más'
+
+        leyenda.append({
+            'nivel': nivel,
+            'texto': texto
+        })
+
+    return leyenda
 
 @login_required
 def listar_ubicaciones(request):
@@ -322,5 +359,6 @@ def mapa_ubicaciones(request):
             'ubicaciones_mapa': ubicaciones_mapa,
             'ubicaciones_sin_coordenadas': ubicaciones_sin_coordenadas,
             'total_cagadas': total_cagadas,
+            'leyenda': _leyenda_mapa(),
         }
     )

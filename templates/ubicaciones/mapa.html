@@ -42,6 +42,21 @@
                         {{ ubicaciones_mapa|length }} ubicaci{{ ubicaciones_mapa|length|pluralize:"ón,ones" }}.
                     </p>
                 </div>
+
+                <div class="mapa-leyenda">
+                    <span class="mapa-leyenda-titulo">Cagadas por lugar</span>
+
+                    <ul class="mapa-leyenda-lista">
+                        {% for item in leyenda %}
+                            <li class="nivel-{{ item.nivel }}">
+                                <span class="nivel-punto" aria-hidden="true"></span>
+                                {{ item.texto }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <span class="mapa-leyenda-nota">👑 tu favorito</span>
+                </div>
             </section>
 
             {# Datos para mapa.js (paso 3) #}
