@@ -1,25 +1,48 @@
-/* static/css/auth.css */
+/* static/css/auth.css
+   ==========================================================================
+   Pantallas de usuario: login, registro, recuperar/cambiar contraseña,
+   eliminar cuenta y perfil.
+   Los formularios, botones y alertas genéricos viven en base.css.
+   ========================================================================== */
+
 
 /* ==========================================================================
-   1. Contenedores de Autenticación (Login, Register, Reset, Eliminar)
+   1. Contenedores de autenticación
    ========================================================================== */
 
 .auth-page {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--navbar-height));
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 2.5rem 1.25rem;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(224, 138, 44, 0.16), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(15, 118, 110, 0.10), transparent 38%);
 }
 
 .auth-card {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  position: relative;
   width: 100%;
   max-width: 460px;
-  padding: 2.5rem;
+  padding: 2.75rem 2.5rem 2.25rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: aparecer 0.4s ease;
+}
+
+/* Franja de color en la parte superior de la tarjeta */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--gradient-brand);
 }
 
 .auth-header {
@@ -28,115 +51,45 @@
 }
 
 .auth-header h1 {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4rem;
 }
 
 .auth-header h2 {
   font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--text-main);
+  font-weight: 700;
   margin-top: 0.5rem;
 }
 
 .auth-header p {
-  font-size: 0.925rem;
-  color: var(--text-muted);
   margin-top: 0.35rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
 }
 
 .auth-footer {
   margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
 }
 
-/* ==========================================================================
-   2. Formularios (Campos manuales y {{ form.as_p }})
-   ========================================================================== */
-
-.form-group,
-.django-as-p p {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label,
-.django-as-p label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 0.35rem;
-  color: var(--text-main);
-}
-
-/* Unificación de inputs de texto, email, passwords y Django forms */
-.form-control,
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="password"],
-.form-group input[type="date"],
-.django-as-p input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+/* En las tarjetas de autenticación los botones ocupan todo el ancho */
+.auth-card .btn {
   width: 100%;
-  padding: 0.7rem 0.9rem;
-  font-size: 0.95rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background-color: #fff;
-  font-family: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.form-control:focus,
-.form-group input:focus,
-.django-as-p input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-}
-
-/* Campo de archivo estandarizado */
-.form-group input[type="file"],
-.django-as-p input[type="file"] {
-  width: 100%;
-  padding: 0.35rem 0.5rem;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  background-color: #fff;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  box-sizing: border-box;
-}
-
-/* Botón estilizado */
-.form-group input[type="file"]::file-selector-button,
-.django-as-p input[type="file"]::file-selector-button {
-  padding: 0.5rem 0.9rem;
-  margin-right: 0.85rem;
-  border: none;
-  border-radius: var(--radius-sm);
-  background-color: var(--primary);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.form-group input[type="file"]::file-selector-button:hover,
-.django-as-p input[type="file"]::file-selector-button:hover {
-  background-color: var(--primary-hover);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
 }
 
 .form-options {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin: -0.25rem 0 1.5rem;
   font-size: 0.875rem;
 }
 
@@ -148,121 +101,91 @@
   cursor: pointer;
 }
 
-/* ==========================================================================
-   3. Botones y Alertas
-   ========================================================================== */
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-decoration: none;
+@media (max-width: 520px) {
+  .auth-card {
+    padding: 2.25rem 1.5rem 1.75rem;
+    border-radius: var(--radius-lg);
+  }
 }
 
-.btn-primary {
-  background-color: var(--primary);
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background-color: var(--primary-hover);
-  text-decoration: none;
-}
-
-.btn-danger {
-  background-color: var(--danger);
-  color: #ffffff;
-}
-
-.btn-danger:hover {
-  background-color: var(--danger-hover);
-  text-decoration: none;
-}
-
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-sm);
-  margin-bottom: 1.25rem;
-  font-size: 0.875rem;
-}
-
-.alert-error,
-.errorlist {
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #991b1b;
-  list-style: none;
-  padding: 0.75rem;
-  border-radius: var(--radius-sm);
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-}
 
 /* ==========================================================================
-   4. Vista de Perfil
+   2. Perfil
    ========================================================================== */
 
 .profile-container {
-  max-width: 680px;
-  margin: 3rem auto;
-  padding: 0 1.5rem;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  animation: aparecer 0.35s ease;
 }
 
 .profile-card {
+  position: relative;
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 2.5rem;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
+  padding: 0 2.5rem 2.5rem;
+  overflow: hidden;
+}
+
+/* Portada con degradado detrás del avatar */
+.profile-card::before {
+  content: "";
+  display: block;
+  height: 110px;
+  margin: 0 -2.5rem;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.25), transparent 40%),
+    var(--gradient-brand);
 }
 
 .profile-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 1.5rem;
+  margin-top: -55px;
   margin-bottom: 2rem;
 }
 
 .profile-header h1 {
   font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--text-main);
-  margin-bottom: 0.25rem;
+  font-weight: 800;
+  margin-bottom: 0.15rem;
 }
 
 .profile-username {
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-muted);
-  font-weight: 500;
+  letter-spacing: 0;
 }
 
-.profile-avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--border);
-}
-
+.profile-avatar,
 .profile-avatar-placeholder {
   width: 110px;
   height: 110px;
   border-radius: 50%;
-  background-color: var(--border);
+  border: 5px solid var(--surface);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  object-fit: cover;
+  background-color: var(--surface);
+}
+
+.profile-avatar-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  background-color: var(--primary-soft);
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--primary);
 }
 
 .profile-section {
@@ -270,20 +193,38 @@
 }
 
 .profile-section h3 {
-  font-size: 1.15rem;
-  color: var(--text-main);
-  margin-bottom: 0.85rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
+/* Datos de la cuenta en forma de lista etiqueta/valor */
 .profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.profile-info-grid p {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.95rem;
+  padding: 0.85rem 1rem;
+  background-color: var(--surface-alt);
+  border-radius: var(--radius-md);
+  overflow-wrap: anywhere;
+}
+
+.profile-info-grid strong {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
 }
 
 .profile-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -291,34 +232,57 @@
 .section-divider {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 1.75rem 0;
+  margin: 2rem 0;
 }
 
-/* Wrapper personalizado para subida de archivos */
+@media (max-width: 600px) {
+  .profile-card {
+    padding: 0 1.25rem 1.75rem;
+  }
+
+  .profile-card::before {
+    margin: 0 -1.25rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   3. Zona de subida de archivos (foto de perfil)
+   ========================================================================== */
+
 .file-dropzone {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem 1rem;
-  border: 2px dashed var(--border);
+  padding: 1.5rem 1rem;
+  border: 2px dashed var(--border-strong);
   border-radius: var(--radius-md);
-  background-color: var(--bg-main);
+  background-color: var(--surface-alt);
   cursor: pointer;
   text-align: center;
-  transition: all 0.2s ease;
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .file-dropzone:hover {
   border-color: var(--primary);
-  background-color: rgba(79, 70, 229, 0.03);
+  background-color: var(--primary-soft);
 }
 
 .file-dropzone input[type="file"] {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -326,13 +290,13 @@
 }
 
 .file-dropzone-text {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--primary);
   margin-top: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
 }
 
 .file-dropzone-subtext {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }

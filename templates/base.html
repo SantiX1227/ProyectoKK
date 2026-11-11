@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Proyecto KK{% endblock %}</title>
 
+    <!-- Fuente -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- CSS Global -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
 
@@ -13,6 +18,10 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {% if user.is_authenticated %}
+        {% include 'includes/navbar.html' %}
+    {% endif %}
+
     {% block content %}
     {% endblock %}
     <!-- Scripts adicionales por vista -->

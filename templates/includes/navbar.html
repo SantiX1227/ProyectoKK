@@ -1,0 +1,91 @@
+{% with url_actual=request.resolver_match.url_name %}
+<header class="navbar">
+    <div class="navbar-container">
+
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <span class="navbar-logo">💩</span>
+            <span>Proyecto KK</span>
+        </a>
+
+        <!-- Menú móvil: checkbox + label, sin JavaScript -->
+        <input
+            type="checkbox"
+            id="navbar-toggle"
+            class="navbar-toggle"
+        >
+        <label
+            for="navbar-toggle"
+            class="navbar-burger"
+            aria-label="Abrir menú"
+        >
+            <span></span>
+        </label>
+
+        <nav class="navbar-menu" aria-label="Navegación principal">
+
+            <div class="navbar-links">
+                <a
+                    href="{% url 'home' %}"
+                    class="navbar-link {% if url_actual == 'home' %}is-active{% endif %}"
+                >Inicio</a>
+
+                <a
+                    href="{% url 'historial_cagadas' %}"
+                    class="navbar-link {% if url_actual in 'historial_cagadas detalle_cagada editar_cagada eliminar_cagada' %}is-active{% endif %}"
+                >Historial</a>
+
+                <a
+                    href="{% url 'listar_ubicaciones' %}"
+                    class="navbar-link {% if url_actual in 'listar_ubicaciones crear_ubicacion editar_ubicacion eliminar_ubicacion' %}is-active{% endif %}"
+                >Ubicaciones</a>
+
+                <a
+                    href="{% url 'feed_cagadas' %}"
+                    class="navbar-link {% if url_actual in 'feed_cagadas detalle_cagada_publica' %}is-active{% endif %}"
+                >Feed</a>
+
+                <a
+                    href="{% url 'analytics' %}"
+                    class="navbar-link {% if url_actual in 'analytics analytics-comparacion' %}is-active{% endif %}"
+                >Analítica</a>
+            </div>
+
+            <div class="navbar-actions">
+                <a
+                    href="{% url 'registrar_cagada' %}"
+                    class="btn btn-primary btn-sm"
+                >＋ Registrar</a>
+
+                <a
+                    href="{% url 'perfil' %}"
+                    class="navbar-avatar {% if url_actual == 'perfil' %}is-active{% endif %}"
+                    title="Mi perfil"
+                >
+                    {% if user.foto %}
+                        <img src="{{ user.foto.url }}" alt="Mi perfil">
+                    {% else %}
+                        {{ user.username|first|upper }}
+                    {% endif %}
+                </a>
+
+                <form
+                    method="POST"
+                    action="{% url 'logout' %}"
+                    class="navbar-logout-form"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="navbar-logout" title="Cerrar sesión">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span class="navbar-logout-text">Cerrar sesión</span>
+                    </button>
+                </form>
+            </div>
+
+        </nav>
+    </div>
+</header>
+{% endwith %}
