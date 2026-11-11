@@ -84,6 +84,174 @@
   }
 }
 
+/* Leaflet usa z-index de hasta 1000 en sus capas y controles: sin un
+   contexto de apilamiento propio pasarían por encima de la barra de
+   navegación (z-index 100) al desplazar la página */
+.mapa.leaflet-container {
+  position: relative;
+  z-index: 0;
+  font-family: var(--font-family);
+}
+
+/* Controles de zoom y atribución con el estilo de la app */
+.mapa .leaflet-bar {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.mapa .leaflet-bar a {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  color: var(--text-main);
+  background-color: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+.mapa .leaflet-bar a.leaflet-disabled {
+  color: var(--border-strong);
+  background-color: var(--surface-alt);
+}
+
+.mapa .leaflet-control-attribution {
+  font-size: 0.68rem;
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+
+/* ==========================================================================
+   1b. Ventana emergente de cada ubicación (la construye mapa.js)
+   ========================================================================== */
+
+.mapa .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.mapa .leaflet-popup-content {
+  width: 240px;
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+
+.mapa .leaflet-container a.leaflet-popup-close-button,
+.mapa a.leaflet-popup-close-button {
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 1.25rem;
+  line-height: 28px;
+  color: var(--text-muted);
+}
+
+.popup-lugar {
+  padding: 1rem 1.1rem 1.05rem;
+}
+
+.popup-cabecera {
+  padding-right: 1.25rem; /* espacio para la × de cerrar */
+}
+
+.popup-nombre {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.popup-tipo {
+  display: inline-block;
+  margin-top: 0.3rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-alt);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Cifra principal con la franja del color del nivel */
+.popup-cifra {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 4px solid var(--nivel-color, var(--nivel-0));
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-alt);
+}
+
+.popup-cifra strong {
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.popup-cifra span {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.popup-datos {
+  margin: 0.75rem 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 0.75rem;
+}
+
+.popup-datos dt {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.popup-datos dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.popup-vacio {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.mapa .popup-enlace {
+  display: block;
+  margin-top: 0.9rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+@media (hover: hover) {
+  .mapa .popup-enlace:hover {
+    background-color: var(--primary);
+    color: #ffffff;
+    text-decoration: none;
+  }
+}
+
+@media (hover: none) {
+  .mapa .popup-enlace:active {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+}
+
 
 /* ==========================================================================
    2. Lista de lugares (debajo del mapa)
