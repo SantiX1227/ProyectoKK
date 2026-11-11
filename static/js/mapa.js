@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', function () {
         iconCreateFunction: crearGrupo
     });
 
+    // Pines por id de ubicación, para poder enfocarlos (paso 7)
+    const marcadores = {};
+
     ubicaciones.forEach(function (lugar, indice) {
         const marcador = L.marker(posiciones[indice], {
             icon: crearPin(lugar),
@@ -122,9 +125,47 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         grupo.addLayer(marcador);
+        marcadores[lugar.id] = marcador;
     });
 
     mapa.addLayer(grupo);
+
+    // Enfocar una ubicación: acerca el mapa (abriendo su grupo si
+    // hace falta) y muestra su ventana
+    function enfocar(id) {
+        const marcador = marcadores[id];
+
+        if (!marcador) {
+            return;
+        }
+
+        grupo.zoomToShowLayer(marcador, function () {
+            marcador.openPopup();
+        });
+    }
+
+    // Lista "Tus lugares": al tocar un lugar se sube al mapa y se enfoca
+    const movimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth';
+
+    document.querySelectorAll('[data-ubicacion]').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            contenedor.scrollIntoView({
+                behavior: movimiento,
+                block: 'center'
+            });
+
+            enfocar(boton.dataset.ubicacion);
+        });
+    });
+
+    // Botón "Ver en el mapa" de Mis ubicaciones: /mapa/?ubicacion=ID
+    const pedida = new URLSearchParams(window.location.search).get('ubicacion');
+
+    if (pedida) {
+        enfocar(pedida);
+    }
 });
 
 // ---------------------------------------------------------

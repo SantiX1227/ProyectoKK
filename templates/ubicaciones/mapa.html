@@ -181,26 +181,33 @@
 
             <section class="mapa-seccion">
                 <h2 class="section-title">Tus lugares</h2>
+                <p class="text-muted text-sm mb-2">Toca un lugar para verlo en el mapa.</p>
 
                 <ol class="mapa-lista">
                     {% for lugar in ubicaciones_mapa %}
-                        <li class="mapa-lugar nivel-{{ lugar.nivel }}">
-                            <span class="nivel-punto" aria-hidden="true"></span>
+                        <li>
+                            <button
+                                type="button"
+                                class="mapa-lugar nivel-{{ lugar.nivel }}"
+                                data-ubicacion="{{ lugar.id }}"
+                            >
+                                <span class="nivel-punto" aria-hidden="true"></span>
 
-                            <div class="mapa-lugar-info">
-                                <span class="mapa-lugar-nombre">
-                                    {% if lugar.favorita %}👑 {% endif %}{{ lugar.nombre }}
+                                <span class="mapa-lugar-info">
+                                    <span class="mapa-lugar-nombre">
+                                        {% if lugar.favorita %}👑 {% endif %}{{ lugar.nombre }}
+                                    </span>
+                                    <span class="mapa-lugar-tipo">{{ lugar.tipo }}</span>
                                 </span>
-                                <span class="mapa-lugar-tipo">{{ lugar.tipo }}</span>
-                            </div>
 
-                            <div class="mapa-lugar-cifra">
-                                <strong>{{ lugar.cantidad }}</strong>
-                                <span>
-                                    cagada{{ lugar.cantidad|pluralize }}
-                                    · {{ lugar.porcentaje|floatformat:1 }} %
+                                <span class="mapa-lugar-cifra">
+                                    <strong>{{ lugar.cantidad }}</strong>
+                                    <span>
+                                        cagada{{ lugar.cantidad|pluralize }}
+                                        · {{ lugar.porcentaje|floatformat:1 }} %
+                                    </span>
                                 </span>
-                            </div>
+                            </button>
                         </li>
                     {% endfor %}
                 </ol>

@@ -1,5 +1,3 @@
-import math
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -8,10 +6,14 @@ from django.urls import reverse
 from django.utils import formats, timezone
 
 from apps.cagadas.models import Cagada
-from apps.core.templatetags.formato import duracion as formatear_duracion
+from apps.core.templatetags.formato import (
+    distancia as formatear_distancia,
+    duracion as formatear_duracion,
+)
 
 from .models import Ubicacion
 from .forms import UbicacionForm
+from .geografia import distancia_metros
 
 
 # Mapa: nivel de color según el número de cagadas en la ubicación.
@@ -72,47 +74,6 @@ def _leyenda_mapa():
     return leyenda
 
 
-RADIO_TIERRA_METROS = 6_371_000
-
-
-def _distancia_metros(latitud_1, longitud_1, latitud_2, longitud_2):
-    """
-    Distancia en línea recta sobre la superficie de la Tierra
-    (fórmula de haversine). Suficiente para distancias de ciudad.
-    """
-
-    fi_1 = math.radians(latitud_1)
-    fi_2 = math.radians(latitud_2)
-
-    delta_fi = math.radians(latitud_2 - latitud_1)
-    delta_lambda = math.radians(longitud_2 - longitud_1)
-
-    a = (
-        math.sin(delta_fi / 2) ** 2
-        + math.cos(fi_1) * math.cos(fi_2) * math.sin(delta_lambda / 2) ** 2
-    )
-
-    return 2 * RADIO_TIERRA_METROS * math.asin(
-        math.sqrt(a)
-    )
-
-
-def _formatear_distancia(metros):
-    """'350 m', '2,4 km' o '128 km'."""
-
-    if metros < 1000:
-        return f'{round(metros)} m'
-
-    kilometros = metros / 1000
-
-    if kilometros < 100:
-        texto = f'{kilometros:.1f}'.replace('.', ',')
-    else:
-        texto = f'{round(kilometros)}'
-
-    return f'{texto} km'
-
-
 def _datos_geograficos(lugares, ubicaciones, total_cagadas):
     """
     Datos para el panel geográfico y el centro del mapa.
@@ -148,7 +109,7 @@ def _datos_geograficos(lugares, ubicaciones, total_cagadas):
     # Distancia de cada lugar al centro
     distancias_al_centro = [
         (
-            _distancia_metros(
+            distancia_metros(
                 centro_latitud,
                 centro_longitud,
                 lugar['latitud'],
@@ -179,7 +140,7 @@ def _datos_geograficos(lugares, ubicaciones, total_cagadas):
 
         for lugar_b in lugares[indice + 1:]:
 
-            distancia = _distancia_metros(
+            distancia = distancia_metros(
                 lugar_a['latitud'],
                 lugar_a['longitud'],
                 lugar_b['latitud'],
@@ -189,7 +150,7 @@ def _datos_geograficos(lugares, ubicaciones, total_cagadas):
             if separacion is None or distancia > separacion['metros']:
                 separacion = {
                     'metros': distancia,
-                    'texto': _formatear_distancia(distancia),
+                    'texto': formatear_distancia(distancia),
                     'lugar_a': lugar_a['nombre'],
                     'lugar_b': lugar_b['nombre'],
                 }
@@ -249,11 +210,11 @@ def _datos_geograficos(lugares, ubicaciones, total_cagadas):
             'latitud': round(centro_latitud, 6),
             'longitud': round(centro_longitud, 6),
             'radio_metros': round(radio),
-            'radio_texto': _formatear_distancia(radio),
+            'radio_texto': formatear_distancia(radio),
         },
         'lugar_cercano': lugar_cercano['nombre'],
-        'distancia_cercano': _formatear_distancia(distancia_cercano),
-        'radio_texto': _formatear_distancia(radio),
+        'distancia_cercano': formatear_distancia(distancia_cercano),
+        'radio_texto': formatear_distancia(radio),
         'radio_metros': round(radio),
         'lugar_lejano': lugar_lejano['nombre'],
         'separacion': separacion,

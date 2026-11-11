@@ -16,6 +16,7 @@ from django.db.models.functions import (
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from apps.cagadas.models import Cagada
+from apps.ubicaciones.geografia import mayor_distancia
 
 Usuario = get_user_model()
 
@@ -1000,6 +1001,60 @@ def _perfil(comparacion_dias, comparacion_horas, comparacion_categorias, lado):
     }
 
 
+def _trotamundos(cagadas):
+    """
+    Mayor distancia en metros entre dos de los lugares donde ha cagado
+    (solo lugares con coordenadas). None si tiene menos de dos.
+    En la comparación solo se muestra la distancia: nunca las
+    coordenadas ni los nombres de los lugares del otro usuario.
+    """
+
+    puntos = (
+        cagadas
+        .filter(
+            ubicacion__latitud__isnull=False,
+            ubicacion__longitud__isnull=False
+        )
+        .values_list(
+            'ubicacion__latitud',
+            'ubicacion__longitud'
+        )
+        .distinct()
+    )
+
+    return mayor_distancia(
+        puntos
+    )
+
+
+def _fidelidad(cagadas):
+    """
+    "Fiel a su trono": porcentaje (0-100) de sus cagadas con ubicación
+    que hizo en su lugar más usado. None si ninguna tiene ubicación.
+    """
+
+    con_lugar = cagadas.filter(
+        ubicacion__isnull=False
+    )
+
+    total = con_lugar.count()
+
+    if not total:
+        return None
+
+    favorito = (
+        con_lugar
+        .values('ubicacion')
+        .annotate(cantidad=Count('id'))
+        .order_by('-cantidad')
+        .first()
+    )
+
+    return round(
+        favorito['cantidad'] * 100 / total
+    )
+
+
 # =========================================================
 # FASE E - ANÁLISIS DE COMPARACIÓN ENTRE USUARIOS
 # =========================================================
@@ -1278,6 +1333,14 @@ def analytics_comparacion(request, usuario_id):
         .count()
     )
 
+    # Trotamundos (puntúa) y fidelidad a su trono (solo informativo):
+    # se envían una distancia y un porcentaje, nunca lugares.
+    trotamundos_actual = _trotamundos(cagadas_actual)
+    trotamundos_comparado = _trotamundos(cagadas_comparado)
+
+    fidelidad_actual = _fidelidad(cagadas_actual)
+    fidelidad_comparado = _fidelidad(cagadas_comparado)
+
     usuarios_comparables = (
         Usuario.objects
         .filter(is_active=True)
@@ -1329,6 +1392,14 @@ def analytics_comparacion(request, usuario_id):
             ubicaciones_actual,
             ubicaciones_comparado,
             criterio='Más explorador',
+        ),
+        _metrica(
+            '🧭',
+            'Mayor distancia entre lugares',
+            'distancia',
+            trotamundos_actual,
+            trotamundos_comparado,
+            criterio='Más trotamundos',
         ),
         _metrica(
             '🕰️',
@@ -1423,6 +1494,9 @@ def analytics_comparacion(request, usuario_id):
         comparacion_categorias,
         'comparado'
     )
+
+    perfil_actual['fidelidad'] = fidelidad_actual
+    perfil_comparado['fidelidad'] = fidelidad_comparado
 
     # ==========================================
     # CONTEXTO COMPARACIÓN

@@ -41,3 +41,29 @@ def duracion(valor):
         return f'{minutos} min {segundos:02d} s'
 
     return f'{segundos} s'
+
+
+@register.filter
+def distancia(metros):
+    """
+    Muestra una distancia en metros de forma legible:
+    '350 m', '2,4 km' o '128 km'.
+    Si el valor es None devuelve '' para poder usar |default.
+    """
+
+    if metros is None or metros == '':
+        return ''
+
+    metros = float(metros)
+
+    if metros < 1000:
+        return f'{round(metros)} m'
+
+    kilometros = metros / 1000
+
+    if kilometros < 100:
+        texto = f'{kilometros:.1f}'.replace('.', ',')
+    else:
+        texto = f'{round(kilometros)}'
+
+    return f'{texto} km'

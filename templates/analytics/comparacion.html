@@ -227,6 +227,15 @@
                         <span>Categoría</span>
                         <strong>{{ perfil_actual.categoria|default:"—" }}</strong>
                     </div>
+                    <div class="habito habito-trono">
+                        <span>🏠 Fiel a su trono</span>
+                        {% if perfil_actual.fidelidad is not None %}
+                            <strong>{{ perfil_actual.fidelidad }} %</strong>
+                            <small>de tus cagadas, en tu lugar favorito</small>
+                        {% else %}
+                            <strong>—</strong>
+                        {% endif %}
+                    </div>
                 </div>
             </article>
 
@@ -278,6 +287,15 @@
                     <div class="habito">
                         <span>Categoría</span>
                         <strong>{{ perfil_comparado.categoria|default:"—" }}</strong>
+                    </div>
+                    <div class="habito habito-trono">
+                        <span>🏠 Fiel a su trono</span>
+                        {% if perfil_comparado.fidelidad is not None %}
+                            <strong>{{ perfil_comparado.fidelidad }} %</strong>
+                            <small>de sus cagadas, en su lugar favorito</small>
+                        {% else %}
+                            <strong>—</strong>
+                        {% endif %}
                     </div>
                 </div>
             </article>
