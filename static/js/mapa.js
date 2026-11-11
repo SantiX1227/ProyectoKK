@@ -64,6 +64,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Centro de gravedad y radio de acción (paso 6). Van fuera del
+    // grupo de pines para que nunca se agrupen con ellos.
+    const datosCentro = document.getElementById('centro-mapa');
+
+    if (datosCentro) {
+        agregarCentro(mapa, JSON.parse(datosCentro.textContent));
+    }
+
     // Agrupa los pines que quedan muy cerca (p. ej. dos baños de la
     // misma casa). Al tocar un grupo se acerca el zoom; si aun así los
     // lugares coinciden, se abren en abanico ("spiderfy").
@@ -141,6 +149,74 @@ function crearPin(lugar) {
         popupAnchor: [0, -40]
     });
 }
+
+// ---------------------------------------------------------
+// Centro de gravedad: el punto medio de tus cagadas (contando
+// más los lugares más usados) y un círculo discontinuo con el
+// radio de acción (hasta el lugar usado más lejano).
+// ---------------------------------------------------------
+
+function agregarCentro(mapa, centro) {
+    const posicion = [centro.latitud, centro.longitud];
+
+    // Con un radio muy pequeño el círculo no aporta nada
+    if (centro.radio_metros >= 30) {
+        L.circle(posicion, {
+            radius: centro.radio_metros,
+            color: '#b5541c',
+            weight: 1.5,
+            dashArray: '6 6',
+            fillColor: '#b5541c',
+            fillOpacity: 0.05,
+            interactive: false
+        }).addTo(mapa);
+    }
+
+    const marcador = L.marker(posicion, {
+        icon: L.divIcon({
+            className: 'centro',
+            html: '<span class="centro-forma" aria-hidden="true">🎯</span>',
+            iconSize: [30, 30]
+        }),
+        keyboard: true,
+        title: 'Tu centro de gravedad',
+        // Siempre por debajo de los pines
+        zIndexOffset: -1000
+    })
+        .bindPopup(function () {
+            return crearPopupCentro(centro);
+        })
+        .addTo(mapa);
+
+    marcador.getElement().setAttribute('aria-label', 'Tu centro de gravedad');
+}
+
+function crearPopupCentro(centro) {
+    const caja = crearElemento('div', 'popup-lugar popup-centro');
+
+    caja.append(
+        crearElemento('h3', 'popup-nombre', '🎯 Tu centro de gravedad')
+    );
+
+    caja.append(
+        crearElemento(
+            'p',
+            null,
+            'El punto medio de tus cagadas: cuenta más los lugares que más usas.'
+        )
+    );
+
+    if (centro.radio_metros >= 30) {
+        const radio = crearElemento('p', null, 'El círculo es tu radio de acción: ');
+        radio.append(crearElemento('strong', null, centro.radio_texto));
+        radio.append(' hasta el lugar más lejano donde has cagado.');
+
+        caja.append(radio);
+    }
+
+    return caja;
+}
+
 
 // ---------------------------------------------------------
 // Grupo de pines cercanos: círculo con el número de lugares,

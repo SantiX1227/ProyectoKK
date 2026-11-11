@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static l10n %}
 
 {% block title %}Mapa - Proyecto KK{% endblock %}
 
@@ -68,6 +68,116 @@
 
             {# Datos para mapa.js (paso 3) #}
             {{ ubicaciones_mapa|json_script:"datos-mapa" }}
+
+            {% if geo %}
+                {# Centro de gravedad y radio para mapa.js (paso 6) #}
+                {{ geo.centro|json_script:"centro-mapa" }}
+            {% endif %}
+
+            {% if geo %}
+                <section class="mapa-seccion">
+                    <h2 class="section-title">Tu geografía</h2>
+
+                    <div class="geo-grid">
+
+                        <article class="stat-card geo-card">
+                            <span class="geo-icono" aria-hidden="true">🏆</span>
+                            <p class="stat-label">Lugar favorito</p>
+
+                            {% if geo.favorita %}
+                                <p class="stat-value">{{ geo.favorita.nombre }}</p>
+                                <p class="stat-hint">
+                                    <strong>{{ geo.favorita.cantidad }}</strong>
+                                    cagada{{ geo.favorita.cantidad|pluralize }}
+                                    · {{ geo.porcentaje_favorita|floatformat:1 }} % del total
+                                </p>
+                            {% else %}
+                                <p class="stat-value">—</p>
+                                <p class="stat-hint">Aún no has registrado cagadas en tus lugares.</p>
+                            {% endif %}
+                        </article>
+
+                        <article class="stat-card geo-card">
+                            <span class="geo-icono" aria-hidden="true">🎯</span>
+                            <p class="stat-label">Centro de gravedad</p>
+                            <p class="stat-value">{{ geo.lugar_cercano }}</p>
+                            <p class="stat-hint">
+                                El punto medio de tus cagadas queda a
+                                <strong>{{ geo.distancia_cercano }}</strong> de aquí.
+                                Es la 🎯 del mapa.
+                            </p>
+                        </article>
+
+                        <article class="stat-card geo-card">
+                            <span class="geo-icono" aria-hidden="true">📏</span>
+                            <p class="stat-label">Radio de acción</p>
+
+                            {% if geo.radio_metros %}
+                                <p class="stat-value">{{ geo.radio_texto }}</p>
+                                <p class="stat-hint">
+                                    Del centro hasta <strong>{{ geo.lugar_lejano }}</strong>,
+                                    el lugar más lejano donde has cagado.
+                                </p>
+                            {% else %}
+                                <p class="stat-value">0 m</p>
+                                <p class="stat-hint">Todas tus cagadas son en el mismo sitio.</p>
+                            {% endif %}
+                        </article>
+
+                        {% if geo.separacion %}
+                            <article class="stat-card geo-card">
+                                <span class="geo-icono" aria-hidden="true">↔️</span>
+                                <p class="stat-label">Mayor distancia</p>
+                                <p class="stat-value">{{ geo.separacion.texto }}</p>
+                                <p class="stat-hint">
+                                    Entre <strong>{{ geo.separacion.lugar_a }}</strong>
+                                    y <strong>{{ geo.separacion.lugar_b }}</strong>.
+                                </p>
+                            </article>
+                        {% endif %}
+
+                        <article class="stat-card geo-card">
+                            <span class="geo-icono" aria-hidden="true">📍</span>
+                            <p class="stat-label">En el mapa</p>
+                            <p class="stat-value">{{ geo.en_mapa }} de {{ ubicaciones|length }}</p>
+                            <p class="stat-hint">
+                                {{ geo.visitados }} con cagadas
+                                · {{ geo.sin_estrenar }} sin estrenar
+                                {% if ubicaciones_sin_coordenadas %}
+                                    · {{ ubicaciones_sin_coordenadas|length }} sin coordenadas
+                                {% endif %}
+                            </p>
+                        </article>
+
+                    </div>
+
+                    {% if geo.reparto_tipos %}
+                        <article class="card tipos-card">
+                            <h3 class="card-title">Cagadas por tipo de lugar</h3>
+
+                            <ul class="tipos-lista">
+                                {% for item in geo.reparto_tipos %}
+                                    <li class="tipo-fila">
+                                        <span class="tipo-nombre">
+                                            {{ item.tipo }}
+                                            <small>{{ item.lugares }} lugar{{ item.lugares|pluralize:"es" }}</small>
+                                        </span>
+
+                                        <span class="tipo-cifra">
+                                            <strong>{{ item.cantidad }}</strong>
+                                            · {{ item.porcentaje|floatformat:1 }} %
+                                        </span>
+
+                                        <span class="tipo-barra" aria-hidden="true">
+                                            <span style="--porcentaje: {{ item.porcentaje|unlocalize }};"></span>
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </article>
+                    {% endif %}
+                </section>
+            {% endif %}
 
             <section class="mapa-seccion">
                 <h2 class="section-title">Tus lugares</h2>

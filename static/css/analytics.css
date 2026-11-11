@@ -114,6 +114,17 @@
   font-size: 1.35rem;
 }
 
+/* Botón opcional a la derecha de la cabecera (p. ej. "Ver en el mapa").
+   Si no cabe, baja a su propia línea. */
+.seccion-cabecera:has(.seccion-accion) {
+  flex-wrap: wrap;
+}
+
+.seccion-accion {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .seccion-cabecera h2 {
   font-size: 1.35rem;
 }
