@@ -48,6 +48,12 @@
                     href="{% url 'analytics' %}"
                     class="navbar-link {% if url_actual == 'analytics' or url_actual == 'analytics-comparacion' %}is-active{% endif %}"
                 >Analítica</a>
+
+                <a
+                    href="{% url 'mapa_ubicaciones' %}"
+                    class="navbar-link {% if url_actual == 'mapa_ubicaciones' %}is-active{% endif %}"
+                >Mapa</a>
+                
             </div>
 
             <div class="navbar-actions">

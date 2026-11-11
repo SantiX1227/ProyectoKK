@@ -1,0 +1,52 @@
+/* static/css/mapa.css
+   ==========================================================================
+   Mapa de ubicaciones (privado): mapa con un pin por ubicación,
+   leyenda de colores y datos geográficos.
+   Usa los componentes globales de base.css (card, stat-card, empty-state…).
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Contenedor del mapa
+   --------------------------------------------------------------------------
+   Altura limitada (~60 % de la pantalla) para que en el móvil siempre
+   quede espacio por donde desplazar la página: dentro del mapa, arrastrar
+   con un dedo mueve el mapa, no la página.
+   ========================================================================== */
+
+.mapa-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mapa {
+  width: 100%;
+  height: 60vh;
+  height: 60dvh;
+  min-height: 320px;
+  max-height: 640px;
+  background-color: var(--surface-alt);
+}
+
+/* Mientras no hay mapa (paso 1) o si no carga Leaflet */
+.mapa-provisional {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.mapa-provisional-icono {
+  font-size: 2.5rem;
+}
+
+@media (max-width: 600px) {
+  .mapa {
+    height: 55vh;
+    height: 55dvh;
+  }
+}

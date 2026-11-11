@@ -24,4 +24,9 @@ urlpatterns = [
         views.eliminar_ubicacion,
         name='eliminar_ubicacion'
     ),
+    path(
+        'mapa/',
+        views.mapa_ubicaciones,
+        name='mapa_ubicaciones'
+    ),
 ]

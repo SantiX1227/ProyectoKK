@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mapa - Proyecto KK{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/mapa.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="page">
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Mapa</h1>
+            <p class="page-subtitle">
+                Tus lugares de confianza y cuánto los usas. Solo tú ves este mapa.
+            </p>
+        </div>
+
+        <div class="page-actions">
+            <a href="{% url 'listar_ubicaciones' %}" class="btn btn-secondary">
+                📍 Mis ubicaciones
+            </a>
+        </div>
+    </header>
+
+    {% if ubicaciones %}
+        <section class="card mapa-card">
+            <div id="mapa" class="mapa mapa-provisional">
+                <span class="mapa-provisional-icono" aria-hidden="true">🗺️</span>
+                <p>Aquí aparecerá el mapa con tus {{ ubicaciones|length }} ubicaciones.</p>
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">🗺️</div>
+            <h3>Tu mapa está vacío</h3>
+            <p>Crea una ubicación con sus coordenadas para verla en el mapa.</p>
+
+            <a href="{% url 'crear_ubicacion' %}" class="btn btn-primary">
+                Crear mi primera ubicación
+            </a>
+        </div>
+    {% endif %}
+
+</main>
+{% endblock %}

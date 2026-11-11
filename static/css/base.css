@@ -407,6 +407,26 @@ hr {
   outline-offset: 2px;
 }
 
+/* Pantallas medianas: 6 enlaces + acciones no caben con el espaciado
+   normal; se compacta y la marca se queda solo con el logo */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .navbar-container {
+    gap: 1rem;
+  }
+
+  .navbar-menu {
+    gap: 0.75rem;
+  }
+
+  .navbar-link {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .navbar-brand > span:not(.navbar-logo) {
+    display: none;
+  }
+}
+
 /* Navegación en pantallas pequeñas */
 @media (max-width: 900px) {
   .navbar-container {

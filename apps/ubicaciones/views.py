@@ -182,3 +182,18 @@ def eliminar_ubicacion(request, id):
             'ubicacion': ubicacion
         }
     )
+
+@login_required
+def mapa_ubicaciones(request):
+
+    ubicaciones = Ubicacion.objects.filter(
+        usuario=request.user
+    )
+
+    return render(
+        request,
+        'ubicaciones/mapa.html',
+        {
+            'ubicaciones': ubicaciones
+        }
+    )
