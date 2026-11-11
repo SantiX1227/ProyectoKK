@@ -26,12 +26,83 @@
     </header>
 
     {% if ubicaciones %}
-        <section class="card mapa-card">
-            <div id="mapa" class="mapa mapa-provisional">
-                <span class="mapa-provisional-icono" aria-hidden="true">🗺️</span>
-                <p>Aquí aparecerá el mapa con tus {{ ubicaciones|length }} ubicaciones.</p>
+
+        {% if ubicaciones_mapa %}
+            <section class="card mapa-card">
+                <div id="mapa" class="mapa mapa-provisional">
+                    <span class="mapa-provisional-icono" aria-hidden="true">🗺️</span>
+                    <p>
+                        Aquí aparecerá el mapa con
+                        {{ ubicaciones_mapa|length }} ubicaci{{ ubicaciones_mapa|length|pluralize:"ón,ones" }}.
+                    </p>
+                </div>
+            </section>
+
+            {# Datos para mapa.js (paso 3) #}
+            {{ ubicaciones_mapa|json_script:"datos-mapa" }}
+
+            <section class="mapa-seccion">
+                <h2 class="section-title">Tus lugares</h2>
+
+                <ol class="mapa-lista">
+                    {% for lugar in ubicaciones_mapa %}
+                        <li class="mapa-lugar nivel-{{ lugar.nivel }}">
+                            <span class="nivel-punto" aria-hidden="true"></span>
+
+                            <div class="mapa-lugar-info">
+                                <span class="mapa-lugar-nombre">
+                                    {% if lugar.favorita %}👑 {% endif %}{{ lugar.nombre }}
+                                </span>
+                                <span class="mapa-lugar-tipo">{{ lugar.tipo }}</span>
+                            </div>
+
+                            <div class="mapa-lugar-cifra">
+                                <strong>{{ lugar.cantidad }}</strong>
+                                <span>
+                                    cagada{{ lugar.cantidad|pluralize }}
+                                    · {{ lugar.porcentaje|floatformat:1 }} %
+                                </span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </section>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📍</div>
+                <h3>Ninguna ubicación tiene coordenadas</h3>
+                <p>Edita tus ubicaciones y añade latitud y longitud para verlas en el mapa.</p>
             </div>
-        </section>
+        {% endif %}
+
+        {% if ubicaciones_sin_coordenadas %}
+            <section class="mapa-seccion">
+                <div class="alert alert-warning">
+                    <span aria-hidden="true">⚠️</span>
+                    <div>
+                        <strong>
+                            {{ ubicaciones_sin_coordenadas|length }}
+                            ubicaci{{ ubicaciones_sin_coordenadas|length|pluralize:"ón no sale,ones no salen" }}
+                            en el mapa
+                        </strong>
+                        porque no tiene{{ ubicaciones_sin_coordenadas|length|pluralize:",n" }} coordenadas.
+                        Tócala{{ ubicaciones_sin_coordenadas|length|pluralize }} para completarla{{ ubicaciones_sin_coordenadas|length|pluralize }}.
+
+                        <ul class="sin-coordenadas-lista">
+                            {% for ubicacion in ubicaciones_sin_coordenadas %}
+                                <li>
+                                    <a href="{% url 'editar_ubicacion' ubicacion.id %}">
+                                        📍 {{ ubicacion.nombre }}
+                                        <span class="text-muted">({{ ubicacion.cantidad }})</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
     {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">🗺️</div>

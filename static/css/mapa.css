@@ -7,6 +7,39 @@
 
 
 /* ==========================================================================
+   0. Colores por nivel (número de cagadas en la ubicación)
+   --------------------------------------------------------------------------
+   El nivel lo calcula la vista (NIVELES_MAPA en ubicaciones/views.py):
+     0 → 0 cagadas · 1 → 1–2 · 2 → 3–5 · 3 → 6–10 · 4 → 11 o más
+   Los usan la lista de lugares, los pines del mapa y la leyenda.
+   ========================================================================== */
+
+:root {
+  --nivel-0: #b8aca0;
+  --nivel-1: #f2c46d;
+  --nivel-2: #e08a2c;
+  --nivel-3: #b5541c;
+  --nivel-4: #6b2f0c;
+}
+
+.nivel-0 { --nivel-color: var(--nivel-0); }
+.nivel-1 { --nivel-color: var(--nivel-1); }
+.nivel-2 { --nivel-color: var(--nivel-2); }
+.nivel-3 { --nivel-color: var(--nivel-3); }
+.nivel-4 { --nivel-color: var(--nivel-4); }
+
+.nivel-punto {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--nivel-color, var(--nivel-0));
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px var(--border-strong);
+}
+
+
+/* ==========================================================================
    1. Contenedor del mapa
    --------------------------------------------------------------------------
    Altura limitada (~60 % de la pantalla) para que en el móvil siempre
@@ -48,5 +81,124 @@
   .mapa {
     height: 55vh;
     height: 55dvh;
+  }
+}
+
+
+/* ==========================================================================
+   2. Lista de lugares (debajo del mapa)
+   --------------------------------------------------------------------------
+   Repite la información del mapa en texto: se lee de un vistazo en el
+   móvil y es accesible para lectores de pantalla.
+   ========================================================================== */
+
+.mapa-seccion {
+  margin-top: 2rem;
+}
+
+.mapa-lista {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.mapa-lugar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--nivel-color, var(--nivel-0));
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.mapa-lugar-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.mapa-lugar-nombre {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.mapa-lugar-tipo {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mapa-lugar-cifra {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.mapa-lugar-cifra strong {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.mapa-lugar-cifra span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .mapa-lista {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   3. Ubicaciones sin coordenadas
+   ========================================================================== */
+
+.sin-coordenadas-lista {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sin-coordenadas-lista a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-full);
+  background-color: var(--surface);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: border-color var(--transition), color var(--transition);
+}
+
+@media (hover: hover) {
+  .sin-coordenadas-lista a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    text-decoration: none;
+  }
+}
+
+@media (hover: none) {
+  .sin-coordenadas-lista a:active {
+    border-color: var(--primary);
+    background-color: var(--primary-soft);
   }
 }
