@@ -1,96 +1,144 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed - Proyecto KK</title>
-</head>
-<body>
+
+{% block title %}Feed - Proyecto KK{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/feed.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="page">
+
+    {# Token CSRF para las reacciones por AJAX (cagadas.js lo lee de la cookie) #}
     {% csrf_token %}
 
-    <h1>Feed de cagadas</h1>
-
-    <hr>
-
-    <h2>Filtros</h2>
-    <form method="GET">
-        <p>
-            {{ filter_form.usuario.label_tag }}
-            {{ filter_form.usuario }}
-        </p>
-
-        <p>
-            {{ filter_form.calificacion.label_tag }}
-            {{ filter_form.calificacion }}
-        </p>
-
-        <p>
-            {{ filter_form.categoria.label_tag }}
-            {{ filter_form.categoria }}
-        </p>
-
-        <button type="submit">Filtrar</button>
-        <a href="{% url 'feed_cagadas' %}">Limpiar filtros</a>
-    </form>
-
-    <hr>
-
-    <p>Aquí aparecen las cagadas que los usuarios han decidido compartir.</p>
-
-    <hr>
-
-    {% if cagadas %}
-        {% for cagada in cagadas %}
-            {% include "feed/components/publicacion.html" %}
-        {% endfor %}
-
-        <hr>
-        <nav>
-            <p>
-                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Feed</h1>
+            <p class="page-subtitle">
+                Las cagadas que la comunidad ha decidido compartir.
             </p>
+        </div>
 
-            {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
-                    ← Anterior
-                </a>
-            {% endif %}
+        <div class="page-actions">
+            <a href="{% url 'registrar_cagada' %}" class="btn btn-primary">
+                ＋ Registrar cagada
+            </a>
+        </div>
+    </header>
 
-            {% for numero in page_obj.paginator.page_range %}
-                {% if numero == page_obj.number %}
-                    <strong>[ {{ numero }} ]</strong>
-                {% else %}
-                    <a href="?page={{ numero }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
-                        [ {{ numero }} ]
-                    </a>
+    <div class="feed-layout">
+
+        <aside class="card filtros">
+            <h2 class="card-title">🔎 Filtros</h2>
+
+            <form method="GET">
+                <div class="filtros-campos">
+                    <div class="form-group">
+                        <label for="{{ filter_form.usuario.id_for_label }}">
+                            {{ filter_form.usuario.label }}
+                        </label>
+                        {{ filter_form.usuario }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter_form.calificacion.id_for_label }}">
+                            {{ filter_form.calificacion.label }}
+                        </label>
+                        {{ filter_form.calificacion }}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter_form.categoria.id_for_label }}">
+                            {{ filter_form.categoria.label }}
+                        </label>
+                        {{ filter_form.categoria }}
+                    </div>
+                </div>
+
+                <div class="filtros-acciones">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        Filtrar
+                    </button>
+
+                    {% if request.GET %}
+                        <a href="{% url 'feed_cagadas' %}" class="btn btn-ghost btn-sm">
+                            Limpiar filtros
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </aside>
+
+        <div class="feed-columna">
+
+            {% if cagadas %}
+
+                {% for cagada in cagadas %}
+                    {% include 'feed/components/publicacion.html' %}
+                {% endfor %}
+
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <nav class="pagination" aria-label="Páginas del feed">
+                        {% if page_obj.has_previous %}
+                            <a href="{% querystring page=page_obj.previous_page_number %}">
+                                ← Anterior
+                            </a>
+                        {% endif %}
+
+                        {% for numero in page_obj.paginator.page_range %}
+                            {% if numero == page_obj.number %}
+                                <span class="is-current" aria-current="page">{{ numero }}</span>
+                            {% else %}
+                                <a href="{% querystring page=numero %}">{{ numero }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="{% querystring page=page_obj.next_page_number %}">
+                                Siguiente →
+                            </a>
+                        {% endif %}
+                    </nav>
+
+                    <p class="paginacion-info">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </p>
                 {% endif %}
-            {% endfor %}
 
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.usuario %}&usuario={{ request.GET.usuario|urlencode }}{% endif %}{% if request.GET.calificacion %}&calificacion={{ request.GET.calificacion|urlencode }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria|urlencode }}{% endif %}">
-                    Siguiente →
-                </a>
+            {% elif request.GET %}
+
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <h3>Nada con esos filtros</h3>
+                    <p>Prueba con otros valores o quita los filtros.</p>
+
+                    <a href="{% url 'feed_cagadas' %}" class="btn btn-outline">
+                        Limpiar filtros
+                    </a>
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    <div class="empty-state-icon">🌍</div>
+                    <h3>Todavía no hay cagadas públicas</h3>
+                    <p>Sé el primero: registra una y márcala como visible para otros.</p>
+
+                    <a href="{% url 'registrar_cagada' %}" class="btn btn-primary">
+                        Registrar cagada
+                    </a>
+                </div>
+
             {% endif %}
-        </nav>
-        <hr>
-    {% else %}
-        <p>Todavía no hay cagadas públicas.</p>
-        <hr>
-    {% endif %}
 
-    <nav>
-        <p>
-            <a href="{% url 'registrar_cagada' %}">Registrar cagada</a>
-        </p>
-        <p>
-            <a href="{% url 'historial_cagadas' %}">Mi historial</a>
-        </p>
-        <p>
-            <a href="{% url 'home' %}">Volver al inicio</a>
-        </p>
-    </nav>
+        </div>
+    </div>
 
+</main>
+{% endblock %}
+
+{% block extra_js %}
     <script src="{% static 'js/cagadas.js' %}"></script>
-</body>
-</html>
+{% endblock %}

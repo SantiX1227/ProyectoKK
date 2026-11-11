@@ -1,0 +1,283 @@
+/* static/css/feed.css
+   ==========================================================================
+   Feed público: filtros, publicaciones, reacciones y paginación.
+   El detalle público reutiliza además .detalle-* de cagadas.css.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Distribución: filtros a la izquierda, publicaciones a la derecha
+   ========================================================================== */
+
+.feed-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.feed-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 680px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .feed-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .feed-columna {
+    max-width: none;
+  }
+}
+
+
+/* ==========================================================================
+   2. Filtros
+   ========================================================================== */
+
+.filtros {
+  position: sticky;
+  top: calc(var(--navbar-height) + 1.5rem);
+}
+
+.filtros .card-title {
+  margin-bottom: 1rem;
+}
+
+.filtros .form-group {
+  margin-bottom: 1rem;
+}
+
+.filtros-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .filtros {
+    position: static;
+  }
+
+  /* En pantallas medianas los tres filtros van en una fila */
+  .filtros-campos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 1rem;
+  }
+
+  .filtros-acciones {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 600px) {
+  .filtros-campos {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   3. Publicación
+   ========================================================================== */
+
+.post {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem;
+  animation: aparecer 0.35s ease both;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.post-autor {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-usuario {
+  display: block;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.post-fecha {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Avatar redondo (foto o inicial) */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 1.1rem;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--border);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-lg {
+  width: 72px;
+  height: 72px;
+  font-size: 1.6rem;
+}
+
+.post-texto {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.post-stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.post-stats > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.post-observaciones {
+  padding: 0.85rem 1rem;
+  border-left: 4px solid var(--color-cagada, var(--border-strong));
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: var(--surface-alt);
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.post-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+
+/* ==========================================================================
+   4. Reacciones
+   ========================================================================== */
+
+.reacciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.boton-reaccion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  background-color: var(--surface);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    transform var(--transition);
+}
+
+.boton-reaccion:hover {
+  border-color: var(--border-strong);
+  background-color: var(--surface-alt);
+}
+
+.boton-reaccion:active {
+  transform: scale(0.95);
+}
+
+.contador-reaccion {
+  min-width: 1.4em;
+  padding: 0 0.35rem;
+  border-radius: var(--radius-full);
+  background-color: var(--surface-alt);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reacción elegida por el usuario actual */
+.boton-reaccion.is-selected {
+  border-color: var(--primary);
+  background-color: var(--primary-soft);
+  color: var(--primary-hover);
+  animation: pop 0.25s ease;
+}
+
+.boton-reaccion.is-selected .contador-reaccion {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+
+/* ==========================================================================
+   5. Paginación con texto de página
+   ========================================================================== */
+
+.paginacion-info {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+
+/* ==========================================================================
+   6. Detalle público
+   ========================================================================== */
+
+.publico-autor {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.publico-autor h1 {
+  font-size: 1.6rem;
+}

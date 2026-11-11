@@ -337,7 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 actualizarReacciones(
                     contenedor,
-                    datos.reacciones
+                    datos.reacciones,
+                    datos.reaccion_usuario
                 );
 
             } catch (error) {
@@ -376,7 +377,8 @@ function obtenerCSRFToken() {
 
 function actualizarReacciones(
     contenedor,
-    reacciones
+    reacciones,
+    reaccionUsuario
 ) {
 
     const botones = contenedor.querySelectorAll(
@@ -392,6 +394,12 @@ function actualizarReacciones(
         );
 
         contador.textContent = reacciones[tipo] ?? 0;
+
+        // Marca la reacción elegida (ninguna si el usuario la quitó)
+        const seleccionada = tipo === reaccionUsuario;
+
+        boton.classList.toggle('is-selected', seleccionada);
+        boton.setAttribute('aria-pressed', seleccionada ? 'true' : 'false');
 
     });
 

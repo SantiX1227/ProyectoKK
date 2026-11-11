@@ -1,75 +1,75 @@
-<article>
-    <header>
-        {% if cagada.usuario.foto %}
-            <img
-                src="{{ cagada.usuario.foto.url }}"
-                alt="Foto de {{ cagada.usuario.username }}"
-                width="60"
-                height="60"
-                style="object-fit: cover; border-radius: 50%;"
-            >
-        {% else %}
-            <div style="font-size: 2rem;">👤</div>
-        {% endif %}
+{% load l10n %}
 
-        <h2>{{ cagada.usuario.username }}</h2>
+<article class="card post" style="--color-cagada: {{ cagada.color }};">
+
+    <header class="post-header">
+        <span class="avatar">
+            {% if cagada.usuario.foto %}
+                <img
+                    src="{{ cagada.usuario.foto.url }}"
+                    alt="Foto de {{ cagada.usuario.username }}"
+                >
+            {% else %}
+                {{ cagada.usuario.username|first|upper }}
+            {% endif %}
+        </span>
+
+        <div class="post-autor">
+            <span class="post-usuario">@{{ cagada.usuario.username }}</span>
+            <span class="post-fecha">
+                {{ cagada.hora_inicio_cagada|date:"j \d\e F · H:i" }}
+            </span>
+        </div>
+
+        <span class="badge badge-primary">
+            {{ cagada.get_categorizacion_display }}
+        </span>
     </header>
 
-    <section>
-        <p>
-            El {{ cagada.hora_inicio_cagada|date:"d \d\e F" }} a las {{ cagada.hora_inicio_cagada|date:"h:i A" }}
-            <strong>{{ cagada.usuario.username }}</strong>
-            hizo una cagada de <strong>{{ cagada.duracion }}</strong>
-            {% if cagada.ubicacion %}
-                en <strong>{{ cagada.ubicacion.nombre }}</strong>
-            {% endif %}.
-        </p>
+    <p class="post-texto">
+        Hizo una cagada de <strong>{{ cagada.duracion }}</strong>{% if cagada.ubicacion %}
+        en <strong>📍 {{ cagada.ubicacion.nombre }}</strong>{% endif %}.
+    </p>
 
-        <p><strong>Calificación:</strong> ⭐ {{ cagada.calificacion }}</p>
-        <p><strong>Categoría:</strong> {{ cagada.get_categorizacion_display }}</p>
+    <div class="post-stats">
+        <span>
+            <span
+                class="rating"
+                style="--nota: {{ cagada.calificacion|unlocalize }};"
+            ></span>
+            {{ cagada.calificacion }} / 5
+        </span>
 
-        <p>
-            <strong>Color:</strong>
-            <span style="display: inline-block; width: 22px; height: 22px; background-color: {{ cagada.color }}; border: 1px solid #333; border-radius: 4px; vertical-align: middle;" title="{{ cagada.color }}"></span>
-            {{ cagada.color }}
-        </p>
-
-        {% if cagada.observaciones %}
-            <div>
-                <strong>Observaciones:</strong>
-                <p>{{ cagada.observaciones|linebreaks }}</p>
-            </div>
-        {% endif %}
-
-        <hr>
-
-        <div
-        class="reacciones"
-        data-cagada-id="{{ cagada.id }}"
-    >
-    
-        {% for reaccion in cagada.reacciones_display %}
-    
-            <button
-                type="button"
-                class="boton-reaccion"
-                data-tipo="{{ reaccion.tipo }}"
-                data-url="{% url 'reaccionar_cagada' cagada.id reaccion.tipo %}"
-            >
-                {{ reaccion.nombre }}
-                (<span class="contador-reaccion">{{ reaccion.cantidad }}</span>)
-            </button>
-    
-        {% endfor %}
-    
+        <span>
+            {% include 'cagadas/components/color_muestra.html' with color=cagada.color id_color=cagada.id mostrar_codigo=True %}
+        </span>
     </div>
-    </section>
 
-    <br>
+    {% if cagada.observaciones %}
+        <blockquote class="post-observaciones">
+            {{ cagada.observaciones|truncatewords:40|linebreaksbr }}
+        </blockquote>
+    {% endif %}
 
-    <footer>
-        <a href="{% url 'detalle_cagada_publica' cagada.id %}">Ver detalle</a>
-    </footer>
+    <div class="post-footer">
+        <div class="reacciones" data-cagada-id="{{ cagada.id }}">
+            {% for reaccion in cagada.reacciones_display %}
+                <button
+                    type="button"
+                    class="boton-reaccion{% if reaccion.seleccionada %} is-selected{% endif %}"
+                    aria-pressed="{% if reaccion.seleccionada %}true{% else %}false{% endif %}"
+                    data-tipo="{{ reaccion.tipo }}"
+                    data-url="{% url 'reaccionar_cagada' cagada.id reaccion.tipo %}"
+                >
+                    {{ reaccion.nombre }}
+                    <span class="contador-reaccion">{{ reaccion.cantidad }}</span>
+                </button>
+            {% endfor %}
+        </div>
+
+        <a href="{% url 'detalle_cagada_publica' cagada.id %}">
+            Ver detalle →
+        </a>
+    </div>
+
 </article>
-
-<hr>

@@ -82,8 +82,7 @@
             <div class="info-item">
                 <span class="info-label">Color</span>
                 <span class="info-value">
-                    <span class="color-dot" style="background-color: {{ cagada.color }};"></span>
-                    {{ cagada.color }}
+                    {% include 'cagadas/components/color_muestra.html' with color=cagada.color id_color=cagada.id mostrar_codigo=True %}
                 </span>
             </div>
 

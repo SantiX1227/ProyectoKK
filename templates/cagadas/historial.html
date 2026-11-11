@@ -74,11 +74,7 @@
                     {% endif %}
 
                     <div class="card-footer">
-                        <span
-                            class="color-dot"
-                            style="background-color: {{ cagada.color }};"
-                            title="{{ cagada.color }}"
-                        ></span>
+                        {% include 'cagadas/components/color_muestra.html' with color=cagada.color id_color=cagada.id %}
 
                         <a href="{% url 'detalle_cagada' cagada.id %}">
                             Ver detalle →

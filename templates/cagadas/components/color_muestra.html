@@ -1,0 +1,35 @@
+{% comment %}
+    Muestra de color que se amplía en un recuadro al hacer clic
+    (API nativa de popover, sin JavaScript).
+
+    Variables:
+      color          -> código #RRGGBB (validado en el modelo)
+      id_color       -> identificador único en la página (p. ej. cagada.id)
+      mostrar_codigo -> True para escribir el código junto al punto
+{% endcomment %}
+
+<button
+    type="button"
+    class="color-boton"
+    popovertarget="color-{{ id_color }}"
+    title="Ver el color en grande"
+    aria-label="Ver el color {{ color }} en grande"
+>
+    <span class="color-dot" style="background-color: {{ color }};"></span>
+    {% if mostrar_codigo %}{{ color }}{% endif %}
+</button>
+
+<span id="color-{{ id_color }}" popover class="color-popover">
+    <span class="color-grande" style="background-color: {{ color }};"></span>
+    <span class="color-titulo">Color registrado</span>
+    <span class="color-codigo">{{ color }}</span>
+
+    <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        popovertarget="color-{{ id_color }}"
+        popovertargetaction="hide"
+    >
+        Cerrar
+    </button>
+</span>

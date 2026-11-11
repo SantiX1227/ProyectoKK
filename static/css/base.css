@@ -1037,6 +1037,104 @@ input[type="color"] {
   vertical-align: middle;
 }
 
+/* Muestra de color clicable que abre un recuadro con el color en grande.
+   Usa la API nativa de popover (sin JavaScript): se cierra con Esc,
+   al hacer clic fuera o con el botón "Cerrar". */
+.color-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.15rem 0.35rem;
+  margin: -0.15rem -0.35rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: zoom-in;
+  transition: background-color var(--transition);
+}
+
+.color-boton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.color-boton:hover .color-dot {
+  transform: scale(1.25);
+}
+
+.color-boton .color-dot {
+  transition: transform var(--transition);
+}
+
+.color-popover {
+  /* Centrado: el reset "* { margin: 0 }" anula el margin:auto del navegador */
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+  width: min(340px, calc(100vw - 2rem));
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background-color: var(--surface);
+  color: var(--text-main);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+/* Explícito para que ningún estilo del contenedor lo muestre cerrado */
+.color-popover:not(:popover-open) {
+  display: none;
+}
+
+.color-popover:popover-open {
+  display: block;
+  animation: color-abrir 0.22s ease;
+}
+
+.color-popover::backdrop {
+  background-color: rgba(42, 31, 24, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.color-grande {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08), var(--shadow-md);
+}
+
+.color-titulo {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.color-codigo {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.color-popover .btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+@keyframes color-abrir {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
