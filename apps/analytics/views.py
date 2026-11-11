@@ -734,6 +734,23 @@ def analytics(request):
     )
 
     # =========================================================
+    # MÁXIMOS PARA ESCALAR LOS GRÁFICOS
+    # =========================================================
+
+    maximo_por_dia = max(
+        cagadas_por_dia.values()
+    )
+
+    maximo_por_hora = max(
+        cagadas_por_hora.values()
+    )
+
+    maximo_por_mes = max(
+        (resultado['cantidad'] for resultado in cagadas_por_mes),
+        default=0
+    )
+
+    # =========================================================
     # CONTEXTO ANALYTICS INDIVIDUAL
     # =========================================================
 
@@ -755,6 +772,9 @@ def analytics(request):
         'cagadas_por_dia': cagadas_por_dia,
         'cagadas_por_hora': cagadas_por_hora,
         'cagadas_por_mes': cagadas_por_mes,
+        'maximo_por_dia': maximo_por_dia,
+        'maximo_por_hora': maximo_por_hora,
+        'maximo_por_mes': maximo_por_mes,
         'duracion_promedio_por_dia': (
             duracion_promedio_por_dia
         ),

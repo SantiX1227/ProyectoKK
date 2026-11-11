@@ -1,486 +1,605 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Analítica</title>
-</head>
-
-<body>
-
-    <h1>Fase A: Resumen personal</h1>
-
-    <hr>
-
-    <h2>Actividad</h2>
-
-    <p>
-        Total de cagadas:
-        {{ resumen.total_cagadas }}
-    </p>
-
-    <p>
-        Duración total:
-        {{ resumen.duracion_total }}
-    </p>
-
-    <p>
-        Duración promedio:
-        {{ resumen.duracion_promedio }}
-    </p>
-
-    <hr>
-
-    <h2>Extremos</h2>
-
-    <p>
-        Cagada más larga:
-        {{ resumen.cagada_mas_larga }}
-    </p>
-
-    <p>
-        Cagada más corta:
-        {{ resumen.cagada_mas_corta }}
-    </p>
-
-    <hr>
-
-    <h2>Calificaciones</h2>
-
-    <p>
-        Calificación promedio:
-        {{ resumen.calificacion_promedio }}
-    </p>
-
-    <hr>
-
-    <h2>Preferencias</h2>
-
-    <p>
-        Categoría más utilizada:
-        {{ categoria_mas_usada|default:"Sin datos" }}
-    </p>
-
-    <p>
-        Ubicación más utilizada:
-        {{ ubicacion_mas_usada|default:"Sin datos" }}
-    </p>
-
-    <hr>
-
-    <h2>Fechas</h2>
-
-    <p>
-        Primera cagada:
-        {{ resumen.primera_cagada|default:"Sin datos" }}
-    </p>
-
-    <p>
-        Cagada más reciente:
-        {{ resumen.ultima_cagada|default:"Sin datos" }}
-    </p>
-<hr>
-
-<h2>Fase B: Análisis temporal</h2>
-
-<h3>Cagadas por día de la semana</h3>
-
-{% for dia, cantidad in cagadas_por_dia.items %}
-    <p>
-        {{ dia }}: {{ cantidad }}
-    </p>
-{% endfor %}
-
-
-<h3>Cagadas por hora</h3>
-
-{% for hora, cantidad in cagadas_por_hora.items %}
-    <p>
-        {{ hora }}:00 → {{ cantidad }}
-    </p>
-{% endfor %}
-
-
-<h3>Cagadas por mes</h3>
-
-{% for resultado in cagadas_por_mes %}
-    <p>
-        {{ resultado.mes|date:"F Y" }}:
-        {{ resultado.cantidad }}
-    </p>
-{% endfor %}
-
-
-<h3>Duración promedio por día</h3>
-
-{% for dia, duracion in duracion_promedio_por_dia.items %}
-    <p>
-        {{ dia }}:
-        {{ duracion|default:"Sin datos" }}
-    </p>
-{% endfor %}
-
-
-<h3>Calificación promedio por día</h3>
-
-{% for dia, calificacion in calificacion_promedio_por_dia.items %}
-    <p>
-        {{ dia }}:
-        {{ calificacion|default:"Sin datos" }}
-    </p>
-{% endfor %}
-
-
-<h3>Duración promedio por hora</h3>
-
-{% for hora, duracion in duracion_promedio_por_hora.items %}
-    <p>
-        {{ hora }}:00 →
-        {{ duracion|default:"Sin datos" }}
-    </p>
-{% endfor %}
-
-<hr>
-
-<h2>Fase C: Análisis por categorías</h2>
-
-<h3>Estadísticas por categoría</h3>
-
-{% for categoria in analitica_categorias %}
-
-    <h4>
-        {{ categoria.nombre }}
-    </h4>
-
-    <p>
-        Cantidad:
-        {{ categoria.cantidad }}
-    </p>
-
-    <p>
-        Porcentaje:
-        {{ categoria.porcentaje|floatformat:2 }}%
-    </p>
-
-    <p>
-        Duración total:
-        {{ categoria.duracion_total|default:"Sin datos" }}
-    </p>
-
-    <p>
-        Duración promedio:
-        {{ categoria.duracion_promedio|default:"Sin datos" }}
-    </p>
-
-    <p>
-        Calificación promedio:
-        {{ categoria.calificacion_promedio|default:"Sin datos" }}
-    </p>
-
-{% empty %}
-
-    <p>
-        No hay datos de categorías.
-    </p>
-
-{% endfor %}
-
-
-<hr>
-
-<h3>Indicadores destacados</h3>
-
-<p>
-    Categoría con mayor duración promedio:
-    {{ categoria_mayor_duracion_nombre|default:"Sin datos" }}
-</p>
-
-{% if categoria_mayor_duracion_valor %}
-    <p>
-        Duración promedio:
-        {{ categoria_mayor_duracion_valor }}
-    </p>
-{% endif %}
-
-
-<p>
-    Categoría más frecuente:
-    {{ categoria_mas_frecuente_nombre|default:"Sin datos" }}
-</p>
-
-{% if categoria_mas_frecuente_cantidad %}
-    <p>
-        Cantidad de registros:
-        {{ categoria_mas_frecuente_cantidad }}
-    </p>
-{% endif %}
-
-
-<p>
-    Categoría mejor calificada:
-    {{ categoria_mejor_calificada_nombre|default:"Sin datos" }}
-</p>
-
-{% if categoria_mejor_calificada_valor %}
-    <p>
-        Calificación promedio:
-        {{ categoria_mejor_calificada_valor }}
-    </p>
-{% endif %}
-
-
-<p>
-    Categoría peor calificada:
-    {{ categoria_peor_calificada_nombre|default:"Sin datos" }}
-</p>
-
-{% if categoria_peor_calificada_valor %}
-    <p>
-        Calificación promedio:
-        {{ categoria_peor_calificada_valor }}
-    </p>
-{% endif %}
-
-
-<hr>
-
-<h3>Distribución de calificaciones</h3>
-
-{% for categoria in analitica_categorias %}
-
-    <h4>
-        {{ categoria.nombre }}
-    </h4>
-
-    {% for categoria_id, calificaciones in distribucion_por_categoria.items %}
-
-        {% if categoria_id == categoria.id %}
-
-            {% for resultado in calificaciones %}
-
-                <p>
-                    Calificación
-                    {{ resultado.calificacion }}
-                    →
-                    {{ resultado.cantidad }}
-                    registro(s)
-                </p>
-
+{% extends 'base.html' %}
+{% load static l10n formato %}
+
+{% block title %}Analítica - Proyecto KK{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="page">
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Analítica</h1>
+            <p class="page-subtitle">
+                Tus estadísticas personales, con todas tus cagadas (públicas y privadas).
+            </p>
+        </div>
+    </header>
+
+    {% if resumen.total_cagadas %}
+
+    <nav class="analitica-nav" aria-label="Secciones de la analítica">
+        <a href="#resumen">📊 Resumen</a>
+        <a href="#tiempo">🕐 Tiempo</a>
+        <a href="#categorias">📂 Categorías</a>
+        <a href="#lugares">📍 Lugares</a>
+        <a href="#comparar">🆚 Comparar</a>
+    </nav>
+
+    {# ===================== FASE A: RESUMEN ===================== #}
+    <section id="resumen" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📊</span>
+            <div>
+                <h2>Resumen personal</h2>
+                <p>Tus números generales de un vistazo.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-4 kpi-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total de cagadas</p>
+                <p class="stat-value">{{ resumen.total_cagadas }}</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Tiempo total</p>
+                <p class="stat-value">{{ resumen.duracion_total|duracion }}</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Duración promedio</p>
+                <p class="stat-value">{{ resumen.duracion_promedio|duracion }}</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Calificación promedio</p>
+                <p class="stat-value">{{ resumen.calificacion_promedio|floatformat:1 }}</p>
+                <span
+                    class="rating"
+                    style="--nota: {{ resumen.calificacion_promedio|unlocalize }};"
+                ></span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="info-list datos-lista">
+                <div class="info-item">
+                    <span class="info-label">Cagada más larga</span>
+                    <span class="info-value">🐢 {{ resumen.cagada_mas_larga|duracion }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Cagada más corta</span>
+                    <span class="info-value">⚡ {{ resumen.cagada_mas_corta|duracion }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Categoría favorita</span>
+                    <span class="info-value">📂 {{ categoria_mas_usada|default:"Sin datos" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Lugar favorito</span>
+                    <span class="info-value">📍 {{ ubicacion_mas_usada|default:"Sin datos" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Primera cagada</span>
+                    <span class="info-value">
+                        🗓️ {{ resumen.primera_cagada|date:"j \d\e F \d\e Y, H:i"|default:"Sin datos" }}
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Más reciente</span>
+                    <span class="info-value">
+                        🕒 {{ resumen.ultima_cagada|date:"j \d\e F \d\e Y, H:i"|default:"Sin datos" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    {# ===================== FASE B: TIEMPO ===================== #}
+    <section id="tiempo" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">🕐</span>
+            <div>
+                <h2>Análisis temporal</h2>
+                <p>Qué días, a qué horas y cuánto tiempo.</p>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <h3 class="card-title mb-2">Por día de la semana</h3>
+
+                <ul class="barras">
+                    {% for dia, cantidad in cagadas_por_dia.items %}
+                        <li class="barra-fila{% if cantidad and cantidad == maximo_por_dia %} is-max{% endif %}">
+                            <span class="barra-etiqueta">{{ dia }}</span>
+                            <span class="barra-pista">
+                                <span
+                                    class="barra"
+                                    style="--valor: {% widthratio cantidad maximo_por_dia 100 %};"
+                                ></span>
+                            </span>
+                            <span class="barra-valor">{{ cantidad }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title mb-2">Por mes</h3>
+
+                <ul class="barras barras-anchas">
+                    {% for resultado in cagadas_por_mes %}
+                        <li class="barra-fila{% if resultado.cantidad == maximo_por_mes %} is-max{% endif %}">
+                            <span class="barra-etiqueta">{{ resultado.mes|date:"F Y"|capfirst }}</span>
+                            <span class="barra-pista">
+                                <span
+                                    class="barra"
+                                    style="--valor: {% widthratio resultado.cantidad maximo_por_mes 100 %};"
+                                ></span>
+                            </span>
+                            <span class="barra-valor">{{ resultado.cantidad }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title mb-2">Por hora del día</h3>
+            <p class="card-subtitulo">
+                Pasa el ratón por una columna para ver el número exacto.
+            </p>
+
+            <ol class="columnas">
+                {% for hora, cantidad in cagadas_por_hora.items %}
+                    <li
+                        class="columna"
+                        title="{{ hora|stringformat:'02d' }}:00 · {{ cantidad }} cagada{{ cantidad|pluralize }}"
+                    >
+                        <span class="columna-pista">
+                            {% if cantidad %}
+                                <span class="columna-cantidad">{{ cantidad }}</span>
+                            {% endif %}
+                            <span
+                                class="columna-barra"
+                                style="--valor: {% widthratio cantidad maximo_por_hora 100 %};"
+                            ></span>
+                        </span>
+                        <span class="columna-etiqueta">{{ hora }}</span>
+                    </li>
+                {% endfor %}
+            </ol>
+
+            <div class="columnas-leyenda">
+                <span>🌙 Madrugada</span>
+                <span>☀️ Mediodía</span>
+                <span>🌙 Noche</span>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="card">
+                <h3 class="card-title mb-1">Duración promedio por día</h3>
+
+                <dl class="valores-lista">
+                    {% for dia, promedio in duracion_promedio_por_dia.items %}
+                        <div class="valores-fila">
+                            <dt>{{ dia }}</dt>
+                            <dd>
+                                {% if promedio %}
+                                    {{ promedio|duracion }}
+                                {% else %}
+                                    <span class="sin-dato">Sin datos</span>
+                                {% endif %}
+                            </dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title mb-1">Calificación promedio por día</h3>
+
+                <dl class="valores-lista">
+                    {% for dia, calificacion in calificacion_promedio_por_dia.items %}
+                        <div class="valores-fila">
+                            <dt>{{ dia }}</dt>
+                            <dd>
+                                {% if calificacion is not None %}
+                                    <span
+                                        class="rating"
+                                        style="--nota: {{ calificacion|unlocalize }};"
+                                    ></span>
+                                    {{ calificacion|floatformat:1 }}
+                                {% else %}
+                                    <span class="sin-dato">Sin datos</span>
+                                {% endif %}
+                            </dd>
+                        </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title mb-1">Duración promedio por hora</h3>
+            <p class="card-subtitulo mt-0">Solo las horas en las que has registrado algo.</p>
+
+            <div class="horas-chips">
+                {% for hora, promedio in duracion_promedio_por_hora.items %}
+                    {% if promedio %}
+                        <span class="hora-chip">
+                            {{ hora|stringformat:"02d" }}:00
+                            <strong>{{ promedio|duracion }}</strong>
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+    </section>
+
+    {# ===================== FASE C: CATEGORÍAS ===================== #}
+    <section id="categorias" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📂</span>
+            <div>
+                <h2>Análisis por categorías</h2>
+                <p>Cómo se reparten y cómo las calificas.</p>
+            </div>
+        </div>
+
+        <div class="destacados">
+            <div class="destacado destacado-info">
+                <span class="destacado-icono">🔁</span>
+                <div class="destacado-texto">
+                    <span class="destacado-etiqueta">Más frecuente</span>
+                    <span class="destacado-nombre">{{ categoria_mas_frecuente_nombre|default:"Sin datos" }}</span>
+                    {% if categoria_mas_frecuente_cantidad %}
+                        <span class="destacado-valor">
+                            {{ categoria_mas_frecuente_cantidad }} registro{{ categoria_mas_frecuente_cantidad|pluralize }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="destacado destacado-marca">
+                <span class="destacado-icono">⏳</span>
+                <div class="destacado-texto">
+                    <span class="destacado-etiqueta">Mayor duración promedio</span>
+                    <span class="destacado-nombre">{{ categoria_mayor_duracion_nombre|default:"Sin datos" }}</span>
+                    {% if categoria_mayor_duracion_valor %}
+                        <span class="destacado-valor">{{ categoria_mayor_duracion_valor|duracion }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="destacado destacado-bueno">
+                <span class="destacado-icono">🏆</span>
+                <div class="destacado-texto">
+                    <span class="destacado-etiqueta">Mejor calificada</span>
+                    <span class="destacado-nombre">{{ categoria_mejor_calificada_nombre|default:"Sin datos" }}</span>
+                    {% if categoria_mejor_calificada_valor is not None %}
+                        <span class="destacado-valor">★ {{ categoria_mejor_calificada_valor|floatformat:1 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="destacado destacado-malo">
+                <span class="destacado-icono">👎</span>
+                <div class="destacado-texto">
+                    <span class="destacado-etiqueta">Peor calificada</span>
+                    <span class="destacado-nombre">{{ categoria_peor_calificada_nombre|default:"Sin datos" }}</span>
+                    {% if categoria_peor_calificada_valor is not None %}
+                        <span class="destacado-valor">★ {{ categoria_peor_calificada_valor|floatformat:1 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="categorias-grid">
+            {% for categoria in analitica_categorias %}
+                <article class="card categoria-card">
+
+                    <div class="card-header">
+                        <h3 class="card-title">{{ categoria.nombre }}</h3>
+                        <span class="badge badge-primary">
+                            {{ categoria.cantidad }} registro{{ categoria.cantidad|pluralize }}
+                        </span>
+                    </div>
+
+                    <div class="categoria-porcentaje">
+                        <span class="barra-pista">
+                            <span
+                                class="barra"
+                                style="--valor: {% widthratio categoria.cantidad resumen.total_cagadas 100 %};"
+                            ></span>
+                        </span>
+                        <strong>{{ categoria.porcentaje|floatformat:1 }}%</strong>
+                    </div>
+
+                    <div class="categoria-datos">
+                        <div class="categoria-dato">
+                            <span>Tiempo total</span>
+                            <strong>{{ categoria.duracion_total|duracion|default:"Sin datos" }}</strong>
+                        </div>
+
+                        <div class="categoria-dato">
+                            <span>Duración promedio</span>
+                            <strong>{{ categoria.duracion_promedio|duracion|default:"Sin datos" }}</strong>
+                        </div>
+
+                        <div class="categoria-dato categoria-dato-ancho">
+                            <span>Calificación promedio</span>
+                            <strong>
+                                <span
+                                    class="rating"
+                                    style="--nota: {{ categoria.calificacion_promedio|unlocalize }};"
+                                ></span>
+                                {{ categoria.calificacion_promedio|floatformat:1 }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="distribucion">
+                        <span class="distribucion-titulo">Distribución de calificaciones</span>
+
+                        <div class="distribucion-chips">
+                            {% for categoria_id, calificaciones in distribucion_por_categoria.items %}
+                                {% if categoria_id == categoria.id %}
+                                    {% for resultado in calificaciones %}
+                                        <span class="distribucion-chip">
+                                            ★ {{ resultado.calificacion }}
+                                            <small>× {{ resultado.cantidad }}</small>
+                                        </span>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </article>
             {% endfor %}
+        </div>
 
-        {% endif %}
+    </section>
 
-    {% endfor %}
+    {# ===================== FASE D: LUGARES ===================== #}
+    <section id="lugares" class="analitica-seccion">
 
-{% endfor %}
-<hr>
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">📍</span>
+            <div>
+                <h2>Analítica espacial</h2>
+                <p>Dónde cagas y qué tal te va en cada sitio. Solo tú ves las coordenadas.</p>
+            </div>
+        </div>
 
-<h2>Fase D - Analítica espacial</h2>
+        {% if analitica_ubicaciones %}
 
-<h3>Estadísticas por ubicación</h3>
+            <div class="destacados">
+                <div class="destacado destacado-info">
+                    <span class="destacado-icono">📍</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Más utilizada</span>
+                        <span class="destacado-nombre">{{ ubicacion_mas_utilizada_nombre }}</span>
+                        <span class="destacado-valor">
+                            {{ ubicacion_mas_utilizada_cantidad }} cagada{{ ubicacion_mas_utilizada_cantidad|pluralize }}
+                        </span>
+                    </div>
+                </div>
 
-{% if analitica_ubicaciones %}
+                <div class="destacado destacado-marca">
+                    <span class="destacado-icono">🕰️</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Más tiempo acumulado</span>
+                        <span class="destacado-nombre">{{ ubicacion_mayor_tiempo_nombre }}</span>
+                        <span class="destacado-valor">{{ ubicacion_mayor_tiempo_valor|duracion }}</span>
+                    </div>
+                </div>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Ubicación</th>
-            <th>Cantidad</th>
-            <th>Porcentaje</th>
-            <th>Duración total</th>
-            <th>Duración promedio</th>
-            <th>Calificación promedio</th>
-            <th>Latitud</th>
-            <th>Longitud</th>
-        </tr>
-    </thead>
+                <div class="destacado destacado-marca">
+                    <span class="destacado-icono">🐢</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Mayor duración promedio</span>
+                        <span class="destacado-nombre">{{ ubicacion_mayor_duracion_nombre }}</span>
+                        <span class="destacado-valor">{{ ubicacion_mayor_duracion_valor|duracion }}</span>
+                    </div>
+                </div>
 
-    <tbody>
-        {% for ubicacion in analitica_ubicaciones %}
-            <tr>
-                <td>
-                    {{ ubicacion.nombre }}
-                </td>
+                <div class="destacado destacado-info">
+                    <span class="destacado-icono">⚡</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Menor duración promedio</span>
+                        <span class="destacado-nombre">{{ ubicacion_menor_duracion_nombre }}</span>
+                        <span class="destacado-valor">{{ ubicacion_menor_duracion_valor|duracion }}</span>
+                    </div>
+                </div>
 
-                <td>
-                    {{ ubicacion.cantidad }}
-                </td>
+                <div class="destacado destacado-bueno">
+                    <span class="destacado-icono">🏆</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Mejor calificada</span>
+                        <span class="destacado-nombre">{{ ubicacion_mejor_calificada_nombre }}</span>
+                        <span class="destacado-valor">★ {{ ubicacion_mejor_calificada_valor|floatformat:1 }}</span>
+                    </div>
+                </div>
 
-                <td>
-                    {{ ubicacion.porcentaje|floatformat:2 }}%
-                </td>
+                <div class="destacado destacado-malo">
+                    <span class="destacado-icono">👎</span>
+                    <div class="destacado-texto">
+                        <span class="destacado-etiqueta">Peor calificada</span>
+                        <span class="destacado-nombre">{{ ubicacion_peor_calificada_nombre }}</span>
+                        <span class="destacado-valor">★ {{ ubicacion_peor_calificada_valor|floatformat:1 }}</span>
+                    </div>
+                </div>
+            </div>
 
-                <td>
-                    {{ ubicacion.duracion_total }}
-                </td>
+            <div class="table-wrapper">
+                <table class="table tabla-ubicaciones">
+                    <thead>
+                        <tr>
+                            <th>Ubicación</th>
+                            <th>Uso</th>
+                            <th>Cagadas</th>
+                            <th>Tiempo total</th>
+                            <th>Duración prom.</th>
+                            <th>Calificación</th>
+                            <th>Coordenadas</th>
+                        </tr>
+                    </thead>
 
-                <td>
-                    {{ ubicacion.duracion_promedio }}
-                </td>
+                    <tbody>
+                        {% for ubicacion in analitica_ubicaciones %}
+                            <tr>
+                                <td>{{ ubicacion.nombre }}</td>
 
-                <td>
-                    {{ ubicacion.calificacion_promedio|floatformat:2 }}
-                </td>
+                                <td>
+                                    <div class="tabla-porcentaje">
+                                        <span class="barra-pista barras-accent">
+                                            <span
+                                                class="barra"
+                                                style="--valor: {% widthratio ubicacion.cantidad resumen.total_cagadas 100 %};"
+                                            ></span>
+                                        </span>
+                                        <span>{{ ubicacion.porcentaje|floatformat:1 }}%</span>
+                                    </div>
+                                </td>
 
-                <td>
-                    {{ ubicacion.latitud }}
-                </td>
+                                <td>{{ ubicacion.cantidad }}</td>
+                                <td>{{ ubicacion.duracion_total|duracion }}</td>
+                                <td>{{ ubicacion.duracion_promedio|duracion }}</td>
 
-                <td>
-                    {{ ubicacion.longitud }}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                                <td>
+                                    <span
+                                        class="rating"
+                                        style="--nota: {{ ubicacion.calificacion_promedio|unlocalize }};"
+                                    ></span>
+                                    {{ ubicacion.calificacion_promedio|floatformat:1 }}
+                                </td>
 
-{% else %}
+                                <td class="coordenadas">
+                                    {% if ubicacion.latitud is not None and ubicacion.longitud is not None %}
+                                        {{ ubicacion.latitud|unlocalize }}, {{ ubicacion.longitud|unlocalize }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-<p>No tienes cagadas asociadas a ninguna ubicación.</p>
-
-{% endif %}
-<h3>Resumen espacial</h3>
-
-<ul>
-
-    <li>
-        <strong>Ubicación más utilizada:</strong>
-        {% if ubicacion_mas_utilizada_nombre %}
-            {{ ubicacion_mas_utilizada_nombre }}
-            ({{ ubicacion_mas_utilizada_cantidad }} cagadas)
         {% else %}
-            Sin datos
+
+            <div class="empty-state sin-datos-card">
+                <div class="empty-state-icon">🗺️</div>
+                <h3>Sin ubicaciones todavía</h3>
+                <p>Ninguna de tus cagadas tiene una ubicación asociada.</p>
+
+                <a href="{% url 'listar_ubicaciones' %}" class="btn btn-outline">
+                    Ver mis ubicaciones
+                </a>
+            </div>
+
         {% endif %}
-    </li>
 
-    <li>
-        <strong>Mayor duración promedio:</strong>
-        {% if ubicacion_mayor_duracion_nombre %}
-            {{ ubicacion_mayor_duracion_nombre }}
-            ({{ ubicacion_mayor_duracion_valor }})
-        {% else %}
-            Sin datos
-        {% endif %}
-    </li>
+    </section>
 
-    <li>
-        <strong>Menor duración promedio:</strong>
-        {% if ubicacion_menor_duracion_nombre %}
-            {{ ubicacion_menor_duracion_nombre }}
-            ({{ ubicacion_menor_duracion_valor }})
-        {% else %}
-            Sin datos
-        {% endif %}
-    </li>
+    {% else %}
 
-    <li>
-        <strong>Mejor calificada:</strong>
-        {% if ubicacion_mejor_calificada_nombre %}
-            {{ ubicacion_mejor_calificada_nombre }}
-            ({{ ubicacion_mejor_calificada_valor|floatformat:2 }})
-        {% else %}
-            Sin datos
-        {% endif %}
-    </li>
+        <div class="empty-state analitica-seccion">
+            <div class="empty-state-icon">📊</div>
+            <h3>Aún no hay nada que analizar</h3>
+            <p>Registra tu primera cagada y aquí aparecerán tus estadísticas.</p>
 
-    <li>
-        <strong>Peor calificada:</strong>
-        {% if ubicacion_peor_calificada_nombre %}
-            {{ ubicacion_peor_calificada_nombre }}
-            ({{ ubicacion_peor_calificada_valor|floatformat:2 }})
-        {% else %}
-            Sin datos
-        {% endif %}
-    </li>
+            <a href="{% url 'registrar_cagada' %}" class="btn btn-primary">
+                ＋ Registrar cagada
+            </a>
+        </div>
 
-    <li>
-        <strong>Mayor tiempo acumulado:</strong>
-        {% if ubicacion_mayor_tiempo_nombre %}
-            {{ ubicacion_mayor_tiempo_nombre }}
-            ({{ ubicacion_mayor_tiempo_valor }})
-        {% else %}
-            Sin datos
-        {% endif %}
-    </li>
+    {% endif %}
 
-</ul>
-<h3>Datos para mapa</h3>
+    {# ===================== FASE E: COMPARAR ===================== #}
+    <section id="comparar" class="analitica-seccion">
 
-{% if analitica_ubicaciones %}
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">🆚</span>
+            <div>
+                <h2>Comparar con otro usuario</h2>
+                <p>Solo se usan las cagadas públicas de ambos.</p>
+            </div>
+        </div>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>Ubicación</th>
-            <th>Latitud</th>
-            <th>Longitud</th>
-        </tr>
-    </thead>
+        <div class="card comparar-card">
+            <div>
+                <h3>¿Quién caga mejor?</h3>
+                <p>
+                    Elige a alguien de la comunidad y comparad vuestras
+                    estadísticas públicas lado a lado.
+                </p>
+            </div>
 
-    <tbody>
-        {% for ubicacion in analitica_ubicaciones %}
-            <tr>
-                <td>{{ ubicacion.nombre }}</td>
-                <td>{{ ubicacion.latitud }}</td>
-                <td>{{ ubicacion.longitud }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            <div>
+                {% if usuarios_comparables %}
 
-{% else %}
+                    <form id="form-comparacion" class="comparar-form">
+                        <label for="usuario-comparacion" class="sr-only">Usuario</label>
 
-<p>No hay ubicaciones con coordenadas disponibles.</p>
+                        <select id="usuario-comparacion" class="form-control">
+                            <option value="">Selecciona un usuario</option>
 
-{% endif %}
+                            {% for usuario in usuarios_comparables %}
+                                <option value="{% url 'analytics-comparacion' usuario.id %}">
+                                    {{ usuario.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
 
-<hr>
+                        <button type="submit" class="btn btn-primary">
+                            Comparar
+                        </button>
+                    </form>
 
-<h2>Fase E: Comparar con otro usuario</h2>
+                    <p
+                        id="aviso-comparacion"
+                        class="alert alert-warning comparar-aviso"
+                        role="alert"
+                        hidden
+                    >
+                        ⚠️ Primero elige un usuario de la lista.
+                    </p>
 
-<form id="form-comparacion">
+                {% else %}
 
-    <select id="usuario-comparacion">
+                    <p class="text-muted">
+                        Todavía no hay otros usuarios con los que compararte.
+                    </p>
 
-        <option value="">
-            Selecciona un usuario
-        </option>
+                {% endif %}
+            </div>
+        </div>
 
-        {% for usuario in usuarios_comparables %}
+    </section>
 
-            <option value="{% url 'analytics-comparacion' usuario.id %}">
-                {{ usuario.username }}
-            </option>
+</main>
+{% endblock %}
 
-        {% endfor %}
-
-    </select>
-
-    <button type="button" onclick="irAComparacion()">
-        Comparar
-    </button>
-
-</form>
-
-<script>
-
-function irAComparacion() {
-
-    const urlComparacion =
-        document.getElementById('usuario-comparacion').value;
-
-    if (!urlComparacion) {
-        alert('Selecciona un usuario.');
-        return;
-    }
-
-    window.location.href = urlComparacion;
-}
-
-</script>
-<nav>
-    <a href="{% url 'home' %}">
-        Volver a inicio
-    </a>
-</nav>
-</body>
-</html>
+{% block extra_js %}
+    <script src="{% static 'js/analytics.js' %}"></script>
+{% endblock %}
