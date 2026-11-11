@@ -64,25 +64,45 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Agrupa los pines que quedan muy cerca (p. ej. dos baños de la
+    // misma casa). Al tocar un grupo se acerca el zoom; si aun así los
+    // lugares coinciden, se abren en abanico ("spiderfy").
+    const grupo = L.markerClusterGroup({
+        maxClusterRadius: 40,
+        showCoverageOnHover: false,
+        spiderfyOnMaxZoom: true,
+        spiderLegPolylineOptions: {
+            color: '#7b6b5e',
+            weight: 1.5,
+            opacity: 0.7
+        },
+        iconCreateFunction: crearGrupo
+    });
+
     ubicaciones.forEach(function (lugar, indice) {
         const marcador = L.marker(posiciones[indice], {
             icon: crearPin(lugar),
             keyboard: true,
             title: lugar.nombre,
             // Los lugares más usados quedan por encima si se solapan
-            zIndexOffset: lugar.nivel * 100 + (lugar.favorita ? 1000 : 0)
+            zIndexOffset: lugar.nivel * 100 + (lugar.favorita ? 1000 : 0),
+            // Lo usa crearGrupo para colorear el grupo
+            nivel: lugar.nivel
         })
             .bindPopup(function () {
                 return crearPopup(lugar);
-            })
-            .addTo(mapa);
+            });
 
-        // Nombre accesible para lectores de pantalla y teclado
-        marcador.getElement().setAttribute(
-            'aria-label',
-            lugar.nombre + ': ' + lugar.cantidad +
-                (lugar.cantidad === 1 ? ' cagada' : ' cagadas')
-        );
+        // Nombre accesible para lectores de pantalla y teclado.
+        // Dentro de un grupo el pin no existe en la página hasta que
+        // el grupo se abre, por eso se pone cada vez que aparece.
+        marcador.on('add', function () {
+            marcador.getElement().setAttribute(
+                'aria-label',
+                lugar.nombre + ': ' + lugar.cantidad +
+                    (lugar.cantidad === 1 ? ' cagada' : ' cagadas')
+            );
+        });
 
         // El pin con la ventana abierta se resalta
         marcador.on('popupopen', function () {
@@ -92,7 +112,11 @@ document.addEventListener('DOMContentLoaded', function () {
         marcador.on('popupclose', function () {
             marcador.getElement().classList.remove('is-activo');
         });
+
+        grupo.addLayer(marcador);
     });
+
+    mapa.addLayer(grupo);
 });
 
 // ---------------------------------------------------------
@@ -115,6 +139,26 @@ function crearPin(lugar) {
         iconSize: [36, 46],
         iconAnchor: [18, 44],
         popupAnchor: [0, -40]
+    });
+}
+
+// ---------------------------------------------------------
+// Grupo de pines cercanos: círculo con el número de lugares,
+// con el aro del color del nivel más alto que contiene.
+// ---------------------------------------------------------
+
+function crearGrupo(grupo) {
+    const marcadores = grupo.getAllChildMarkers();
+
+    const nivelMaximo = Math.max.apply(null, marcadores.map(function (marcador) {
+        return Number(marcador.options.nivel) || 0;
+    }));
+
+    return L.divIcon({
+        className: 'grupo nivel-' + nivelMaximo,
+        html: '<span class="grupo-circulo"><strong>' + marcadores.length +
+            '</strong><small>lugares</small></span>',
+        iconSize: [48, 48]
     });
 }
 

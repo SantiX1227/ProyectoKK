@@ -210,6 +210,78 @@
 
 
 /* ==========================================================================
+   1a-bis. Grupos de pines cercanos (Leaflet.markercluster)
+   --------------------------------------------------------------------------
+   <div class="leaflet-marker-icon grupo nivel-N">
+     <span class="grupo-circulo"><strong>3</strong><small>lugares</small></span>
+   </div>
+   El número es de LUGARES agrupados (no de cagadas). El aro toma el color
+   del nivel más alto del grupo. Al tocarlo se acerca el zoom o, si los
+   lugares están en el mismo sitio, se abren en abanico.
+   ========================================================================== */
+
+.grupo {
+  background: none;
+  border: none;
+}
+
+.grupo-circulo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: var(--surface);
+  border: 4px solid var(--nivel-color, var(--nivel-0));
+  /* Segundo aro desplazado: da sensación de "varios pines apilados" */
+  box-shadow:
+    3px 3px 0 -1px var(--surface),
+    3px 3px 0 1px var(--nivel-color, var(--nivel-0)),
+    0 6px 14px -4px rgba(42, 31, 24, 0.45);
+  color: var(--text-main);
+  transition: transform var(--transition);
+}
+
+.grupo-circulo strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.grupo-circulo small {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.grupo:focus-visible {
+  outline: none;
+}
+
+.grupo:focus-visible .grupo-circulo {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 4px var(--primary-ring),
+    0 6px 14px -4px rgba(42, 31, 24, 0.45);
+}
+
+@media (hover: hover) {
+  .grupo:hover .grupo-circulo {
+    transform: scale(1.08);
+  }
+}
+
+@media (hover: none) {
+  .grupo:active .grupo-circulo {
+    transform: scale(0.94);
+  }
+}
+
+
+/* ==========================================================================
    1c. Leyenda de colores (franja debajo del mapa, dentro de la tarjeta)
    ========================================================================== */
 
