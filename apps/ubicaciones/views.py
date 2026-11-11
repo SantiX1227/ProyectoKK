@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 
 from .models import Ubicacion
 from .forms import UbicacionForm
@@ -74,9 +75,20 @@ def crear_ubicacion(request):
                         'cagada_ubicacion_seleccionada'
                     ] = ubicacion.id
 
+                    messages.success(
+                        request,
+                        f'La ubicación «{ubicacion.nombre}» se creó '
+                        'y quedó seleccionada en tu registro.'
+                    )
+
                     return redirect(
                         'registrar_cagada'
                     )
+
+                messages.success(
+                    request,
+                    f'La ubicación «{ubicacion.nombre}» se creó.'
+                )
 
                 return redirect(
                     'listar_ubicaciones'
@@ -115,7 +127,12 @@ def editar_ubicacion(request, id):
 
         if form.is_valid():
 
-            form.save()
+            ubicacion = form.save()
+
+            messages.success(
+                request,
+                f'La ubicación «{ubicacion.nombre}» se actualizó.'
+            )
 
             return redirect('listar_ubicaciones')
 
@@ -145,7 +162,16 @@ def eliminar_ubicacion(request, id):
 
     if request.method == 'POST':
 
+        nombre = ubicacion.nombre
+
         ubicacion.delete()
+
+        messages.success(
+            request,
+            f'La ubicación «{nombre}» se eliminó. '
+            'Tus cagadas registradas allí se conservan, '
+            'pero sin ubicación.'
+        )
 
         return redirect('listar_ubicaciones')
 
