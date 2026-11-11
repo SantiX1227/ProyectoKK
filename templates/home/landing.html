@@ -12,7 +12,7 @@
 
     <section class="hero-card">
         <span class="hero-emoji">🚽</span>
-        <h1>¡Hola, {{ request.user.first_name|default:request.user.username }}!</h1>
+        <h1>¡Hola, {{ request.user.username }}!</h1>
         <p>¿Listo para otra sesión? Pon el cronómetro en marcha y registra cómo fue.</p>
 
         <a href="{% url 'registrar_cagada' %}" class="hero-cta">

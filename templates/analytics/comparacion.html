@@ -129,7 +129,7 @@
 
                     <div class="duelo-valor duelo-valor-yo">
                         {% if metrica.ganador == 'actual' %}
-                            <span class="corona" title="Gana">👑</span>
+                            <span class="corona" aria-label="Gana">👑</span>
                         {% endif %}
                         <span class="duelo-pill">
                             {% include 'analytics/components/valor_metrica.html' with valor=metrica.actual tipo=metrica.tipo %}
@@ -155,7 +155,7 @@
                             {% include 'analytics/components/valor_metrica.html' with valor=metrica.comparado tipo=metrica.tipo %}
                         </span>
                         {% if metrica.ganador == 'comparado' %}
-                            <span class="corona" title="Gana">👑</span>
+                            <span class="corona" aria-label="Gana">👑</span>
                         {% endif %}
                     </div>
 
@@ -504,7 +504,10 @@
             <span class="seccion-icono">🕐</span>
             <div>
                 <h2>Hora a hora</h2>
-                <p>Pasa el ratón por una hora para ver los números exactos.</p>
+                <p>
+                    <span class="ayuda-raton">Pasa el ratón por una hora para ver los números exactos.</span>
+                    <span class="ayuda-tactil">Toca una hora para ver los números exactos.</span>
+                </p>
             </div>
 
             <div class="leyenda">
@@ -518,8 +521,16 @@
                 {% for hora in comparacion_horas %}
                     <li
                         class="columna"
-                        title="{{ hora.hora|stringformat:'02d' }}:00 · Tú: {{ hora.actual.cantidad }} · {{ usuario_comparado.username }}: {{ hora.comparado.cantidad }}"
+                        tabindex="0"
+                        aria-label="{{ hora.hora|stringformat:'02d' }}:00. Tú: {{ hora.actual.cantidad }}. {{ usuario_comparado.username }}: {{ hora.comparado.cantidad }}"
                     >
+                        <span class="columna-burbuja columna-burbuja-doble" aria-hidden="true">
+                            <b>{{ hora.hora|stringformat:"02d" }}:00</b>
+                            <span class="burbuja-fila">
+                                <span class="burbuja-yo">{{ hora.actual.cantidad }}</span>
+                                <span class="burbuja-rival">{{ hora.comparado.cantidad }}</span>
+                            </span>
+                        </span>
                         <span class="columna-pista columna-pista-doble">
                             <span
                                 class="columna-barra columna-yo"

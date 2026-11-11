@@ -160,19 +160,22 @@
         <div class="card">
             <h3 class="card-title mb-2">Por hora del día</h3>
             <p class="card-subtitulo">
-                Pasa el ratón por una columna para ver el número exacto.
+                <span class="ayuda-raton">Pasa el ratón por una columna para ver el número exacto.</span>
+                <span class="ayuda-tactil">Toca una columna para ver el número exacto.</span>
             </p>
 
             <ol class="columnas">
                 {% for hora, cantidad in cagadas_por_hora.items %}
                     <li
                         class="columna"
-                        title="{{ hora|stringformat:'02d' }}:00 · {{ cantidad }} cagada{{ cantidad|pluralize }}"
+                        tabindex="0"
+                        aria-label="{{ hora|stringformat:'02d' }}:00, {{ cantidad }} cagada{{ cantidad|pluralize }}"
                     >
+                        <span class="columna-burbuja" aria-hidden="true">
+                            <b>{{ hora|stringformat:"02d" }}:00</b>
+                            {{ cantidad }}
+                        </span>
                         <span class="columna-pista">
-                            {% if cantidad %}
-                                <span class="columna-cantidad">{{ cantidad }}</span>
-                            {% endif %}
                             <span
                                 class="columna-barra"
                                 style="--valor: {% widthratio cantidad maximo_por_hora 100 %};"

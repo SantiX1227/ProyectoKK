@@ -793,6 +793,33 @@
   background: linear-gradient(0deg, #0f766e 0%, #2bb5a5 100%);
 }
 
+/* Burbuja con los dos valores: punto caramelo = tú, punto verde = rival */
+.burbuja-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.burbuja-yo,
+.burbuja-rival {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.burbuja-yo::before,
+.burbuja-rival::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gradiente-yo);
+}
+
+.burbuja-rival::before {
+  background: var(--gradiente-rival);
+}
+
 
 /* ==========================================================================
    8. Tablas de duelo
@@ -850,7 +877,8 @@
   border-left: 1px solid var(--border);
 }
 
-.tabla-duelo tbody tr:nth-child(even) {
+.tabla-duelo tbody tr:nth-child(even),
+.tabla-duelo tbody tr:nth-child(even) td:first-child {
   background-color: #fdfaf6;
 }
 

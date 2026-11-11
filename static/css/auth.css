@@ -12,6 +12,7 @@
 
 .auth-page {
   min-height: calc(100vh - var(--navbar-height));
+  min-height: calc(100dvh - var(--navbar-height));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -275,9 +276,11 @@
   transition: border-color var(--transition), background-color var(--transition);
 }
 
-.file-dropzone:hover {
-  border-color: var(--primary);
-  background-color: var(--primary-soft);
+@media (hover: hover) {
+  .file-dropzone:hover {
+    border-color: var(--primary);
+    background-color: var(--primary-soft);
+  }
 }
 
 .file-dropzone input[type="file"] {

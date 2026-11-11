@@ -54,8 +54,9 @@
                         <span
                             class="rating"
                             style="--nota: {{ cagada.calificacion|unlocalize }};"
-                            title="{{ cagada.calificacion }} de 5"
+                            aria-hidden="true"
                         ></span>
+                        <span class="fw-bold text-sm">{{ cagada.calificacion }} / 5</span>
 
                         <span class="badge badge-primary">
                             {{ cagada.get_categorizacion_display }}

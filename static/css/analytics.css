@@ -46,6 +46,25 @@
   display: none;
 }
 
+/* En el móvil la barra se desliza de lado: los bordes se difuminan
+   para que se note que hay más secciones a la derecha */
+@media (max-width: 760px) {
+  .analitica-nav {
+    width: auto;
+    padding-right: 1.75rem;
+    scroll-padding-inline: 0.35rem 1.75rem;
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 2.25rem), transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 2.25rem), transparent 100%);
+  }
+}
+
+@media (hover: none) {
+  .analitica-nav a:active {
+    color: var(--primary);
+    background-color: var(--primary-soft);
+  }
+}
+
 .analitica-nav a {
   flex-shrink: 0;
   padding: 0.45rem 0.95rem;
@@ -57,10 +76,12 @@
   transition: color var(--transition), background-color var(--transition);
 }
 
-.analitica-nav a:hover {
-  color: var(--primary);
-  background-color: var(--primary-soft);
-  text-decoration: none;
+@media (hover: hover) {
+  .analitica-nav a:hover {
+    color: var(--primary);
+    background-color: var(--primary-soft);
+    text-decoration: none;
+  }
 }
 
 
@@ -246,8 +267,12 @@
 
 /* ==========================================================================
    5. Gráfico de columnas (24 horas)
+   Pensado para móvil: cada columna se puede tocar (tabindex="0") y al
+   seleccionarla muestra una burbuja con la hora y el valor. En ordenador
+   la burbuja sale también al pasar el ratón.
    <ol class="columnas">
-     <li class="columna" title="08:00 · 2">
+     <li class="columna" tabindex="0" aria-label="08:00, 2 cagadas">
+       <span class="columna-burbuja"><b>08:00</b> 2</span>
        <span class="columna-pista"><span class="columna-barra" style="--valor: 40"></span></span>
        <span class="columna-etiqueta">8</span>
      </li>
@@ -264,11 +289,15 @@
 }
 
 .columna {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 0.45rem;
-  cursor: default;
+  cursor: pointer;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 .columna-pista {
@@ -279,6 +308,7 @@
   border-radius: 6px;
   background-color: var(--surface-alt);
   overflow: hidden;
+  transition: box-shadow var(--transition);
 }
 
 .columna-barra {
@@ -290,37 +320,117 @@
   background: linear-gradient(0deg, #b5541c 0%, #e08a2c 100%);
   transform-origin: bottom;
   animation: columna-crecer 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  transition: filter var(--transition);
+  transition: filter var(--transition), opacity var(--transition);
 }
 
-.columna:hover .columna-barra {
-  filter: brightness(1.12);
-}
-
-.columna:hover .columna-pista {
-  box-shadow: inset 0 0 0 2px var(--primary-ring);
-}
-
-/* Valor que aparece sobre la columna al pasar el ratón */
-.columna-cantidad {
+/* Burbuja con la hora y el valor (oculta hasta seleccionar la columna) */
+.columna-burbuja {
   position: absolute;
   top: 0.35rem;
   left: 50%;
-  z-index: 1;
-  transform: translateX(-50%);
-  padding: 0.05rem 0.4rem;
-  border-radius: var(--radius-full);
-  background-color: var(--surface);
-  box-shadow: var(--shadow-sm);
-  font-size: 0.72rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--text-main);
+  color: #ffffff;
+  box-shadow: var(--shadow-md);
+  font-size: 0.75rem;
   font-weight: 800;
-  color: var(--primary);
+  line-height: 1.2;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
   opacity: 0;
-  transition: opacity var(--transition);
+  transform: translate(-50%, 4px);
+  transition: opacity var(--transition), transform var(--transition);
 }
 
-.columna:hover .columna-cantidad {
+.columna-burbuja b {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Las tres primeras y las tres últimas se alinean al borde para no salirse */
+.columna:nth-child(-n + 3) .columna-burbuja {
+  left: 0;
+  transform: translate(0, 4px);
+}
+
+.columna:nth-last-child(-n + 3) .columna-burbuja {
+  left: auto;
+  right: 0;
+  transform: translate(0, 4px);
+}
+
+/* Columna seleccionada: al tocarla (móvil), con el teclado o con el ratón */
+.columna:focus .columna-burbuja,
+.columna:focus-visible .columna-burbuja {
   opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.columna:nth-child(-n + 3):focus .columna-burbuja,
+.columna:nth-last-child(-n + 3):focus .columna-burbuja {
+  transform: translate(0, 0);
+}
+
+.columna:focus .columna-pista {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.columna:focus-visible .columna-pista {
+  box-shadow: 0 0 0 3px var(--primary-ring), inset 0 0 0 2px var(--primary);
+}
+
+.columna:focus .columna-etiqueta {
+  visibility: visible;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Las demás columnas se atenúan mientras hay una seleccionada */
+.columnas:has(.columna:focus) .columna:not(:focus) .columna-barra {
+  opacity: 0.4;
+}
+
+@media (hover: hover) {
+  .columna:hover .columna-burbuja {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  .columna:nth-child(-n + 3):hover .columna-burbuja,
+  .columna:nth-last-child(-n + 3):hover .columna-burbuja {
+    transform: translate(0, 0);
+  }
+
+  .columna:hover .columna-pista {
+    box-shadow: inset 0 0 0 2px var(--primary-ring);
+  }
+
+  .columna:hover .columna-barra {
+    filter: brightness(1.12);
+  }
+}
+
+/* Texto de ayuda: uno para ratón y otro para pantallas táctiles */
+.ayuda-tactil {
+  display: none;
+}
+
+@media (hover: none) {
+  .ayuda-raton {
+    display: none;
+  }
+
+  .ayuda-tactil {
+    display: inline;
+  }
 }
 
 .columna-etiqueta {
@@ -459,9 +569,11 @@
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.destacado:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+@media (hover: hover) {
+  .destacado:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .destacado-icono {

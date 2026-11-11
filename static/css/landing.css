@@ -103,11 +103,13 @@
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.hero-cta:hover {
-  color: var(--primary-hover);
-  text-decoration: none;
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 20px 36px -12px rgba(60, 25, 5, 0.55);
+@media (hover: hover) {
+  .hero-cta:hover {
+    color: var(--primary-hover);
+    text-decoration: none;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 36px -12px rgba(60, 25, 5, 0.55);
+  }
 }
 
 
@@ -135,12 +137,14 @@
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
-.shortcut:hover {
-  color: var(--text-main);
-  text-decoration: none;
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+@media (hover: hover) {
+  .shortcut:hover {
+    color: var(--text-main);
+    text-decoration: none;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+  }
 }
 
 .shortcut-icon {
@@ -199,4 +203,18 @@
 @keyframes flotar {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50%      { transform: translateY(-6px) rotate(-4deg); }
+}
+
+
+/* Respuesta al toque en el móvil (el :hover solo existe con ratón) */
+@media (hover: none) {
+  .hero-cta:active {
+    transform: scale(0.97);
+  }
+
+  .shortcut:active {
+    transform: scale(0.97);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+  }
 }

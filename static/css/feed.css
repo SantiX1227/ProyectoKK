@@ -216,9 +216,11 @@
     transform var(--transition);
 }
 
-.boton-reaccion:hover {
-  border-color: var(--border-strong);
-  background-color: var(--surface-alt);
+@media (hover: hover) {
+  .boton-reaccion:hover {
+    border-color: var(--border-strong);
+    background-color: var(--surface-alt);
+  }
 }
 
 .boton-reaccion:active {

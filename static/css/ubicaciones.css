@@ -102,9 +102,11 @@
   color: var(--danger);
 }
 
-.btn-ghost-danger:hover {
-  background-color: var(--danger-soft);
-  color: var(--danger-hover);
+@media (hover: hover) {
+  .btn-ghost-danger:hover {
+    background-color: var(--danger-soft);
+    color: var(--danger-hover);
+  }
 }
 
 
