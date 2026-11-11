@@ -1,5 +1,7 @@
 # 💩 Proyecto KK
 
+Este readme lo hizo claude, y que? sapo
+
 Aplicación web para **registrar, analizar y comparar tus visitas al baño**. Cronometras
 cada "cagada", la calificas, la ubicas en el mapa y, si quieres, la compartes con la
 comunidad. Con el tiempo, la app te muestra tus hábitos: a qué hora vas más, dónde,
