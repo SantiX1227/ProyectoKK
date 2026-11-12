@@ -17,6 +17,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import get_user_model
 from apps.cagadas.models import Cagada
 from apps.ubicaciones.geografia import mayor_distancia
+from apps.cagadas.rachas import HITOS_RACHA, resumen_racha
+
 
 Usuario = get_user_model()
 
@@ -82,6 +84,12 @@ def analytics(request):
         )
     else:
         categoria_mas_usada_nombre = None
+
+    # =========================================================
+    # RACHA DIARIA
+    # =========================================================
+
+    racha = resumen_racha(cagadas)
 
     # =========================================================
     # FASE B - ANÁLISIS TEMPORAL
@@ -837,6 +845,9 @@ def analytics(request):
 
         #Fase E
         'usuarios_comparables': usuarios_comparables,
+        # Racha
+        'racha': racha,
+        'hitos_racha': HITOS_RACHA,
     }
 
     return render(

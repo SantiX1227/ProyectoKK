@@ -14,6 +14,7 @@
    10. Estadísticas, estado vacío y paginación
    11. Utilidades y animaciones
    12. Pantallas táctiles
+   13. Llama de la racha
    ========================================================================== */
 
 
@@ -1827,4 +1828,77 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+
+/* ==========================================================================
+   13. Llama de la racha
+   --------------------------------------------------------------------------
+   SVG compartido (templates/includes/llama_racha.html) por la landing,
+   la analítica y la animación. El estado lo da una clase del contenedor:
+   .racha-activa · .racha-en_peligro · .racha-apagada
+   ========================================================================== */
+
+.llama {
+  display: block;
+  width: 64px;
+  height: 80px;
+  overflow: visible;
+}
+
+.llama-exterior { fill: #e4572e; }
+.llama-media    { fill: #f59e0b; }
+.llama-nucleo   { fill: #fde68a; }
+
+.llama-capa {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition: fill 0.4s ease;
+}
+
+/* Activa: las tres capas titilan a ritmos distintos */
+.racha-activa .llama-exterior {
+  animation: llama-titilar 1.6s ease-in-out infinite;
+}
+
+.racha-activa .llama-media {
+  animation: llama-titilar 1.15s ease-in-out infinite reverse;
+}
+
+.racha-activa .llama-nucleo {
+  animation: llama-titilar 0.85s ease-in-out infinite;
+}
+
+/* En peligro: llama baja y parpadeante, como a punto de apagarse */
+.racha-en_peligro .llama {
+  animation: llama-vacilar 2.4s ease-in-out infinite;
+}
+
+.racha-en_peligro .llama-exterior { fill: #f08a5d; }
+.racha-en_peligro .llama-media    { fill: #f7c16b; }
+.racha-en_peligro .llama-nucleo   { fill: #fdf0c4; }
+
+/* Apagada: gris y quieta */
+.racha-apagada .llama-exterior { fill: #c9bfb5; }
+.racha-apagada .llama-media    { fill: #ddd5cc; }
+.racha-apagada .llama-nucleo   { fill: #efe9e3; }
+
+@keyframes llama-titilar {
+  0%, 100% { transform: scale(1, 1) skewX(0deg); }
+  30%      { transform: scale(0.95, 1.06) skewX(-3deg); }
+  65%      { transform: scale(1.04, 0.96) skewX(2deg); }
+}
+
+@keyframes llama-vacilar {
+  0%, 100% { opacity: 1;    transform: scaleY(0.9); }
+  45%      { opacity: 0.55; transform: scaleY(0.8); }
+  55%      { opacity: 0.9;  transform: scaleY(0.88); }
+}
+
+/* Texto de la cifra con el degradado del fuego */
+.texto-fuego {
+  background: linear-gradient(135deg, #e4572e 0%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

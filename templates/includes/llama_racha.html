@@ -1,0 +1,25 @@
+{% comment %}
+Llama de la racha: la misma en la landing, la analítica y la animación.
+El color y el movimiento salen de la clase del contenedor
+(.racha-activa, .racha-en_peligro o .racha-apagada, en base.css).
+Uso: include 'includes/llama_racha.html' with clase='racha-hero-llama'
+{% endcomment %}
+<svg
+    class="llama {{ clase }}"
+    viewBox="0 0 64 80"
+    aria-hidden="true"
+    focusable="false"
+>
+    <path
+        class="llama-capa llama-exterior"
+        d="M32 2C35 15 50 24 53 42C56 62 46 78 32 78C17 78 8 67 10 50C11 40 17 34 19 24C24 31 25 36 27 39C29 27 34 17 32 2Z"
+    />
+    <path
+        class="llama-capa llama-media"
+        d="M33 28C36 39 46 46 46 59C46 70 39 77 32 77C24 77 18 71 18 61C18 53 23 48 25 42C27 47 29 50 30 52C32 44 35 37 33 28Z"
+    />
+    <path
+        class="llama-capa llama-nucleo"
+        d="M32 50C35 57 40 61 40 67C40 73 36 77 32 77C27 77 24 73 24 68C24 62 29 59 32 50Z"
+    />
+</svg>

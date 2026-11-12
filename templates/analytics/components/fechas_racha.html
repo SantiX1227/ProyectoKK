@@ -1,0 +1,1 @@
+{% if r.inicio == r.fin %}{{ r.fin|date:"j M" }}{% elif r.inicio.month == r.fin.month and r.inicio.year == r.fin.year %}{{ r.inicio|date:"j" }}–{{ r.fin|date:"j M" }}{% else %}{{ r.inicio|date:"j M" }} – {{ r.fin|date:"j M" }}{% endif %}

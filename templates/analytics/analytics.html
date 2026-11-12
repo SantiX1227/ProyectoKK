@@ -23,6 +23,7 @@
 
     <nav class="analitica-nav" aria-label="Secciones de la analítica">
         <a href="#resumen">📊 Resumen</a>
+        <a href="#racha">🔥 Racha</a>
         <a href="#tiempo">🕐 Tiempo</a>
         <a href="#categorias">📂 Categorías</a>
         <a href="#lugares">📍 Lugares</a>
@@ -102,6 +103,161 @@
                     </span>
                 </div>
             </div>
+        </div>
+
+    </section>
+    {# ===================== RACHA DIARIA ===================== #}
+    <section id="racha" class="analitica-seccion">
+
+        <div class="seccion-cabecera">
+            <span class="seccion-icono">🔥</span>
+            <div>
+                <h2>Racha diaria</h2>
+                <p>Días seguidos con al menos una cagada.</p>
+            </div>
+        </div>
+
+        <div class="card racha-hero racha-{{ racha.estado }}">
+
+            {% include 'includes/llama_racha.html' with clase='racha-hero-llama' %}
+
+            <div class="racha-hero-texto">
+
+                <p class="racha-hero-numero">
+                    <strong>{{ racha.actual }}</strong>
+                    día{{ racha.actual|pluralize }} seguido{{ racha.actual|pluralize }}
+                </p>
+
+                <p class="racha-hero-estado">
+                    {% if racha.estado == 'activa' %}
+                        ¡Racha encendida! Hoy ya registraste.
+                    {% elif racha.estado == 'en_peligro' %}
+                        ⏳ Sigue viva, pero se apaga a medianoche si hoy no registras.
+                    {% elif racha.total_rachas %}
+                        Tu racha se apagó. Registra hoy para encender una nueva.
+                    {% else %}
+                        Aún no has empezado ninguna racha.
+                    {% endif %}
+                </p>
+
+                {% if racha.es_record and racha.actual > 1 %}
+                    <span class="racha-record">🏆 ¡Es tu récord!</span>
+                {% endif %}
+
+                <div class="racha-hito">
+                    {% if racha.siguiente_hito %}
+                        <p>
+                            Te falta{{ racha.faltan_para_hito|pluralize:"n" }}
+                            <strong>{{ racha.faltan_para_hito }} día{{ racha.faltan_para_hito|pluralize }}</strong>
+                            para la meta de {{ racha.siguiente_hito }} días
+                        </p>
+                        <span class="barra-pista">
+                            <span
+                                class="barra"
+                                style="--valor: {{ racha.progreso_hito|unlocalize }};"
+                            ></span>
+                        </span>
+                    {% else %}
+                        <p>🏅 ¡Superaste todas las metas!</p>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="grid grid-4 kpi-grid">
+            <div class="stat-card">
+                <p class="stat-label">Mejor racha</p>
+                <p class="stat-value">
+                    {% if racha.mejor %}
+                        {{ racha.mejor.dias }} día{{ racha.mejor.dias|pluralize }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </p>
+                {% if racha.mejor %}
+                    <p class="racha-fechas">
+                        {% include 'analytics/components/fechas_racha.html' with r=racha.mejor %}
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Rachas totales</p>
+                <p class="stat-value">{{ racha.total_rachas }}</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Media por racha</p>
+                <p class="stat-value">
+                    {% if racha.media %}
+                        {{ racha.media|floatformat:"-1" }} días
+                    {% else %}
+                        —
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Días activos</p>
+                <p class="stat-value">{{ racha.porcentaje_dias_activos|default:0 }}%</p>
+                <p class="racha-fechas">
+                    {{ racha.dias_activos }} día{{ racha.dias_activos|pluralize }} con cagada
+                </p>
+            </div>
+        </div>
+
+        <div class="grid racha-detalle">
+
+            <div class="card">
+                <h3 class="card-title">🏅 Metas</h3>
+                <p class="card-subtitulo racha-subtitulo">Según tu mejor racha.</p>
+
+                <ul class="racha-metas">
+                    {% for hito in hitos_racha %}
+                        {% if racha.mejor and racha.mejor.dias >= hito %}
+                            <li class="racha-meta is-lograda">
+                                ✅ {{ hito }} días
+                            </li>
+                        {% else %}
+                            <li class="racha-meta">
+                                🔒 {{ hito }} días
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">📜 Rachas pasadas</h3>
+                <p class="card-subtitulo racha-subtitulo">Las más recientes primero.</p>
+
+                {% if racha.pasadas %}
+                    <ul class="barras barras-rachas">
+                        {% for pasada in racha.pasadas|slice:":8" %}
+                            <li class="barra-fila{% if pasada is racha.mejor %} is-max{% endif %}">
+                                <span class="barra-etiqueta">
+                                    {% include 'analytics/components/fechas_racha.html' with r=pasada %}
+                                </span>
+                                <span class="barra-pista">
+                                    <span
+                                        class="barra"
+                                        style="--valor: {% widthratio pasada.dias racha.mejor.dias 100 %};"
+                                    ></span>
+                                </span>
+                                <span class="barra-valor">
+                                    {{ pasada.dias }} d{% if pasada is racha.mejor %} 🏆{% endif %}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="racha-vacio">
+                        Aún no tienes rachas terminadas. Aquí aparecerán cuando se apague una.
+                    </p>
+                {% endif %}
+            </div>
+
         </div>
 
     </section>
