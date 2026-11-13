@@ -879,6 +879,33 @@
     var(--warning-soft);
 }
 
+/* Apagada: toda la tarjeta en grises (también el icono de la cabecera) */
+.racha-hero.racha-apagada {
+  background-color: var(--surface-alt);
+  border-color: var(--border-strong);
+}
+
+.racha-apagada .racha-hero-numero,
+.racha-apagada .racha-hero-numero strong,
+.racha-apagada .racha-hero-estado,
+.racha-apagada .racha-hito p,
+.racha-apagada .racha-hito strong {
+  color: var(--text-muted);
+}
+
+.racha-apagada .racha-hito .barra-pista {
+  background-color: var(--border);
+}
+
+.racha-apagada .racha-hito .barra {
+  background: #b8aca0;
+}
+
+.analitica-seccion:has(.racha-hero.racha-apagada) .seccion-icono {
+  background-color: var(--surface-alt);
+  filter: grayscale(1);
+}
+
 .racha-hero-llama {
   flex-shrink: 0;
   width: 84px;
